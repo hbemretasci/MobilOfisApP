@@ -3,16 +3,14 @@ package com.codmine.mukellef.presentation.login_screen
 import android.content.Context
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.datastore.dataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codmine.mukellef.R
-import com.codmine.mukellef.domain.use_case.login_screen.GetTaxPayer
-import com.codmine.mukellef.domain.use_case.login_screen.ValidateGib
-import com.codmine.mukellef.domain.use_case.login_screen.ValidatePassword
-import com.codmine.mukellef.domain.use_case.login_screen.ValidateVk
+import com.codmine.mukellef.domain.use_case.login_screen.*
+import com.codmine.mukellef.domain.util.Constants
 import com.codmine.mukellef.domain.util.Constants.RESULT_USER_LOGIN
 import com.codmine.mukellef.domain.util.Resource
-import com.codmine.mukellef.presentation.splash_screen.dataStore
 import com.codmine.mukellef.presentation.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -28,6 +26,7 @@ class LoginViewModel @Inject constructor(
     private val validateVk: ValidateVk,
     private val validatePassword: ValidatePassword,
     private val getTaxPayer: GetTaxPayer,
+    private val setUserLoginData: SetUserLoginData
 ): ViewModel() {
     
     private val _dataState = mutableStateOf(LoginScreenDataState())
@@ -90,6 +89,14 @@ class LoginViewModel @Inject constructor(
                     _dataState.value = LoginScreenDataState(taxPayer = result.data)
                     _dataState.value.taxPayer?.let {
                         if(it.loginResult == RESULT_USER_LOGIN) {
+                            setAppSettings(
+                                _viewState.value.gib,
+                                _viewState.value.vk,
+                                _viewState.value.password,
+                                it.userId?: "",
+                                it.accountantId?: "",
+                                context
+                            )
                             _uiEventChannel.send(LoginUiEvent.Login)
                         } else {
                             _uiEventChannel.send(
@@ -117,28 +124,9 @@ class LoginViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    /*
-    private suspend fun saveData(
-        loginStatus: Boolean,
-        gib: String,
-        vk: String,
-        password: String,
-        user: String,
-        accountant: String,
-        context: Context
+    private suspend fun setAppSettings(gib: String, vk: String, password: String,
+        user: String, accountant: String, context: Context
     ) {
-        context.dataStore.updateData {
-            it.copy(
-                loginData = loginStatus,
-                gibData = gib,
-                vkData = vk,
-                passwordData = password,
-                userData = user,
-                accountantData = accountant
-            )
-        }
-        //if (!loginStatus) exitProcess(0)
+        setUserLoginData(true, gib, vk, password, user, accountant, context)
     }
-     */
-
 }

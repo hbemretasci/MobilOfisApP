@@ -1,6 +1,5 @@
 package com.codmine.mukellef.presentation.splash_screen
 
-import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -14,40 +13,32 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.datastore.dataStore
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.codmine.mukellef.R
-import com.codmine.mukellef.data.local.AppSettings
-import com.codmine.mukellef.data.repository.AppSettingsSerializer
-import com.codmine.mukellef.domain.util.Constants
 import com.codmine.mukellef.domain.util.Constants.LOGO_DISPLAY_TIME
 import com.codmine.mukellef.presentation.components.Screen
 import com.codmine.mukellef.presentation.util.UiText
 import kotlinx.coroutines.delay
-
-val Context.dataStore by dataStore(Constants.DATA_FILE_KEY, AppSettingsSerializer)
 
 @Composable
 fun SplashScreen(
     navController: NavController,
     viewModel: SplashViewModel = hiltViewModel()
 ) {
-    val logoState = viewModel.logoState.value
+//    val logoState = viewModel.logoState.value
+//    val appSettings = viewModel.appSettings.value
     val context = LocalContext.current
 
-    val appSettings = context.dataStore.data.collectAsState(
-        initial = AppSettings()
-    ).value
-
     LaunchedEffect(key1 = true) {
+        viewModel.getAppSettings(context)
         viewModel.showLogo()
         delay(LOGO_DISPLAY_TIME)
         viewModel.hideLogo()
-        if(appSettings.loginData) {
+        if(viewModel.appSettings.value.login) {
             navController.navigate(
                 Screen.Notification.route +
-                        "/${appSettings.gibData}/${appSettings.vkData}/${appSettings.passwordData}/${appSettings.userData}/${appSettings.accountantData}"
+                        "/${viewModel.appSettings.value.gib}/${viewModel.appSettings.value.vk}/${viewModel.appSettings.value.password}/${viewModel.appSettings.value.user}/${viewModel.appSettings.value.accountant}"
             ) {
                 popUpTo(Screen.Splash.route) {
                     inclusive = true
@@ -66,7 +57,7 @@ fun SplashScreen(
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxSize()
     ) {
-        ShowLogo(logoState)
+        ShowLogo(viewModel.logoState.value)
     }
 }
 
