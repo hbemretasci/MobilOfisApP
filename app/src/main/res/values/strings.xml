@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Mobil Ofis</string>
+
+    <string name="bottom_title_notification">Bildirimler</string>
+    <string name="bottom_title_document">Evraklar</string>
+    <string name="bottom_title_chat">Sohbet</string>
+    <string name="bottom_title_balance">Cari</string>
+
+    <string name="exit_app">Çıkış</string>
+    <string name="app_logo">Logo</string>
+
+    <string name="gib_blank">Gib kodu boş olamaz.</string>
+    <string name="vk_blank">Vergi kimlik numarası boş olamaz.</string>
+    <string name="password_blank">Şifre boş olamaz.</string>
+    <string name="max_gib_len_error">Gib kodu en fazla %d karakter olabilir.</string>
+    <string name="max_vk_len_error">Vergi kimlik numarası en fazla %d karakter olabilir.</string>
+    <string name="max_password_len_error">Şifre en fazla %d karakter olabilir.</string>
+
+    <string name="gib_place_holder">Gib kodunu giriniz.</string>
+    <string name="vk_place_holder">Vergi kimlik numarasını giriniz.</string>
+    <string name="password_place_holder">Şifreyi giriniz.</string>
+    <string name="login_button_text">Giriş Yap</string>
+    <string name="login_screen_text">Giriş Yap</string>
+    <string name="unexpected_error">Beklenmeyen hata.</string>
+    <string name="internet_error">Sunucuya erişilemiyor, bağlantı hatası.</string>
+
+</resources>
