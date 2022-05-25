@@ -87,7 +87,6 @@ class LoginViewModel @Inject constructor(
         ).onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    println("başarılı")
                     _dataState.value = LoginScreenDataState(taxPayer = result.data)
                     _dataState.value.taxPayer?.let {
                         if(it.loginResult == RESULT_USER_LOGIN) {
@@ -102,7 +101,6 @@ class LoginViewModel @Inject constructor(
                     }
                 }
                 is Resource.Error -> {
-                    println("hata")
                     _dataState.value = LoginScreenDataState(
                         error = result.message ?: UiText.StringResources(R.string.unexpected_error).asString(context)
                     )
@@ -113,7 +111,6 @@ class LoginViewModel @Inject constructor(
                     )
                 }
                 is Resource.Loading -> {
-                    println("loading")
                     _dataState.value = LoginScreenDataState(isLoading = true)
                 }
             }

@@ -1,6 +1,7 @@
 package com.codmine.mukellef.presentation.components
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -12,6 +13,7 @@ import com.codmine.mukellef.presentation.splash_screen.SplashScreen
 @Composable
 fun Navigation(
     navController: NavController,
+    snackbarHostState: SnackbarHostState,
     paddingValues: PaddingValues
 ) {
     NavHost(
@@ -23,7 +25,7 @@ fun Navigation(
         }
 
         composable(Screen.Login.route) {
-            LoginScreen(navController = navController)
+            LoginScreen(navController = navController, snackbarHostState)
         }
 
         composable(Screen.Notification.route + "/{gib}/{vk}/{pass}/{user}/{accountant}") {

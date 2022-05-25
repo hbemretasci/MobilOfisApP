@@ -8,18 +8,22 @@ data class TaxPayerDto(
     @SerializedName("islemzamani")
     val processingTime: String,
     @SerializedName("kullanici")
-    val user: UserDto,
+    val user: UserDto?,
     @SerializedName("kullanicidogrulama")
     val userAuthentication: UserAuthenticationDto,
     @SerializedName("malimusavir")
-    val accountant: AccountantDto
+    val accountant: AccountantDto?
 )
 
 fun TaxPayerDto.toTaxPayer(): TaxPayer {
     return TaxPayer(
         loginResult = userAuthentication.loginResult,
         loginMessage = userAuthentication.loginMessage,
-        userId = user.id,
-        accountantId = accountant.id
+        userId = user?.let {
+            it.id
+        },
+        accountantId = accountant?.let {
+            it.id
+        }
     )
 }

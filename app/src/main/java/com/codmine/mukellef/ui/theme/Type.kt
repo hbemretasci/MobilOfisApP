@@ -24,14 +24,14 @@ private val KarlaFontFamily = FontFamily(
 val Typography = Typography(
     displayLarge = TextStyle(
         fontFamily = MontserratFontFamily,
-        fontWeight = FontWeight.Light,
+        fontWeight = FontWeight.Bold,
         fontSize = 57.sp,
         lineHeight = 64.sp,
         letterSpacing = 0.sp
     ),
     displayMedium = TextStyle(
         fontFamily = MontserratFontFamily,
-        fontWeight = FontWeight.Light,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 45.sp,
         lineHeight = 52.sp,
         letterSpacing = 0.sp

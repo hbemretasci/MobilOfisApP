@@ -34,6 +34,7 @@ val Context.dataStore by dataStore(Constants.DATA_FILE_KEY, AppSettingsSerialize
 @Composable
 fun LoginScreen(
     navController: NavController,
+    snackbarHostState: SnackbarHostState,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     val dataState = viewModel.dataState.value
@@ -41,7 +42,6 @@ fun LoginScreen(
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
-    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(key1 = context) {
         viewModel.uiEvents.collect { event ->
@@ -54,8 +54,8 @@ fun LoginScreen(
                                 gibData = viewState.gib,
                                 vkData = viewState.vk,
                                 passwordData = viewState.password,
-                                userData = dataState.taxPayer.userId,
-                                accountantData = dataState.taxPayer.accountantId
+                                userData = dataState.taxPayer.userId ?: "",
+                                accountantData = dataState.taxPayer.accountantId ?: ""
                             )
                         }
                         navController.navigate(
@@ -78,109 +78,123 @@ fun LoginScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(MaterialTheme.spacing.extraLarge),
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            modifier = Modifier.padding(start = MaterialTheme.spacing.medium),
-            text = UiText.StringResources(R.string.login_screen_text).asString(),
-            color = MaterialTheme.colorScheme.secondary,
-            style = MaterialTheme.typography.headlineMedium
-        )
-        Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
-        TextField(
-            value = viewState.gib,
-            onValueChange = {
-                viewModel.onEvent(LoginEvent.GibChanged(it), context)
-            },
-            isError = viewState.gibError != null,
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = {
-                Text(UiText.StringResources(R.string.gib_place_holder).asString())
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
-            keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(focusDirection = FocusDirection.Next) }),
-            maxLines = 1,
-            singleLine = true
-        )
-        if (viewState.gibError != null) {
-            Text(
-                text = viewState.gibError,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.align(Alignment.End)
-            )
-        }
-        Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
-        TextField(
-            value = viewState.vk,
-            onValueChange = {
-                viewModel.onEvent(LoginEvent.VkChanged(it), context)
-            },
-            isError = viewState.vkError != null,
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = {
-                Text(UiText.StringResources(R.string.vk_place_holder).asString())
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
-            keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(focusDirection = FocusDirection.Next) }),
-            maxLines = 1,
-            singleLine = true
-        )
-        if (viewState.vkError != null) {
-            Text(
-                text = viewState.vkError,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.align(Alignment.End)
-            )
-        }
-        Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
-        TextField(
-            value = viewState.password,
-            onValueChange = {
-                viewModel.onEvent(LoginEvent.PasswordChanged(it), context)
-            },
-            isError = viewState.passwordError != null,
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = {
-                Text(UiText.StringResources(R.string.password_place_holder).asString())
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    keyboardController?.hide()
-                    viewModel.onEvent(LoginEvent.Validate, context)
-                }
-            ),
-            maxLines = 1,
-            singleLine = true
-        )
-        if (viewState.passwordError != null) {
-            Text(
-                text = viewState.passwordError,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.align(Alignment.End)
-            )
-        }
-        Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
-        Button(
-            onClick = {
-                keyboardController?.hide()
-                viewModel.onEvent(LoginEvent.Validate, context)
-            },
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
             modifier = Modifier
-                .align(Alignment.End)
-                .padding(end = MaterialTheme.spacing.medium)
+                .fillMaxSize()
+                .padding(MaterialTheme.spacing.extraLarge),
+            verticalArrangement = Arrangement.Top
         ) {
             Text(
-                text = UiText.StringResources(R.string.login_button_text).asString(),
-                style = MaterialTheme.typography.titleMedium
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = MaterialTheme.spacing.medium),
+                text = UiText.StringResources(R.string.app_name).asString(),
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.displayMedium
             )
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxLarge))
+            Text(
+                modifier = Modifier.padding(start = MaterialTheme.spacing.medium),
+                text = UiText.StringResources(R.string.login_screen_text).asString(),
+                color = MaterialTheme.colorScheme.secondary,
+                style = MaterialTheme.typography.headlineMedium
+            )
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
+            TextField(
+                value = viewState.gib,
+                onValueChange = {
+                    viewModel.onEvent(LoginEvent.GibChanged(it), context)
+                },
+                isError = viewState.gibError != null,
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = {
+                    Text(UiText.StringResources(R.string.gib_place_holder).asString())
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
+                keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(focusDirection = FocusDirection.Next) }),
+                maxLines = 1,
+                singleLine = true
+            )
+            if (viewState.gibError != null) {
+                Text(
+                    text = viewState.gibError,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.align(Alignment.End)
+                )
+            }
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
+            TextField(
+                value = viewState.vk,
+                onValueChange = {
+                    viewModel.onEvent(LoginEvent.VkChanged(it), context)
+                },
+                isError = viewState.vkError != null,
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = {
+                    Text(UiText.StringResources(R.string.vk_place_holder).asString())
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
+                keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(focusDirection = FocusDirection.Next) }),
+                maxLines = 1,
+                singleLine = true
+            )
+            if (viewState.vkError != null) {
+                Text(
+                    text = viewState.vkError,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.align(Alignment.End)
+                )
+            }
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
+            TextField(
+                value = viewState.password,
+                onValueChange = {
+                    viewModel.onEvent(LoginEvent.PasswordChanged(it), context)
+                },
+                isError = viewState.passwordError != null,
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = {
+                    Text(UiText.StringResources(R.string.password_place_holder).asString())
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyboardController?.hide()
+                        viewModel.onEvent(LoginEvent.Validate, context)
+                    }
+                ),
+                maxLines = 1,
+                singleLine = true
+            )
+            if (viewState.passwordError != null) {
+                Text(
+                    text = viewState.passwordError,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.align(Alignment.End)
+                )
+            }
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
+            Button(
+                onClick = {
+                    keyboardController?.hide()
+                    viewModel.onEvent(LoginEvent.Validate, context)
+                },
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(end = MaterialTheme.spacing.medium)
+            ) {
+                Text(
+                    text = UiText.StringResources(R.string.login_button_text).asString(),
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+        }
+        if(dataState.isLoading) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
     }
 }

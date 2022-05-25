@@ -22,15 +22,8 @@ class GetTaxPayer @Inject constructor(
     ): Flow<Resource<TaxPayer>> = flow {
         try {
             emit(Resource.Loading())
-            val taxPayer = repository.getTaxPayer(QUERY_MUKELLEF, gib, vk, password)
-
-            println("result: " + taxPayer.userAuthentication.loginResult)
-            println("message: " + taxPayer.userAuthentication.loginMessage)
-            println("user id: " + taxPayer.user.id)
-            println("acc id : " + taxPayer.accountant.id)
-
-
-            if(taxPayer != null) emit(Resource.Success(taxPayer.toTaxPayer()))
+            val taxPayer = repository.getTaxPayer(QUERY_MUKELLEF, gib, vk, password).toTaxPayer()
+            emit(Resource.Success(taxPayer))
         } catch(e: HttpException) {
             emit(Resource.Error(e.localizedMessage ?: UiText.StringResources(R.string.unexpected_error).asString(context)))
         } catch(e: IOException) {
