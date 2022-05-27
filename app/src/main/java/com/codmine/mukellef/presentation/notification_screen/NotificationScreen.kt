@@ -11,14 +11,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.codmine.mukellef.domain.model.notifications.Notification
 import com.codmine.mukellef.presentation.components.ReLoadData
-import com.codmine.mukellef.presentation.login_screen.LoginEvent
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
@@ -31,6 +29,11 @@ fun NotificationScreen(
     val state = viewModel.dataState.value
     val context = LocalContext.current
     var isRefreshing by remember { mutableStateOf(false) }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.getAppSettings(context)
+        viewModel.onEvent(NotificationEvent.LoadData, context)
+    }
 
     LaunchedEffect(isRefreshing) {
         if (isRefreshing) {

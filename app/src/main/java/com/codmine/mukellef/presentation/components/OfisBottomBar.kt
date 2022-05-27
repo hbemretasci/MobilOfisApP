@@ -21,11 +21,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.codmine.mukellef.R
 import com.codmine.mukellef.presentation.util.UiText
 
-sealed class BottomNavItem (val title: Int, val route: String, val arg: String, val icon: ImageVector, val cont: Int) {
-    object Notification: BottomNavItem(R.string.bottom_title_notification, Screen.NotificationScreen.route, Screen.NotificationScreen.arg, Icons.Filled.MarkChatUnread, R.string.bottom_title_notification)
-    object Document: BottomNavItem(R.string.bottom_title_document, Screen.DocumentScreen.route, Screen.DocumentScreen.arg, Icons.Filled.Description, R.string.bottom_title_document)
-    object Chat: BottomNavItem(R.string.bottom_title_chat, Screen.ChatPersonScreen.route, Screen.ChatPersonScreen.arg, Icons.Filled.QuestionAnswer, R.string.bottom_title_chat)
-    object Balance: BottomNavItem(R.string.bottom_title_balance, Screen.BalanceScreen.route, Screen.BalanceScreen.arg,  Icons.Filled.Analytics, R.string.bottom_title_balance)
+sealed class BottomNavItem (val title: Int, val route: String, val icon: ImageVector, val cont: Int) {
+    object Notification: BottomNavItem(R.string.bottom_title_notification, Screen.NotificationScreen.route, Icons.Filled.MarkChatUnread, R.string.bottom_title_notification)
+    object Document: BottomNavItem(R.string.bottom_title_document, Screen.DocumentScreen.route, Icons.Filled.Description, R.string.bottom_title_document)
+    object Chat: BottomNavItem(R.string.bottom_title_chat, Screen.ChatPersonScreen.route, Icons.Filled.QuestionAnswer, R.string.bottom_title_chat)
+    object Balance: BottomNavItem(R.string.bottom_title_balance, Screen.BalanceScreen.route,  Icons.Filled.Analytics, R.string.bottom_title_balance)
 }
 
 val bottomNavItems = listOf(
@@ -52,9 +52,9 @@ fun OfisBottomBar(
                 NavigationBarItem(
                     icon = { Icon(screen.icon, UiText.StringResources(screen.cont).asString()) },
                     label = { Text(UiText.StringResources(screen.title).asString(), fontWeight = FontWeight.Bold) },
-                    selected = currentDestination?.hierarchy?.any { it.route == screen.route + screen.arg } == true,
+                    selected = currentDestination?.hierarchy?.any { it.route == screen.route} == true,
                     onClick = {
-                        navController.navigate(screen.route + screen.arg) {
+                        navController.navigate(screen.route) {
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
                             }

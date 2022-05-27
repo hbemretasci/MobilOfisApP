@@ -45,7 +45,7 @@ class MainActivity : ComponentActivity() {
 
     private fun shouldShowBars(backStackEntry: NavBackStackEntry?): Boolean {
         return backStackEntry?.destination?.route in listOf(
-            Screen.NotificationScreen.route + Screen.NotificationScreen.arg,
+            Screen.NotificationScreen.route,
             Screen.DocumentScreen.route,
             Screen.ChatPersonScreen.route,
             Screen.BalanceScreen.route

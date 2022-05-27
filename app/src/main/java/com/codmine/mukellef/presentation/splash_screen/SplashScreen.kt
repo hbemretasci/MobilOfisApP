@@ -36,10 +36,7 @@ fun SplashScreen(
         delay(LOGO_DISPLAY_TIME)
         viewModel.hideLogo()
         if(viewModel.appSettings.value.login) {
-            navController.navigate(
-                Screen.NotificationScreen.route +
-                        "/${viewModel.appSettings.value.gib}/${viewModel.appSettings.value.vk}/${viewModel.appSettings.value.password}/${viewModel.appSettings.value.user}/${viewModel.appSettings.value.accountant}"
-            ) {
+            navController.navigate(Screen.NotificationScreen.route) {
                 popUpTo(Screen.SplashScreen.route) {
                     inclusive = true
                 }
