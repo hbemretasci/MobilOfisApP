@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
-import kotlin.system.exitProcess
 
 class CustomDataStore @Inject constructor()  {
 
@@ -26,67 +25,69 @@ class CustomDataStore @Inject constructor()  {
         val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = DATA_FILE_KEY)
     }
 
-    suspend fun saveUserData(login: Boolean, gib: String, vk: String, password: String, user: String, accountant: String, context: Context) {
+    suspend fun saveUserData(
+        login: Boolean, gib: String, vk: String, password: String, user: String, accountant: String, context: Context
+    ) {
         val loginKey = booleanPreferencesKey(KEY_LOGIN)
         val gibKey = stringPreferencesKey(KEY_GIB)
         val vkKey = stringPreferencesKey(KEY_VK)
         val passwordKey = stringPreferencesKey(KEY_PASSWORD)
         val userKey = stringPreferencesKey(KEY_USER)
-        val accountantKEY = stringPreferencesKey(KEY_ACCOUNTANT)
+        val accountantKey = stringPreferencesKey(KEY_ACCOUNTANT)
         context.dataStore.edit {
             it[loginKey] = login
             it[gibKey] = gib
             it[vkKey] = vk
             it[passwordKey] = password
             it[userKey] = user
-            it[accountantKEY] = accountant
+            it[accountantKey] = accountant
         }
     }
 
     suspend fun getLoginData(context: Context): Boolean {
-        val wrapKey = booleanPreferencesKey(KEY_LOGIN)
+        val loginKey = booleanPreferencesKey(KEY_LOGIN)
         val valueFlow: Flow<Boolean> = context.dataStore.data.map {
-            it[wrapKey] ?: false
+            it[loginKey] ?: false
         }
         return valueFlow.first()
     }
 
     suspend fun getGibData(context: Context): String {
-        val wrapKey = stringPreferencesKey(KEY_GIB)
+        val gibKey = stringPreferencesKey(KEY_GIB)
         val valueFlow: Flow<String> = context.dataStore.data.map {
-            it[wrapKey] ?: ""
+            it[gibKey] ?: ""
         }
         return valueFlow.first()
     }
 
     suspend fun getVkData(context: Context): String {
-        val wrapKey = stringPreferencesKey(KEY_VK)
+        val vkKey = stringPreferencesKey(KEY_VK)
         val valueFlow: Flow<String> = context.dataStore.data.map {
-            it[wrapKey] ?: ""
+            it[vkKey] ?: ""
         }
         return valueFlow.first()
     }
 
     suspend fun getPasswordData(context: Context): String {
-        val wrapKey = stringPreferencesKey(KEY_PASSWORD)
+        val passwordKey = stringPreferencesKey(KEY_PASSWORD)
         val valueFlow: Flow<String> = context.dataStore.data.map {
-            it[wrapKey] ?: ""
+            it[passwordKey] ?: ""
         }
         return valueFlow.first()
     }
 
     suspend fun getUserData(context: Context): String {
-        val wrapKey = stringPreferencesKey(KEY_USER)
+        val userKey = stringPreferencesKey(KEY_USER)
         val valueFlow: Flow<String> = context.dataStore.data.map {
-            it[wrapKey] ?: ""
+            it[userKey] ?: ""
         }
         return valueFlow.first()
     }
 
     suspend fun getAccountantData(context: Context): String {
-        val wrapKey = stringPreferencesKey(KEY_ACCOUNTANT)
+        val accountantKey = stringPreferencesKey(KEY_ACCOUNTANT)
         val valueFlow: Flow<String> = context.dataStore.data.map {
-            it[wrapKey] ?: ""
+            it[accountantKey] ?: ""
         }
         return valueFlow.first()
     }

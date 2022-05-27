@@ -24,4 +24,6 @@
     <string name="unexpected_error">Beklenmeyen hata.</string>
     <string name="internet_error">Sunucuya erişilemiyor, bağlantı hatası.</string>
 
+    <string name="retry">Yeniden dene!</string>
+
 </resources>

@@ -17,6 +17,7 @@ class GetUserLoginData @Inject constructor(
         val password = dataStore.getPasswordData(context)
         val user = dataStore.getUserData(context)
         val accountant = dataStore.getAccountantData(context)
-        emit(AppSettings(login, gib, vk, password, user, accountant))
+        val appSettings = AppSettings(login, gib, vk, password, user, accountant)
+        emit(appSettings)
     }
 }

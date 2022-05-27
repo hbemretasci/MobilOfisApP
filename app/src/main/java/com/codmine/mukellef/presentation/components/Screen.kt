@@ -1,11 +1,20 @@
 package com.codmine.mukellef.presentation.components
 
-sealed class Screen(val route: String) {
-    object Splash: Screen("splash_screen_route")
-    object Login: Screen("login_screen_route")
-    object Notification: Screen("notification_screen_route")
-    object Document: Screen("document_screen_route")
-    object ChatPerson: Screen("chat_person_screen_route")
-    object ChatMessage: Screen("chat_messages_screen_route")
-    object Balance: Screen("balance_screen_route")
+import com.codmine.mukellef.domain.util.Constants.KEY_ACCOUNTANT
+import com.codmine.mukellef.domain.util.Constants.KEY_GIB
+import com.codmine.mukellef.domain.util.Constants.KEY_PASSWORD
+import com.codmine.mukellef.domain.util.Constants.KEY_USER
+import com.codmine.mukellef.domain.util.Constants.KEY_VK
+
+sealed class Screen(val route: String, val arg: String) {
+    object SplashScreen: Screen("splash_screen", "")
+    object LoginScreen: Screen("login_screen", "")
+    object NotificationScreen: Screen(
+        "notification_screen",
+        "/{$KEY_GIB}/{$KEY_VK}/{$KEY_PASSWORD}/{$KEY_USER}/{$KEY_ACCOUNTANT}"
+    )
+    object DocumentScreen: Screen("document_screen", "")
+    object ChatPersonScreen: Screen("chat_person_screen", "")
+    object ChatMessageScreen: Screen("chat_messages_screen", "")
+    object BalanceScreen: Screen("balance_screen", "")
 }

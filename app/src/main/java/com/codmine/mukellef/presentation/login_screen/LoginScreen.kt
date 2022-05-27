@@ -41,10 +41,10 @@ fun LoginScreen(
                 is LoginUiEvent.Login -> {
                     viewModel.dataState.value.taxPayer?.let {
                         navController.navigate(
-                            Screen.Notification.route +
+                            Screen.NotificationScreen.route +
                                     "/${viewModel.viewState.value.gib}/${viewModel.viewState.value.vk}/${viewModel.viewState.value.password}/${it.userId}/${it.accountantId}"
                         ) {
-                            popUpTo(Screen.Login.route) {
+                            popUpTo(Screen.LoginScreen.route) {
                                 inclusive = true
                             }
                         }

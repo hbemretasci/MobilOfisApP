@@ -22,7 +22,6 @@ fun OfisScaffold(
     onActIconPressed: () -> Unit = { }
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
-
     Scaffold(
         modifier = modifier
             .navigationBarsPadding()

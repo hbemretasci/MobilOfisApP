@@ -29,7 +29,7 @@ class SplashViewModel @Inject constructor(
         _logoState.value = false
     }
 
-    suspend fun getAppSettings(context: Context) {
+    fun getAppSettings(context: Context) {
         getUserLoginData(context).onEach { result ->
             _appSettings.value = result
         }.launchIn(viewModelScope)

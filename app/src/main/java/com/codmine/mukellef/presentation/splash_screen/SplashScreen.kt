@@ -37,16 +37,17 @@ fun SplashScreen(
         viewModel.hideLogo()
         if(viewModel.appSettings.value.login) {
             navController.navigate(
-                Screen.Notification.route +
+                Screen.NotificationScreen.route +
                         "/${viewModel.appSettings.value.gib}/${viewModel.appSettings.value.vk}/${viewModel.appSettings.value.password}/${viewModel.appSettings.value.user}/${viewModel.appSettings.value.accountant}"
             ) {
-                popUpTo(Screen.Splash.route) {
+                popUpTo(Screen.SplashScreen.route) {
                     inclusive = true
                 }
             }
+
         } else {
-            navController.navigate(Screen.Login.route) {
-                popUpTo(Screen.Splash.route) {
+            navController.navigate(Screen.LoginScreen.route) {
+                popUpTo(Screen.SplashScreen.route) {
                     inclusive = true
                 }
             }

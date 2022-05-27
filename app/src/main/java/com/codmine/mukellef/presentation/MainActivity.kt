@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
                         val navBackStackEntry by navController.currentBackStackEntryAsState()
                         OfisScaffold(
                             navController = navController,
-                            showBars = shouldShowTopAndBottomBar(navBackStackEntry),
+                            showBars = shouldShowBars(navBackStackEntry),
                             modifier = Modifier.fillMaxSize(),
                         )
                     }
@@ -43,12 +43,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun shouldShowTopAndBottomBar(backStackEntry: NavBackStackEntry?): Boolean {
+    private fun shouldShowBars(backStackEntry: NavBackStackEntry?): Boolean {
         return backStackEntry?.destination?.route in listOf(
-            Screen.Notification.route,
-            Screen.Document.route,
-            Screen.ChatPerson.route,
-            Screen.Balance.route
+            Screen.NotificationScreen.route + Screen.NotificationScreen.arg,
+            Screen.DocumentScreen.route,
+            Screen.ChatPersonScreen.route,
+            Screen.BalanceScreen.route
         )
     }
 }

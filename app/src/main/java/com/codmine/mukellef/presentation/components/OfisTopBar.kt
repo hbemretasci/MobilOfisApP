@@ -17,6 +17,7 @@ fun OfisTopBar(
         title = title,
         actions = actions,
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer)
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
     )
 }

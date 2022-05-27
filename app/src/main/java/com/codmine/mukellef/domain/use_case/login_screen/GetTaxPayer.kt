@@ -2,8 +2,8 @@ package com.codmine.mukellef.domain.use_case.login_screen
 
 import android.content.Context
 import com.codmine.mukellef.R
-import com.codmine.mukellef.data.remote.dto.toTaxPayer
-import com.codmine.mukellef.domain.model.TaxPayer
+import com.codmine.mukellef.data.remote.dto.tax_payer.toTaxPayer
+import com.codmine.mukellef.domain.model.tax_payer.TaxPayer
 import com.codmine.mukellef.domain.repository.MobileOfficeRepository
 import com.codmine.mukellef.domain.util.Constants.QUERY_MUKELLEF
 import com.codmine.mukellef.domain.util.Resource
