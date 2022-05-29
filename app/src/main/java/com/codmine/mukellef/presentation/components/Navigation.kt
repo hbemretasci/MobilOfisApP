@@ -31,10 +31,10 @@ fun Navigation(
             LoginScreen(navController, snackbarHostState)
         }
         composable(Screen.NotificationScreen.route) {
-            NotificationScreen(navController, paddingValues)
+            NotificationScreen(paddingValues)
         }
         composable(Screen.DocumentScreen.route) {
-            DocumentScreen(navController, paddingValues)
+            DocumentScreen(paddingValues)
         }
         composable(Screen.ChatPersonScreen.route) {
             ChatPersonScreen(navController, paddingValues)

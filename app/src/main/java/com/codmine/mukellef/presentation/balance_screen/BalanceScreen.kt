@@ -46,7 +46,7 @@ fun BalanceScreen(
             onRefresh = { isRefreshing = true }
         ) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium)) }
+                item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
                 items(state.transactions) { transaction ->
                     TransactionItem(transaction = transaction)
                 }
@@ -74,7 +74,7 @@ fun TransactionItem(transaction: Transaction) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(
-                horizontal = MaterialTheme.spacing.medium,
+                horizontal = MaterialTheme.spacing.large,
                 vertical = MaterialTheme.spacing.small
             ),
     ) {
@@ -90,6 +90,7 @@ fun TransactionItem(transaction: Transaction) {
         ) {
             Text(
                 text = transaction.dateTime,
+                color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.labelLarge,
             )
         }
@@ -107,10 +108,12 @@ fun TransactionItem(transaction: Transaction) {
         ) {
             Text(
                 text = transaction.name,
+                color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.labelLarge,
             )
             Text(
                 text = transaction.amount,
+                color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.labelLarge
             )
         }

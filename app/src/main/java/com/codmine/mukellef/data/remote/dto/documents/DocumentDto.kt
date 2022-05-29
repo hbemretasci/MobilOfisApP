@@ -1,5 +1,6 @@
 package com.codmine.mukellef.data.remote.dto.documents
 
+import com.codmine.mukellef.domain.model.documents.Document
 import com.google.gson.annotations.SerializedName
 
 data class DocumentDto(
@@ -22,3 +23,12 @@ data class DocumentDto(
     @SerializedName("Bildirim_id")
     val id: String
 )
+
+fun DocumentDto.toDocument(): Document {
+    return Document(
+        documentName = documentName,
+        postTime = postTime,
+        readingTime = readingTime,
+        message = message
+    )
+}

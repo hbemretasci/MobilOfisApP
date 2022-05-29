@@ -25,5 +25,8 @@
     <string name="internet_error">Sunucuya erişilemiyor, bağlantı hatası.</string>
 
     <string name="retry">Yeniden dene!</string>
+    <string name="document_title_post_time">Yayınlanma</string>
+    <string name="document_title_read_time">Okunma</string>
+    <string name="document_icon_content_description">Evrak</string>
 
 </resources>

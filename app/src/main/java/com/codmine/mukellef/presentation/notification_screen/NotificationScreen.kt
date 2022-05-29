@@ -22,7 +22,6 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
 fun NotificationScreen(
-    navController: NavController,
     paddingValues: PaddingValues,
     viewModel: NotificationViewModel = hiltViewModel()
 ) {
@@ -32,12 +31,12 @@ fun NotificationScreen(
 
     LaunchedEffect(key1 = true) {
         viewModel.getAppSettings(context)
-        viewModel.onEvent(NotificationEvent.LoadData, context)
+        viewModel.onEvent(NotificationEvent.LoadData)
     }
 
     LaunchedEffect(isRefreshing) {
         if (isRefreshing) {
-            viewModel.onEvent(NotificationEvent.LoadData, context)
+            viewModel.onEvent(NotificationEvent.LoadData)
             isRefreshing = false
         }
     }
@@ -66,7 +65,7 @@ fun NotificationScreen(
                 modifier = Modifier.fillMaxSize(),
                 errorMsg = state.error,
                 onRetry = {
-                    viewModel.onEvent(NotificationEvent.LoadData, context)
+                    viewModel.onEvent(NotificationEvent.LoadData)
                 }
             )
         }
