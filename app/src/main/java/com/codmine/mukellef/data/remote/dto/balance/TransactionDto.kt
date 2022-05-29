@@ -1,5 +1,6 @@
 package com.codmine.mukellef.data.remote.dto.balance
 
+import com.codmine.mukellef.domain.model.balance.Transaction
 import com.google.gson.annotations.SerializedName
 
 data class TransactionDto(
@@ -22,3 +23,13 @@ data class TransactionDto(
     @SerializedName("Bildirim_id")
     val id: String
 )
+
+fun TransactionDto.toTransaction(): Transaction {
+    val before = message.substringBeforeLast("-")
+    val after = message.substringAfterLast("-")
+    return Transaction(
+        dateTime = before,
+        name = after.substringBeforeLast("|"),
+        amount = after.substringAfterLast("|")
+    )
+}

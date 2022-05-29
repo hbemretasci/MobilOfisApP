@@ -1,5 +1,5 @@
 package com.codmine.mukellef.presentation.notification_screen
 
-sealed interface NotificationEvent {
-    object LoadData: NotificationEvent
+sealed class NotificationEvent{
+    object LoadData: NotificationEvent()
 }

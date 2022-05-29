@@ -43,7 +43,7 @@ fun Navigation(
 //        composable(Screen.ChatMessage.route) { LoginScreen(navController = navController) }
 
         composable(Screen.BalanceScreen.route) {
-            BalanceScreen(navController, paddingValues)
+            BalanceScreen(paddingValues)
         }
     }
 }
