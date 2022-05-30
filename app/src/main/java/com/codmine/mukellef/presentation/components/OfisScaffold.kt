@@ -18,9 +18,10 @@ fun OfisScaffold(
     navController: NavController,
     modifier: Modifier,
     showBars: Boolean = true,
-    onActIconPressed: () -> Unit = { }
+    onActIconPressed: () -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
+
     Scaffold(
         modifier = modifier
             .navigationBarsPadding()
@@ -54,7 +55,6 @@ fun OfisScaffold(
         snackbarHost = {
             SnackbarHost(snackbarHostState)
         }
-
     ) {
         Navigation(navController, snackbarHostState, it)
     }

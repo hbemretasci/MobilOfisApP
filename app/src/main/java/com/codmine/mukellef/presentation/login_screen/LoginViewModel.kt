@@ -3,12 +3,10 @@ package com.codmine.mukellef.presentation.login_screen
 import android.content.Context
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.datastore.dataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codmine.mukellef.R
 import com.codmine.mukellef.domain.use_case.login_screen.*
-import com.codmine.mukellef.domain.util.Constants
 import com.codmine.mukellef.domain.util.Constants.RESULT_USER_LOGIN
 import com.codmine.mukellef.domain.util.Resource
 import com.codmine.mukellef.presentation.util.UiText
@@ -90,6 +88,7 @@ class LoginViewModel @Inject constructor(
                     _dataState.value.taxPayer?.let {
                         if(it.loginResult == RESULT_USER_LOGIN) {
                             setAppSettings(
+                                true,
                                 _viewState.value.gib,
                                 _viewState.value.vk,
                                 _viewState.value.password,
@@ -124,9 +123,9 @@ class LoginViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private suspend fun setAppSettings(gib: String, vk: String, password: String,
+    private suspend fun setAppSettings(loginStatus: Boolean, gib: String, vk: String, password: String,
         user: String, accountant: String, context: Context
     ) {
-        setUserLoginData(true, gib, vk, password, user, accountant, context)
+        setUserLoginData(loginStatus, gib, vk, password, user, accountant, context)
     }
 }
