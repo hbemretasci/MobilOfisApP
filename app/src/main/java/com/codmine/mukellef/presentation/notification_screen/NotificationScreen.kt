@@ -14,8 +14,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.codmine.mukellef.domain.model.notifications.Notification
+import com.codmine.mukellef.presentation.components.GlowIndicator
 import com.codmine.mukellef.presentation.components.ReLoadData
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -27,18 +27,10 @@ fun NotificationScreen(
 ) {
     val state = viewModel.dataState.value
     val context = LocalContext.current
-    var isRefreshing by remember { mutableStateOf(false) }
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
 
     LaunchedEffect(key1 = true) {
-        viewModel.getAppSettings(context)
-        viewModel.onEvent(NotificationEvent.LoadData)
-    }
-
-    LaunchedEffect(isRefreshing) {
-        if (isRefreshing) {
-            viewModel.onEvent(NotificationEvent.LoadData)
-            isRefreshing = false
-        }
+        viewModel.onEvent(NotificationEvent.LoadData, context)
     }
 
     Box(modifier = Modifier
@@ -46,8 +38,14 @@ fun NotificationScreen(
         .padding(paddingValues)
     ) {
         SwipeRefresh(
-            state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
-            onRefresh = { isRefreshing = true }
+            state = rememberSwipeRefreshState(isRefreshing),
+            onRefresh = { viewModel.onEvent(NotificationEvent.Refresh, context) },
+            indicator = { state, trigger ->
+                GlowIndicator(
+                    swipeRefreshState = state,
+                    refreshTriggerDistance = trigger
+                )
+            }
         ) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
@@ -64,9 +62,7 @@ fun NotificationScreen(
             ReLoadData(
                 modifier = Modifier.fillMaxSize(),
                 errorMsg = state.error,
-                onRetry = {
-                    viewModel.onEvent(NotificationEvent.LoadData)
-                }
+                onRetry = {viewModel.onEvent(NotificationEvent.LoadNotifications, context) }
             )
         }
         if(state.isLoading) {

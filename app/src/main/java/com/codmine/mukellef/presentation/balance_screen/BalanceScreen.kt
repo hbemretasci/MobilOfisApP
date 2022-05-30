@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.codmine.mukellef.domain.model.balance.Transaction
+import com.codmine.mukellef.presentation.components.GlowIndicator
 import com.codmine.mukellef.presentation.components.ReLoadData
 import com.codmine.mukellef.ui.theme.spacing
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -23,18 +24,10 @@ fun BalanceScreen(
 ) {
     val state = viewModel.dataState.value
     val context = LocalContext.current
-    var isRefreshing by remember { mutableStateOf(false) }
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
 
     LaunchedEffect(key1 = true) {
-        viewModel.getAppSettings(context)
-        viewModel.onEvent(BalanceEvent.LoadData)
-    }
-
-    LaunchedEffect(isRefreshing) {
-        if (isRefreshing) {
-            viewModel.onEvent(BalanceEvent.LoadData)
-            isRefreshing = false
-        }
+        viewModel.onEvent(BalanceEvent.LoadData, context)
     }
 
     Box(modifier = Modifier
@@ -42,8 +35,14 @@ fun BalanceScreen(
         .padding(paddingValues)
     ) {
         SwipeRefresh(
-            state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
-            onRefresh = { isRefreshing = true }
+            state = rememberSwipeRefreshState(isRefreshing),
+            onRefresh = { viewModel.onEvent(BalanceEvent.Refresh, context) },
+            indicator = { state, trigger ->
+                GlowIndicator(
+                    swipeRefreshState = state,
+                    refreshTriggerDistance = trigger
+                )
+            }
         ) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
@@ -56,9 +55,7 @@ fun BalanceScreen(
             ReLoadData(
                 modifier = Modifier.fillMaxSize(),
                 errorMsg = state.error,
-                onRetry = {
-                    viewModel.onEvent(BalanceEvent.LoadData)
-                }
+                onRetry = { viewModel.onEvent(BalanceEvent.LoadData, context) }
             )
         }
         if(state.isLoading) {

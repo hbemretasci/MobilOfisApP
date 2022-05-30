@@ -1,5 +1,6 @@
 package com.codmine.mukellef.presentation.document_screen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.codmine.mukellef.R
 import com.codmine.mukellef.domain.model.documents.Document
 import com.codmine.mukellef.domain.util.dateAndTime
+import com.codmine.mukellef.presentation.components.GlowIndicator
 import com.codmine.mukellef.presentation.components.ReLoadData
 import com.codmine.mukellef.presentation.util.UiText
 import com.codmine.mukellef.ui.theme.spacing
@@ -33,18 +35,10 @@ fun DocumentScreen(
 ) {
     val state = viewModel.dataState.value
     val context = LocalContext.current
-    var isRefreshing by remember { mutableStateOf(false) }
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
 
     LaunchedEffect(key1 = true) {
-        viewModel.getAppSettings(context)
-        viewModel.onEvent(DocumentEvent.LoadData)
-    }
-
-    LaunchedEffect(isRefreshing) {
-        if (isRefreshing) {
-            viewModel.onEvent(DocumentEvent.LoadData)
-            isRefreshing = false
-        }
+        viewModel.onEvent(DocumentEvent.LoadData, context)
     }
 
     Box(modifier = Modifier
@@ -52,8 +46,14 @@ fun DocumentScreen(
         .padding(paddingValues)
     ) {
         SwipeRefresh(
-            state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
-            onRefresh = { isRefreshing = true }
+            state = rememberSwipeRefreshState(isRefreshing),
+            onRefresh = { viewModel.onEvent(DocumentEvent.Refresh, context) },
+            indicator = { state, trigger ->
+                GlowIndicator(
+                    swipeRefreshState = state,
+                    refreshTriggerDistance = trigger
+                )
+            }
         ) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
@@ -63,6 +63,10 @@ fun DocumentScreen(
                     DocumentItem(
                         document = document,
                         readingStatus = document.readingTime.isNotEmpty(),
+                        onDocumentClick = {
+                            viewModel.onEvent(DocumentEvent.ShowAndReadDocument(it), context)
+
+                        }
                     )
                 }
             }
@@ -72,7 +76,7 @@ fun DocumentScreen(
                 modifier = Modifier.fillMaxSize(),
                 errorMsg = state.error,
                 onRetry = {
-                    viewModel.onEvent(DocumentEvent.LoadData)
+                    viewModel.onEvent(DocumentEvent.LoadDocuments, context)
                 }
             )
         }
@@ -86,7 +90,8 @@ fun DocumentScreen(
 @Composable
 fun DocumentItem(
     document: Document,
-    readingStatus : Boolean,
+    readingStatus: Boolean,
+    onDocumentClick: (Document) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -94,7 +99,10 @@ fun DocumentItem(
             .padding(
                 horizontal = MaterialTheme.spacing.large,
                 vertical = MaterialTheme.spacing.small
-            ),
+            )
+            .clickable {
+                onDocumentClick(document)
+            },
         shape = RoundedCornerShape(MaterialTheme.spacing.large).copy(
             topStart = CornerSize(0),
             bottomEnd = CornerSize(0)

@@ -10,8 +10,8 @@ import com.codmine.mukellef.domain.use_case.notification_screen.GetNotifications
 import com.codmine.mukellef.domain.use_case.splash_screen.GetUserLoginData
 import com.codmine.mukellef.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,6 +24,25 @@ class NotificationViewModel @Inject constructor(
     val dataState: State<NotificationScreenDataState> = _dataState
 
     private val _appSettings = mutableStateOf(AppSettings())
+
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean>
+        get() = _isRefreshing.asStateFlow()
+
+    fun onEvent(event: NotificationEvent, context: Context) {
+        when(event) {
+            is NotificationEvent.LoadData -> {
+                getAppSettings(context)
+                getNotificationList()
+            }
+            is NotificationEvent.LoadNotifications -> {
+                getNotificationList()
+            }
+            is NotificationEvent.Refresh -> {
+                refresh()
+            }
+        }
+    }
 
     private fun getNotificationList() {
         getNotifications(
@@ -43,15 +62,15 @@ class NotificationViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun onEvent(event: NotificationEvent) {
-        when(event) {
-            is NotificationEvent.LoadData -> {
-                getNotificationList()
-            }
+    private fun refresh() {
+        viewModelScope.launch {
+            _isRefreshing.emit(true)
+            getNotificationList()
+            _isRefreshing.emit(false)
         }
     }
 
-    fun getAppSettings(context: Context) {
+    private fun getAppSettings(context: Context) {
         getUserLoginData(context).onEach { result ->
             _appSettings.value = result
         }.launchIn(viewModelScope)

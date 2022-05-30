@@ -29,6 +29,7 @@ fun DocumentDto.toDocument(): Document {
         documentName = documentName,
         postTime = postTime,
         readingTime = readingTime,
-        message = message
+        message = message,
+        id = id
     )
 }
