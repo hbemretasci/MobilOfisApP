@@ -6,28 +6,31 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codmine.mukellef.data.local.AppSettings
+import com.codmine.mukellef.domain.model.documents.Document
+import com.codmine.mukellef.domain.model.notifications.Notification
 import com.codmine.mukellef.domain.use_case.notification_screen.GetNotifications
+import com.codmine.mukellef.domain.use_case.notification_screen.PostNotificationReadingInfo
 import com.codmine.mukellef.domain.use_case.splash_screen.GetUserLoginData
 import com.codmine.mukellef.domain.util.Resource
+import com.codmine.mukellef.domain.util.downloadFile
+import com.codmine.mukellef.domain.util.fileExist
+import com.codmine.mukellef.domain.util.showFile
+import com.codmine.mukellef.presentation.document_screen.ReadingDocumentState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class NotificationViewModel @Inject constructor(
     private val getNotifications: GetNotifications,
+    private val postNotificationReadingInfo: PostNotificationReadingInfo,
     private val getUserLoginData: GetUserLoginData
 ): ViewModel() {
-
     private val _dataState = mutableStateOf(NotificationScreenDataState())
     val dataState: State<NotificationScreenDataState> = _dataState
 
+    private val _readingNotificationState = mutableStateOf(ReadingNotificationState())
     private val _appSettings = mutableStateOf(AppSettings())
-
-    private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshing: StateFlow<Boolean>
-        get() = _isRefreshing.asStateFlow()
 
     fun onEvent(event: NotificationEvent, context: Context) {
         when(event) {
@@ -35,12 +38,27 @@ class NotificationViewModel @Inject constructor(
                 getAppSettings(context)
                 getNotificationList()
             }
-            is NotificationEvent.LoadNotifications -> {
+            is NotificationEvent.Refresh -> {
                 getNotificationList()
             }
-            is NotificationEvent.Refresh -> {
-                refresh()
+            is NotificationEvent.ReadNotification -> {
+                if (event.notification.readingTime.isEmpty()) {
+                    postReadingInfo(event.notification)
+                }
             }
+            is NotificationEvent.ShowNotification -> {
+                if (event.notification.documentName.isNotEmpty()) {
+                    showNotification(_appSettings.value.gib, event.notification, context)
+                }
+            }
+        }
+    }
+
+    private fun showNotification(gib: String, notification: Notification, context: Context) {
+        if (!fileExist(notification.documentName, context)) {
+            downloadFile(gib, notification.documentName, context)
+        } else {
+            showFile(notification.documentName, context)
         }
     }
 
@@ -62,12 +80,22 @@ class NotificationViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun refresh() {
-        viewModelScope.launch {
-            _isRefreshing.emit(true)
-            getNotificationList()
-            _isRefreshing.emit(false)
-        }
+    private fun postReadingInfo(notification: Notification) {
+        postNotificationReadingInfo(
+            _appSettings.value.gib, _appSettings.value.vk, _appSettings.value.password, notification.id
+        ).onEach { result ->
+            when(result) {
+                is Resource.Success -> {
+                    _readingNotificationState.value = ReadingNotificationState(readingNotification = result.data)
+                }
+                is Resource.Error -> {
+                    _readingNotificationState.value = ReadingNotificationState(error = result.message ?: "Beklenmeyen hata.")
+                }
+                is Resource.Loading -> {
+                    _readingNotificationState.value = ReadingNotificationState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 
     private fun getAppSettings(context: Context) {

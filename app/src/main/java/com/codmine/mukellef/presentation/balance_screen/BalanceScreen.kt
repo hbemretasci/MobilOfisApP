@@ -22,9 +22,11 @@ fun BalanceScreen(
     paddingValues: PaddingValues,
     viewModel: BalanceViewModel = hiltViewModel()
 ) {
-    val state = viewModel.dataState.value
+    val state = viewModel.dataState
     val context = LocalContext.current
-    val isRefreshing by viewModel.isRefreshing.collectAsState()
+    val swipeRefreshState = rememberSwipeRefreshState(
+        isRefreshing = state.value.isRefreshing
+    )
 
     LaunchedEffect(key1 = true) {
         viewModel.onEvent(BalanceEvent.LoadData, context)
@@ -35,7 +37,7 @@ fun BalanceScreen(
         .padding(paddingValues)
     ) {
         SwipeRefresh(
-            state = rememberSwipeRefreshState(isRefreshing),
+            state = swipeRefreshState,
             onRefresh = { viewModel.onEvent(BalanceEvent.Refresh, context) },
             indicator = { state, trigger ->
                 GlowIndicator(
@@ -46,19 +48,19 @@ fun BalanceScreen(
         ) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
-                items(state.transactions) { transaction ->
+                items(state.value.transactions) { transaction ->
                     TransactionItem(transaction = transaction)
                 }
             }
         }
-        if(state.error.isNotBlank()) {
+        if(state.value.error.isNotBlank()) {
             ReLoadData(
                 modifier = Modifier.fillMaxSize(),
-                errorMsg = state.error,
-                onRetry = { viewModel.onEvent(BalanceEvent.LoadData, context) }
+                errorMsg = state.value.error,
+                onRetry = { viewModel.onEvent(BalanceEvent.Refresh, context) }
             )
         }
-        if(state.isLoading) {
+        if(state.value.isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
     }

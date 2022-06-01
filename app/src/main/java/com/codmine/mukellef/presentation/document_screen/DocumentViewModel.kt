@@ -25,18 +25,11 @@ class DocumentViewModel @Inject constructor(
     private val postDocumentReadingInfo: PostDocumentReadingInfo,
     private val getUserLoginData: GetUserLoginData
 ): ViewModel() {
-
     private val _dataState = mutableStateOf(DocumentScreenDataState())
     val dataState: State<DocumentScreenDataState> = _dataState
 
     private val _readingDocumentState = mutableStateOf(ReadingDocumentState())
-    val readingDocumentState: State<ReadingDocumentState> = _readingDocumentState
-
     private val _appSettings = mutableStateOf(AppSettings())
-
-    private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshing: StateFlow<Boolean>
-        get() = _isRefreshing.asStateFlow()
 
     fun onEvent(event: DocumentEvent, context: Context) {
         when(event) {
@@ -44,23 +37,17 @@ class DocumentViewModel @Inject constructor(
                 getAppSettings(context)
                 getDocumentList()
             }
-            is DocumentEvent.LoadDocuments -> {
-                getDocumentList()
-            }
             is DocumentEvent.Refresh -> {
-                refresh()
+                getDocumentList()
             }
             is DocumentEvent.ShowAndReadDocument -> {
                 if (event.document.readingTime.isEmpty()) {
                     postReadingInfo(event.document)
                 }
-
                 if (event.document.documentName.isNotEmpty()) {
-                    showDocument(_appSettings.value.gib,event.document, context)
+                    showDocument(_appSettings.value.gib, event.document, context)
                 }
-
-                refresh()
-
+                getDocumentList()
             }
         }
     }
@@ -107,14 +94,6 @@ class DocumentViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
-    }
-
-    private fun refresh() {
-        viewModelScope.launch {
-            _isRefreshing.emit(true)
-            getDocumentList()
-            _isRefreshing.emit(false)
-        }
     }
 
     private fun getAppSettings(context: Context) {

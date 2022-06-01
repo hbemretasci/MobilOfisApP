@@ -32,5 +32,8 @@
     <string name="exit_dialog_message">Çıkmak istediğinizden emin misiniz?</string>
     <string name="exit_dialog_confirm_message">Evet</string>
     <string name="exit_dialog_cancel_message">Hayır</string>
+    <string name="document_unread_icon_content_description">Okunmamış İletiler</string>
+    <string name="document_read_icon_content_description">İletiler</string>
+    <string name="document_content_description">Döküman</string>
 
 </resources>

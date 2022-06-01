@@ -26,6 +26,7 @@ data class NotificationDto(
 
 fun NotificationDto.toNotification(): Notification {
     return Notification(
+        id = id,
         documentName = documentName,
         postTime = postTime,
         senderUser = senderUser,

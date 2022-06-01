@@ -33,9 +33,11 @@ fun DocumentScreen(
     paddingValues: PaddingValues,
     viewModel: DocumentViewModel = hiltViewModel()
 ) {
-    val state = viewModel.dataState.value
+    val state = viewModel.dataState
     val context = LocalContext.current
-    val isRefreshing by viewModel.isRefreshing.collectAsState()
+    val swipeRefreshState = rememberSwipeRefreshState(
+        isRefreshing = state.value.isRefreshing
+    )
 
     LaunchedEffect(key1 = true) {
         viewModel.onEvent(DocumentEvent.LoadData, context)
@@ -46,7 +48,7 @@ fun DocumentScreen(
         .padding(paddingValues)
     ) {
         SwipeRefresh(
-            state = rememberSwipeRefreshState(isRefreshing),
+            state = swipeRefreshState,
             onRefresh = { viewModel.onEvent(DocumentEvent.Refresh, context) },
             indicator = { state, trigger ->
                 GlowIndicator(
@@ -59,28 +61,27 @@ fun DocumentScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
-                items(state.documents) { document ->
+                items(state.value.documents) { document ->
                     DocumentItem(
                         document = document,
                         readingStatus = document.readingTime.isNotEmpty(),
                         onDocumentClick = {
                             viewModel.onEvent(DocumentEvent.ShowAndReadDocument(it), context)
-
                         }
                     )
                 }
             }
         }
-        if(state.error.isNotBlank()) {
+        if(state.value.error.isNotBlank()) {
             ReLoadData(
                 modifier = Modifier.fillMaxSize(),
-                errorMsg = state.error,
+                errorMsg = state.value.error,
                 onRetry = {
-                    viewModel.onEvent(DocumentEvent.LoadDocuments, context)
+                    viewModel.onEvent(DocumentEvent.Refresh, context)
                 }
             )
         }
-        if(state.isLoading) {
+        if(state.value.isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
     }

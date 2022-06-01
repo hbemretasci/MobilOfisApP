@@ -29,8 +29,8 @@ fun LoginScreen(
     snackbarHostState: SnackbarHostState,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
-//    val dataState = viewModel.dataState.value
-//    val viewState = viewModel.viewState.value
+    val dataState = viewModel.dataState.value
+    val viewState = viewModel.viewState.value
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -39,11 +39,9 @@ fun LoginScreen(
         viewModel.uiEvents.collect { event ->
             when(event) {
                 is LoginUiEvent.Login -> {
-                    viewModel.dataState.value.taxPayer?.let {
-                        navController.navigate(Screen.NotificationScreen.route) {
-                            popUpTo(Screen.LoginScreen.route) {
-                                inclusive = true
-                            }
+                    navController.navigate(Screen.NotificationScreen.route) {
+                        popUpTo(Screen.LoginScreen.route) {
+                            inclusive = true
                         }
                     }
                 }
@@ -73,6 +71,7 @@ fun LoginScreen(
                 style = MaterialTheme.typography.displayMedium
             )
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxLarge))
+
             Text(
                 modifier = Modifier.padding(start = MaterialTheme.spacing.medium),
                 text = UiText.StringResources(R.string.login_screen_text).asString(),
@@ -80,12 +79,13 @@ fun LoginScreen(
                 style = MaterialTheme.typography.headlineMedium
             )
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
+
             TextField(
-                value = viewModel.viewState.value.gib,
+                value = viewState.gib,
                 onValueChange = {
                     viewModel.onEvent(LoginEvent.GibChanged(it), context)
                 },
-                isError = viewModel.viewState.value.gibError != null,
+                isError = viewState.gibError != null,
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = {
                     Text(UiText.StringResources(R.string.gib_place_holder).asString())
@@ -95,7 +95,7 @@ fun LoginScreen(
                 maxLines = 1,
                 singleLine = true
             )
-            if (viewModel.viewState.value.gibError != null) {
+            if (viewState.gibError != null) {
                 Text(
                     text = viewModel.viewState.value.gibError?: "",
                     style = MaterialTheme.typography.labelMedium,
@@ -104,12 +104,13 @@ fun LoginScreen(
                 )
             }
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
+
             TextField(
-                value = viewModel.viewState.value.vk,
+                value = viewState.vk,
                 onValueChange = {
                     viewModel.onEvent(LoginEvent.VkChanged(it), context)
                 },
-                isError = viewModel.viewState.value.vkError != null,
+                isError = viewState.vkError != null,
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = {
                     Text(UiText.StringResources(R.string.vk_place_holder).asString())
@@ -119,7 +120,7 @@ fun LoginScreen(
                 maxLines = 1,
                 singleLine = true
             )
-            if (viewModel.viewState.value.vkError != null) {
+            if (viewState.vkError != null) {
                 Text(
                     text = viewModel.viewState.value.vkError?: "",
                     style = MaterialTheme.typography.labelMedium,
@@ -128,12 +129,13 @@ fun LoginScreen(
                 )
             }
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
+
             TextField(
-                value = viewModel.viewState.value.password,
+                value = viewState.password,
                 onValueChange = {
                     viewModel.onEvent(LoginEvent.PasswordChanged(it), context)
                 },
-                isError = viewModel.viewState.value.passwordError != null,
+                isError = viewState.passwordError != null,
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = {
                     Text(UiText.StringResources(R.string.password_place_holder).asString())
@@ -148,7 +150,7 @@ fun LoginScreen(
                 maxLines = 1,
                 singleLine = true
             )
-            if (viewModel.viewState.value.passwordError != null) {
+            if (viewState.passwordError != null) {
                 Text(
                     text = viewModel.viewState.value.passwordError?: "",
                     style = MaterialTheme.typography.labelMedium,
@@ -157,6 +159,7 @@ fun LoginScreen(
                 )
             }
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
+
             Button(
                 onClick = {
                     keyboardController?.hide()
@@ -172,7 +175,7 @@ fun LoginScreen(
                 )
             }
         }
-        if(viewModel.dataState.value.isLoading) {
+        if(dataState.isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
     }
