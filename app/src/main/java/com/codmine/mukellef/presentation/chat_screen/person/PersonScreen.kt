@@ -1,0 +1,151 @@
+package com.codmine.mukellef.presentation.chat_screen.person
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.codmine.mukellef.domain.model.tax_payer.RelatedUser
+import com.codmine.mukellef.domain.util.Constants.ROUNDED_VALUE
+import com.codmine.mukellef.presentation.chat_screen.person.components.ReadMessages
+import com.codmine.mukellef.presentation.chat_screen.person.components.UnReadMessages
+import com.codmine.mukellef.presentation.components.GlowIndicator
+import com.codmine.mukellef.presentation.components.ReLoadData
+import com.codmine.mukellef.presentation.components.Screen
+import com.codmine.mukellef.ui.theme.spacing
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+
+@Composable
+fun PersonScreen(
+    navController: NavController,
+    paddingValues: PaddingValues,
+    viewModel: PersonViewModel = hiltViewModel()
+) {
+    val state = viewModel.state
+    val context = LocalContext.current
+    val swipeRefreshState = rememberSwipeRefreshState(
+        isRefreshing = state.isRefreshing
+    )
+
+    LaunchedEffect(key1 = true) {
+        viewModel.onEvent(PersonEvent.LoadData, context)
+    }
+
+    LaunchedEffect(key1 = context) {
+        viewModel.uiEvents.collect { event ->
+            when(event) {
+                is PersonUiEvent.Navigate -> {
+                    navController.navigate(Screen.ChatMessageScreen.route)
+                }
+            }
+        }
+    }
+
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .padding(paddingValues)
+    ) {
+        if(state.error == null) {
+            SwipeRefresh(
+                state = swipeRefreshState,
+                onRefresh = { viewModel.onEvent(PersonEvent.Refresh, context) },
+                indicator = { state, trigger ->
+                    GlowIndicator(
+                        swipeRefreshState = state,
+                        refreshTriggerDistance = trigger
+                    )
+                }
+            ) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    state.relatedUsers?.let { users ->
+                        item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
+                        items(users) { user ->
+                            UserItem(
+                                user = user,
+                                unRead = user.unReadCount,
+                                onItemClick = { clickedUser ->
+                                    viewModel.onEvent(PersonEvent.NavigateUser(clickedUser) , context)
+                                }
+                            )
+                        }
+                        item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
+                    }
+                }
+            }
+            if(state.isLoading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        } else {
+            ReLoadData(
+                modifier = Modifier.fillMaxSize(),
+                errorMsg = state.error ?: "",
+                onRetry = {
+                    viewModel.onEvent(PersonEvent.Refresh, context)
+                }
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun UserItem(
+    user: RelatedUser,
+    unRead: String,
+    onItemClick: (RelatedUser) -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                horizontal = MaterialTheme.spacing.large,
+                vertical =  MaterialTheme.spacing.small
+            )
+            .clickable { onItemClick(user) },
+        shape = RoundedCornerShape(ROUNDED_VALUE.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    top = MaterialTheme.spacing.medium,
+                    bottom = MaterialTheme.spacing.medium,
+                    end = MaterialTheme.spacing.medium
+                ),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val messageCount = unRead.toInt()
+            if(messageCount > 99) UnReadMessages("99+")
+                else if (messageCount > 0) UnReadMessages(user.unReadCount)
+                    else ReadMessages()
+            Column {
+                Text(
+                    text = user.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.width(MaterialTheme.spacing.medium))
+                Text(
+                    text = user.eMail,
+                    fontStyle = FontStyle.Italic
+                )
+            }
+        }
+    }
+}

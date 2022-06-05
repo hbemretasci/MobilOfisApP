@@ -47,7 +47,6 @@ class DocumentViewModel @Inject constructor(
                 if (event.document.documentName.isNotEmpty()) {
                     showDocument(_appSettings.value.gib, event.document, context)
                 }
-                getDocumentList()
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.codmine.mukellef.data.remote.dto.notifications
 
+import com.codmine.mukellef.domain.model.chat.UnreadNotification
 import com.google.gson.annotations.SerializedName
 
 data class UnreadNotificationDto(
@@ -10,3 +11,10 @@ data class UnreadNotificationDto(
     @SerializedName("Toplam")
     val total: String
 )
+
+fun UnreadNotificationDto.toUnreadNotification(): UnreadNotification {
+    return UnreadNotification(
+        senderUserId = senderUserId,
+        unReadAmount = total
+    )
+}

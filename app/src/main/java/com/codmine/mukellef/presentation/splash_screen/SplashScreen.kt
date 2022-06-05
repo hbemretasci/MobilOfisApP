@@ -18,6 +18,9 @@ import androidx.navigation.NavController
 import com.codmine.mukellef.R
 import com.codmine.mukellef.domain.util.Constants.LOGO_DISPLAY_TIME
 import com.codmine.mukellef.presentation.components.Screen
+import com.codmine.mukellef.presentation.login_screen.LoginEvent
+import com.codmine.mukellef.presentation.login_screen.LoginUiEvent
+import com.codmine.mukellef.presentation.notification_screen.NotificationEvent
 import com.codmine.mukellef.presentation.util.UiText
 import kotlinx.coroutines.delay
 
@@ -26,26 +29,33 @@ fun SplashScreen(
     navController: NavController,
     viewModel: SplashViewModel = hiltViewModel()
 ) {
-//    val logoState = viewModel.logoState.value
-//    val appSettings = viewModel.appSettings.value
+    val logoState = viewModel.logoState.value
     val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
-        viewModel.getAppSettings(context)
-        viewModel.showLogo()
+        viewModel.onEvent(SplashEvent.LoadData, context)
+        viewModel.onEvent(SplashEvent.ShowLogo, context)
         delay(LOGO_DISPLAY_TIME)
-        viewModel.hideLogo()
-        if(viewModel.appSettings.value.login) {
-            navController.navigate(Screen.NotificationScreen.route) {
-                popUpTo(Screen.SplashScreen.route) {
-                    inclusive = true
-                }
-            }
+        viewModel.onEvent(SplashEvent.HideLogo, context)
+        viewModel.onEvent(SplashEvent.Navigate, context)
+    }
 
-        } else {
-            navController.navigate(Screen.LoginScreen.route) {
-                popUpTo(Screen.SplashScreen.route) {
-                    inclusive = true
+    LaunchedEffect(key1 = context) {
+        viewModel.uiEvents.collect { event ->
+            when(event) {
+                is SplashUiEvent.NavigateLogin -> {
+                    navController.navigate(Screen.LoginScreen.route) {
+                        popUpTo(Screen.SplashScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+                is SplashUiEvent.NavigateNotification -> {
+                    navController.navigate(Screen.NotificationScreen.route) {
+                        popUpTo(Screen.SplashScreen.route) {
+                            inclusive = true
+                        }
+                    }
                 }
             }
         }
@@ -55,7 +65,7 @@ fun SplashScreen(
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxSize()
     ) {
-        ShowLogo(viewModel.logoState.value)
+        ShowLogo(logoState)
     }
 }
 

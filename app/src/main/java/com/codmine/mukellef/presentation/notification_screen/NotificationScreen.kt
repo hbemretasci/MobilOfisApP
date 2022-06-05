@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.codmine.mukellef.domain.model.notifications.Notification
+import com.codmine.mukellef.domain.util.Constants.ROUNDED_VALUE
 import com.codmine.mukellef.presentation.components.GlowIndicator
 import com.codmine.mukellef.presentation.components.ReLoadData
 import com.codmine.mukellef.presentation.notification_screen.components.NotificationDocumentIcon
@@ -110,7 +111,7 @@ fun NotificationItem(
                 vertical =  MaterialTheme.spacing.extraSmall,
             )
             .clickable { onItemClick(notification) },
-        shape = RoundedCornerShape(6.dp)
+        shape = RoundedCornerShape(ROUNDED_VALUE.dp)
     ) {
         if (!expanded) {
             Row (
@@ -154,7 +155,6 @@ fun NotificationItem(
                                 .padding(
                                     bottom = MaterialTheme.spacing.medium,
                                     end = MaterialTheme.spacing.medium
-
                                 )
                                 .scale(1.5f, 1.5f)
                         )

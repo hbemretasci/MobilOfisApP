@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codmine.mukellef.data.local.AppSettings
-import com.codmine.mukellef.domain.model.documents.Document
 import com.codmine.mukellef.domain.model.notifications.Notification
 import com.codmine.mukellef.domain.use_case.notification_screen.GetNotifications
 import com.codmine.mukellef.domain.use_case.notification_screen.PostNotificationReadingInfo
@@ -15,7 +14,6 @@ import com.codmine.mukellef.domain.util.Resource
 import com.codmine.mukellef.domain.util.downloadFile
 import com.codmine.mukellef.domain.util.fileExist
 import com.codmine.mukellef.domain.util.showFile
-import com.codmine.mukellef.presentation.document_screen.ReadingDocumentState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject

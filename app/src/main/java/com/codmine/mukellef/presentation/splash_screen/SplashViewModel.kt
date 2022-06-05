@@ -7,8 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.codmine.mukellef.data.local.AppSettings
 import com.codmine.mukellef.domain.use_case.splash_screen.GetUserLoginData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,16 +23,36 @@ class SplashViewModel @Inject constructor(
     val logoState: State<Boolean> = _logoState
 
     private val _appSettings = mutableStateOf(AppSettings())
-    val appSettings: State<AppSettings> = _appSettings
 
-    fun showLogo() {
-        _logoState.value = true
-    }
-    fun hideLogo() {
-        _logoState.value = false
+    private val _uiEventChannel = Channel<SplashUiEvent>()
+    val uiEvents = _uiEventChannel.receiveAsFlow()
+
+    fun onEvent(event: SplashEvent, context: Context) {
+        when(event) {
+            is SplashEvent.LoadData -> {
+                getAppSettings(context)
+            }
+            is SplashEvent.ShowLogo -> {
+                _logoState.value = true
+            }
+            is SplashEvent.HideLogo -> {
+                _logoState.value = false
+            }
+            is SplashEvent.Navigate -> {
+                if(_appSettings.value.login) {
+                    viewModelScope.launch {
+                        _uiEventChannel.send(SplashUiEvent.NavigateNotification)
+                    }
+                } else {
+                    viewModelScope.launch {
+                        _uiEventChannel.send(SplashUiEvent.NavigateLogin)
+                    }
+                }
+            }
+        }
     }
 
-    fun getAppSettings(context: Context) {
+    private fun getAppSettings(context: Context) {
         getUserLoginData(context).onEach { result ->
             _appSettings.value = result
         }.launchIn(viewModelScope)

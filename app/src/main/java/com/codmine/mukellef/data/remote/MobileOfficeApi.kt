@@ -58,7 +58,7 @@ interface MobileOfficeApi {
         @Query("Bildirim_Tip") notificationType: String
     ): MessagesDto
 
-    //http://www.ipeksu.com/mobil/mobil_islem.asp?CodMineMobil=4&GibNo=95600494&User_Vk=2111196061&User_Pass=456&User_id=2&&Tipi=2
+    //http://www.ipeksu.com/mobil/mobil_islem.asp?CodMineMobil=4&GibNo=95600494&User_Vk=2111196061&User_Pass=456&User_id=2&Tipi=2
     @GET("mobil_islem.asp")
     suspend fun getUnreadNotifications(
         @Query("CodMineMobil") queryType: String,
