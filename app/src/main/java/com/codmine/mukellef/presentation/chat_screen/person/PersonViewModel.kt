@@ -12,13 +12,9 @@ import com.codmine.mukellef.domain.use_case.chat_screen.GetRelatedUsers
 import com.codmine.mukellef.domain.use_case.chat_screen.GetUnreadMessagesCount
 import com.codmine.mukellef.domain.use_case.splash_screen.GetUserLoginData
 import com.codmine.mukellef.domain.util.Resource
-import com.codmine.mukellef.presentation.login_screen.LoginUiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,9 +25,6 @@ class PersonViewModel @Inject constructor(
     private val getUserLoginData: GetUserLoginData
 ): ViewModel() {
     var state by mutableStateOf(PersonScreenDataState())
-
-    private val _uiEventChannel = Channel<PersonUiEvent>()
-    val uiEvents = _uiEventChannel.receiveAsFlow()
 
     private val _appSettings = mutableStateOf(AppSettings())
 
@@ -45,11 +38,6 @@ class PersonViewModel @Inject constructor(
             }
             is PersonEvent.Refresh -> {
                 getChatPersons()
-            }
-            is PersonEvent.NavigateUser -> {
-                viewModelScope.launch {
-                    _uiEventChannel.send(PersonUiEvent.Navigate)
-                }
             }
         }
     }

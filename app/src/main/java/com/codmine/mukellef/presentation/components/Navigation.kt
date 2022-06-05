@@ -7,6 +7,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.codmine.mukellef.domain.util.Constants.NAV_CHAT_MESSAGES
 import com.codmine.mukellef.presentation.balance_screen.BalanceScreen
 import com.codmine.mukellef.presentation.chat_screen.messages.MessagesScreen
 import com.codmine.mukellef.presentation.chat_screen.person.PersonScreen
@@ -41,7 +42,7 @@ fun Navigation(
             PersonScreen(navController, paddingValues)
         }
 
-        composable(Screen.ChatMessageScreen.route) {
+        composable(Screen.ChatMessageScreen.route + "/{$NAV_CHAT_MESSAGES}") {
             MessagesScreen(navController, paddingValues)
         }
 

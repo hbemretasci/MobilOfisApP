@@ -44,16 +44,6 @@ fun PersonScreen(
         viewModel.onEvent(PersonEvent.LoadData, context)
     }
 
-    LaunchedEffect(key1 = context) {
-        viewModel.uiEvents.collect { event ->
-            when(event) {
-                is PersonUiEvent.Navigate -> {
-                    navController.navigate(Screen.ChatMessageScreen.route)
-                }
-            }
-        }
-    }
-
     Box(modifier = Modifier
         .fillMaxSize()
         .padding(paddingValues)
@@ -79,7 +69,7 @@ fun PersonScreen(
                                 user = user,
                                 unRead = user.unReadCount,
                                 onItemClick = { clickedUser ->
-                                    viewModel.onEvent(PersonEvent.NavigateUser(clickedUser) , context)
+                                    navController.navigate(Screen.ChatMessageScreen.route + "/{${clickedUser.id}}")
                                 }
                             )
                         }

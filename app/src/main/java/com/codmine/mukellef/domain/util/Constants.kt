@@ -31,4 +31,6 @@ object Constants {
     const val KEY_USER = "user"
     const val KEY_ACCOUNTANT = "accountant"
 
+    const val NAV_CHAT_MESSAGES ="opponentUserId"
+
 }
