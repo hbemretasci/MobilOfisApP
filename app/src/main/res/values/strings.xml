@@ -35,4 +35,13 @@
     <string name="unread_icon_content_description">Okunmamış İletiler</string>
     <string name="read_icon_content_description">İletiler</string>
     <string name="document_content_description">Döküman</string>
+    <string name="top_bar_back_button_content_description">Geri</string>
+    <string name="notification_not_found">Gösterilecek bildirim bulunamadı.</string>
+    <string name="document_not_found">Gösterilecek döküman bulunamadı.</string>
+    <string name="transaction_not_found">Gösterilecek işlem bulunamadı.</string>
+    <string name="jumpBottom">Son Mesaja Git</string>
+    <string name="messages_not_found">Gösterilecek mesaj bulunamadı.</string>
+    <string name="send_message_place_holder">Mesaj</string>
+    <string name="send_message_content_description">Gönder</string>
+
 </resources>

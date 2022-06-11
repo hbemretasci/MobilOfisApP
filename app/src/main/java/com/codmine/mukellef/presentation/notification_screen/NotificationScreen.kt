@@ -16,13 +16,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.codmine.mukellef.R
 import com.codmine.mukellef.domain.model.notifications.Notification
 import com.codmine.mukellef.domain.util.Constants.ROUNDED_VALUE
+import com.codmine.mukellef.presentation.components.DataNotFound
 import com.codmine.mukellef.presentation.components.GlowIndicator
 import com.codmine.mukellef.presentation.components.ReLoadData
 import com.codmine.mukellef.presentation.notification_screen.components.NotificationDocumentIcon
 import com.codmine.mukellef.presentation.notification_screen.components.ReadNotificationIcon
 import com.codmine.mukellef.presentation.notification_screen.components.UnReadNotificationIcon
+import com.codmine.mukellef.presentation.util.UiText
 import com.codmine.mukellef.ui.theme.spacing
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -80,6 +83,9 @@ fun NotificationScreen(
                 item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
             }
         }
+        if((!state.value.isLoading) && ((state.value.error.isBlank())) && (state.value.notifications.isEmpty())) {
+            DataNotFound(message = UiText.StringResources(R.string.notification_not_found).asString())
+        }
         if(state.value.error.isNotBlank()) {
             ReLoadData(
                 modifier = Modifier.fillMaxSize(),
@@ -108,7 +114,7 @@ fun NotificationItem(
             .fillMaxWidth()
             .padding(
                 horizontal = MaterialTheme.spacing.large,
-                vertical =  MaterialTheme.spacing.extraSmall,
+                vertical = MaterialTheme.spacing.extraSmall,
             )
             .clickable { onItemClick(notification) },
         shape = RoundedCornerShape(ROUNDED_VALUE.dp)

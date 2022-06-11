@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -69,7 +70,9 @@ fun PersonScreen(
                                 user = user,
                                 unRead = user.unReadCount,
                                 onItemClick = { clickedUser ->
-                                    navController.navigate(Screen.ChatMessageScreen.route + "/{${clickedUser.id}}")
+                                    val opponentId = clickedUser.id
+                                    val opponentName = clickedUser.name
+                                    navController.navigate(Screen.ChatMessageScreen.route + "/${opponentId}/${opponentName}")
                                 }
                             )
                         }
@@ -83,7 +86,7 @@ fun PersonScreen(
         } else {
             ReLoadData(
                 modifier = Modifier.fillMaxSize(),
-                errorMsg = state.error ?: "",
+                errorMsg = state.error,
                 onRetry = {
                     viewModel.onEvent(PersonEvent.Refresh, context)
                 }
@@ -101,7 +104,7 @@ fun UserItem(
 ) {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(
                 horizontal = MaterialTheme.spacing.large,
                 vertical =  MaterialTheme.spacing.small
@@ -111,26 +114,27 @@ fun UserItem(
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    top = MaterialTheme.spacing.medium,
-                    bottom = MaterialTheme.spacing.medium,
-                    end = MaterialTheme.spacing.medium
-                ),
+                .fillMaxSize()
+                .padding(MaterialTheme.spacing.medium),
             verticalAlignment = Alignment.CenterVertically
         ) {
             val messageCount = unRead.toInt()
             if(messageCount > 99) UnReadMessages("99+")
                 else if (messageCount > 0) UnReadMessages(user.unReadCount)
                     else ReadMessages()
-            Column {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = MaterialTheme.spacing.medium)
+            ) {
                 Text(
                     text = user.name,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
                 )
-                Spacer(modifier = Modifier.width(MaterialTheme.spacing.medium))
                 Text(
                     text = user.eMail,
                     fontStyle = FontStyle.Italic

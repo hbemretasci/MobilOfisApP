@@ -7,6 +7,7 @@ object Constants {
 
     const val LOGO_DISPLAY_TIME = 2000L
     const val ROUNDED_VALUE = 8
+    const val XL_ROUNDED_VALUE = 24
 
     const val MAX_GIB_LENGTH = 8
     const val MAX_VK_LENGTH = 10
@@ -31,6 +32,6 @@ object Constants {
     const val KEY_USER = "user"
     const val KEY_ACCOUNTANT = "accountant"
 
-    const val NAV_CHAT_MESSAGES ="opponentUserId"
-
+    const val NAV_CHAT_MESSAGES_USER_ID ="opponentUserId"
+    const val NAV_CHAT_MESSAGES_USER_NAME ="opponentUserName"
 }

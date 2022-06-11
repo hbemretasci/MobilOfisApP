@@ -20,7 +20,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.codmine.mukellef.R
 import com.codmine.mukellef.domain.model.documents.Document
+import com.codmine.mukellef.domain.util.Constants.XL_ROUNDED_VALUE
 import com.codmine.mukellef.domain.util.dateAndTime
+import com.codmine.mukellef.presentation.components.DataNotFound
 import com.codmine.mukellef.presentation.components.GlowIndicator
 import com.codmine.mukellef.presentation.components.ReLoadData
 import com.codmine.mukellef.presentation.util.UiText
@@ -72,6 +74,9 @@ fun DocumentScreen(
                 }
             }
         }
+        if((!state.value.isLoading) && ((state.value.error.isBlank())) && (state.value.documents.isEmpty())) {
+            DataNotFound(message = UiText.StringResources(R.string.document_not_found).asString())
+        }
         if(state.value.error.isNotBlank()) {
             ReLoadData(
                 modifier = Modifier.fillMaxSize(),
@@ -104,7 +109,7 @@ fun DocumentItem(
             .clickable {
                 onDocumentClick(document)
             },
-        shape = RoundedCornerShape(MaterialTheme.spacing.large).copy(
+        shape = RoundedCornerShape(XL_ROUNDED_VALUE).copy(
             topStart = CornerSize(0),
             bottomEnd = CornerSize(0)
         ),

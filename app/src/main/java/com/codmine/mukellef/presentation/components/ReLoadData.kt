@@ -17,7 +17,7 @@ fun ReLoadData(
     errorMsg: String,
     onRetry: () -> Unit
 ) {
-    Column (
+    Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center

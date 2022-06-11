@@ -19,34 +19,24 @@ import com.codmine.mukellef.ui.theme.spacing
 fun UnReadMessages(messageCount: String) {
     BadgedBox(
         badge = {
-            Badge {
-                Text(messageCount)
-            }
+            Badge { Text(messageCount) }
         }
     ) {
         Icon (
             modifier = Modifier
-                .scale(1.2f,1.2f)
-                .padding(
-                    start = MaterialTheme.spacing.medium,
-                    end = MaterialTheme.spacing.small
-                ),
+                .scale(1.2f,1.2f),
             imageVector = Icons.Default.Chat,
             tint = MaterialTheme.colorScheme.primary,
             contentDescription = UiText.StringResources(R.string.unread_icon_content_description).asString()
         )
     }
-    Spacer(modifier = Modifier.width(MaterialTheme.spacing.extraLarge))
 }
 
 @Composable
 fun ReadMessages() {
     Icon (
         modifier = Modifier
-            .scale(1.2f,1.2f)
-            .padding(
-                horizontal = MaterialTheme.spacing.medium
-            ),
+            .scale(1.2f,1.2f),
         imageVector = Icons.Default.MarkChatRead,
         tint = MaterialTheme.colorScheme.primary,
         contentDescription = UiText.StringResources(R.string.read_icon_content_description).asString()

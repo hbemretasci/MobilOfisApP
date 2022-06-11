@@ -1,5 +1,6 @@
 package com.codmine.mukellef.data.remote.dto.messages
 
+import com.codmine.mukellef.domain.model.chat.Message
 import com.google.gson.annotations.SerializedName
 
 data class MessageDto(
@@ -22,3 +23,15 @@ data class MessageDto(
     @SerializedName("Bildirim_id")
     val id: String
 )
+
+fun MessageDto.toMessage(): Message {
+    return Message(
+        receivedUserId = receivedUserId,
+        postTime = postTime,
+        senderUser = senderUser,
+        senderUserId = senderUserId,
+        message = message,
+        readingTime = readingTime,
+        id = id
+    )
+}

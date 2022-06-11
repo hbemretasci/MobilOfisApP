@@ -15,6 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.codmine.mukellef.domain.util.Constants
 import com.codmine.mukellef.presentation.components.ExitDialog
 import com.codmine.mukellef.presentation.components.OfisScaffold
 import com.codmine.mukellef.presentation.components.Screen
@@ -45,7 +46,8 @@ class MainActivity : ComponentActivity() {
 
                         OfisScaffold(
                             navController = navController,
-                            showBars = shouldShowBars(navBackStackEntry),
+                            showNavigation = shouldShowNaviIcon(navBackStackEntry) ,
+                            showBars = !shouldNotShowBars(navBackStackEntry),
                             modifier = Modifier.fillMaxSize(),
                             onActIconPressed = {
                                 viewModel.onEvent(MainEvent.ExitDialog, context)
@@ -67,12 +69,16 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun shouldShowBars(backStackEntry: NavBackStackEntry?): Boolean {
+    private fun shouldNotShowBars(backStackEntry: NavBackStackEntry?): Boolean {
         return backStackEntry?.destination?.route in listOf(
-            Screen.NotificationScreen.route,
-            Screen.DocumentScreen.route,
-            Screen.ChatPersonScreen.route,
-            Screen.BalanceScreen.route
+            Screen.SplashScreen.route,
+            Screen.LoginScreen.route,
+        )
+    }
+
+    private fun shouldShowNaviIcon(backStackEntry: NavBackStackEntry?): Boolean {
+        return backStackEntry?.destination?.route in listOf(
+            Screen.ChatMessageScreen.route + "/{${Constants.NAV_CHAT_MESSAGES_USER_ID}}/{${Constants.NAV_CHAT_MESSAGES_USER_NAME}}"
         )
     }
 }

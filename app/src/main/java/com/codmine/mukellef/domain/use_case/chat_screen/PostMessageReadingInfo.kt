@@ -1,0 +1,31 @@
+package com.codmine.mukellef.domain.use_case.chat_screen
+
+import com.codmine.mukellef.data.remote.dto.post_reading.toReadingMessage
+import com.codmine.mukellef.domain.model.chat.ReadingMessage
+import com.codmine.mukellef.domain.repository.MobileOfficeRepository
+import com.codmine.mukellef.domain.util.Constants
+import com.codmine.mukellef.domain.util.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import retrofit2.HttpException
+import java.io.IOException
+import javax.inject.Inject
+
+class PostMessageReadingInfo @Inject constructor(
+    private val repository: MobileOfficeRepository
+) {
+    suspend operator fun invoke(
+        gib: String, vk: String, password: String, messageId: String
+    ): Resource<ReadingMessage> {
+        return try {
+            val messageReadingInfo = repository.postReadingInfo(
+                Constants.QUERY_READING, gib, vk, password, messageId
+            ).toReadingMessage()
+            Resource.Success(messageReadingInfo)
+        } catch(e: HttpException) {
+            Resource.Error(e.localizedMessage ?: "Beklenmeyen hata.")
+        } catch(e: IOException) {
+            Resource.Error("Sunucuya erişilemiyor, bağlantı hatası.")
+        }
+    }
+}

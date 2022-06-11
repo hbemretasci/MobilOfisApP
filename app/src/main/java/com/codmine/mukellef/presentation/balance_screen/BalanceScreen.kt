@@ -10,9 +10,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.codmine.mukellef.R
 import com.codmine.mukellef.domain.model.balance.Transaction
+import com.codmine.mukellef.presentation.components.DataNotFound
 import com.codmine.mukellef.presentation.components.GlowIndicator
 import com.codmine.mukellef.presentation.components.ReLoadData
+import com.codmine.mukellef.presentation.util.UiText
 import com.codmine.mukellef.ui.theme.spacing
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -52,6 +55,9 @@ fun BalanceScreen(
                     TransactionItem(transaction = transaction)
                 }
             }
+        }
+        if((!state.value.isLoading) && ((state.value.error.isBlank())) && (state.value.transactions.isEmpty())) {
+            DataNotFound(message = UiText.StringResources(R.string.transaction_not_found).asString())
         }
         if(state.value.error.isNotBlank()) {
             ReLoadData(
