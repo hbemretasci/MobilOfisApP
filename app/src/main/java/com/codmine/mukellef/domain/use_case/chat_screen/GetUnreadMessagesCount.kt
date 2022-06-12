@@ -21,7 +21,7 @@ class GetUnreadMessagesCount @Inject constructor(
             val unreadData = repository.getUnreadNotifications(
                 Constants.QUERY_UNREAD, gib, vk, password, user, NOTIFICATION_TYPE_MESSAGE
             ).unreadNotifications.map { it.toUnreadNotification() }
-            Resource.Success(unreadData ?: emptyList())
+            Resource.Success(unreadData)
         } catch(e: HttpException) {
             Resource.Error(e.localizedMessage ?: "Beklenmeyen hata.")
         } catch(e: IOException) {

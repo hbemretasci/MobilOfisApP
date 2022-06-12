@@ -34,7 +34,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun MessagesScreen(
-    navController: NavController,
     paddingValues: PaddingValues,
     viewModel: MessagesViewModel = hiltViewModel()
 ) {

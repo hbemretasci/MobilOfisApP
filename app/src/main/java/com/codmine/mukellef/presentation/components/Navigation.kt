@@ -44,7 +44,7 @@ fun Navigation(
         }
 
         composable(Screen.ChatMessageScreen.route + "/{$NAV_CHAT_MESSAGES_USER_ID}/{$NAV_CHAT_MESSAGES_USER_NAME}") {
-            MessagesScreen(navController, paddingValues)
+            MessagesScreen(paddingValues)
         }
 
         composable(Screen.BalanceScreen.route) {
