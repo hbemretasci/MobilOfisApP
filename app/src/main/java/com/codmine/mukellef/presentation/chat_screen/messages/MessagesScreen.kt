@@ -1,25 +1,25 @@
 package com.codmine.mukellef.presentation.chat_screen.messages
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.codmine.mukellef.R
 import com.codmine.mukellef.domain.model.chat.Message
-import com.codmine.mukellef.domain.util.Constants.XL_ROUNDED_VALUE
 import com.codmine.mukellef.domain.util.postDate
 import com.codmine.mukellef.domain.util.postTime
 import com.codmine.mukellef.presentation.chat_screen.messages.components.DayHeader
@@ -61,7 +61,6 @@ fun MessagesScreen(
            modifier = Modifier.fillMaxSize(),
            horizontalAlignment = Alignment.CenterHorizontally
        ) {
-
            Box(
                modifier = Modifier.weight(.85f),
            ) {
@@ -70,7 +69,7 @@ fun MessagesScreen(
                    state = scrollState,
                ) {
                    for (i in state.messages.indices) {
-                       item{
+                       item {
                            if ((state.messages[i].readingTime.isEmpty()) && (state.messages[i].senderUserId == state.receiverId)) {
                                viewModel.onEvent(MessagesEvent.PostReadingMessage(state.messages[i].id), context)
                            }
@@ -85,7 +84,6 @@ fun MessagesScreen(
                        }
                    }
                }
-
                // Jump to bottom button shows up when user scrolls past a threshold.
                // Convert to pixels:
                val jumpThreshold = with(LocalDensity.current) {
@@ -112,7 +110,6 @@ fun MessagesScreen(
                    modifier = Modifier.align(Alignment.BottomCenter)
                )
            }
-
            MessageInput(
                text = state.message,
                modifier = Modifier.weight(.15f),
@@ -127,7 +124,6 @@ fun MessagesScreen(
                    }
                }
            )
-
            if((!state.isLoading) && ((state.error.isBlank())) && (state.messages.isEmpty())) {
                DataNotFound(message = UiText.StringResources(R.string.messages_not_found).asString())
            }
@@ -145,69 +141,72 @@ fun MessagesScreen(
                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                }
            }
-
        }
-
    }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MessageItem(
     message: Message,
     isUserMe: Boolean
 ) {
-    Column(
+    val meColor: Color = MaterialTheme.colorScheme.primary
+    val opponentColor: Color = MaterialTheme.colorScheme.tertiary
+
+    Box(
+        contentAlignment = if (isUserMe) Alignment.CenterEnd else Alignment.CenterStart,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(
-                horizontal =  MaterialTheme.spacing.medium,
-                vertical =  MaterialTheme.spacing.small,
-            ),
-        horizontalAlignment = when {
-            isUserMe -> Alignment.End
-            else -> Alignment.Start
-        }
+            .padding(vertical = MaterialTheme.spacing.small)
     ) {
-        Text(
-            modifier = Modifier.padding(horizontal = MaterialTheme.spacing.small),
-            text = postTime(message.postTime),
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
-            style = MaterialTheme.typography.bodySmall,
-        )
-        Card(
-            modifier = Modifier.widthIn(max = 265.dp),
-            shape = cardShapeFor(isUserMe),
-            colors = CardDefaults.cardColors(
-                containerColor = when {
-                    isUserMe -> MaterialTheme.colorScheme.primary
-                    else -> MaterialTheme.colorScheme.tertiaryContainer
+        Column(
+            modifier = Modifier
+                .widthIn(max = 245.dp)
+                .padding(
+                    horizontal = MaterialTheme.spacing.small,
+                    vertical = MaterialTheme.spacing.small
+                )
+                .drawBehind {
+                    val cornerRadius = 10.dp.toPx()
+                    val triangleHeight = 15.dp.toPx()
+                    val triangleWidth = 20.dp.toPx()
+                    val trianglePath = Path().apply {
+                        if (isUserMe) {
+                            moveTo(size.width, size.height - cornerRadius)
+                            lineTo(size.width, size.height + triangleHeight)
+                            lineTo(size.width - triangleWidth, size.height - cornerRadius)
+                            close()
+                        } else {
+                            moveTo(0f, size.height - cornerRadius)
+                            lineTo(0f, size.height + triangleHeight)
+                            lineTo(triangleWidth, size.height - cornerRadius)
+                            close()
+                        }
+                    }
+                    drawPath(
+                        path = trianglePath,
+                        color = if (isUserMe) meColor else opponentColor
+                    )
                 }
-            )
-        )
-        {
+                .background(
+                    color = if (isUserMe) meColor else opponentColor,
+                    shape = RoundedCornerShape(10.dp)
+                )
+                .padding(MaterialTheme.spacing.small)
+        ) {
             Text(
-                modifier = Modifier.padding(
-                    horizontal = MaterialTheme.spacing.large,
-                    vertical = MaterialTheme.spacing.medium
-                ),
+                modifier = Modifier.padding(bottom = MaterialTheme.spacing.extraSmall),
                 text = message.message,
                 style = MaterialTheme.typography.bodyLarge,
-                color = when {
-                    isUserMe -> MaterialTheme.colorScheme.onPrimary
-                    else -> MaterialTheme.colorScheme.tertiary
-                }
+                color = if (isUserMe) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onTertiary
+            )
+            Text(
+                text = postTime(message.postTime),
+                style = MaterialTheme.typography.bodySmall,
+                color = if (isUserMe) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onTertiary,
+                modifier = Modifier.align(Alignment.End)
             )
         }
-    }
-}
-
-@Composable
-fun cardShapeFor(isUserMe: Boolean): Shape {
-    val roundedCorners = RoundedCornerShape(XL_ROUNDED_VALUE)
-    return when {
-        isUserMe -> roundedCorners.copy(bottomEnd = CornerSize(0))
-        else -> roundedCorners.copy(bottomStart = CornerSize(0))
     }
 }
 
