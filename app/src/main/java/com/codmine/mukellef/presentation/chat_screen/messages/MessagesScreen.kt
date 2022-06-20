@@ -195,14 +195,14 @@ fun MessageItem(
                 .padding(MaterialTheme.spacing.small)
         ) {
             Text(
-                modifier = Modifier.padding(bottom = MaterialTheme.spacing.extraSmall),
+                modifier = Modifier.padding(bottom = MaterialTheme.spacing.small),
                 text = message.message,
                 style = MaterialTheme.typography.bodyLarge,
                 color = if (isUserMe) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onTertiary
             )
             Text(
                 text = postTime(message.postTime),
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.labelSmall,
                 color = if (isUserMe) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onTertiary,
                 modifier = Modifier.align(Alignment.End)
             )

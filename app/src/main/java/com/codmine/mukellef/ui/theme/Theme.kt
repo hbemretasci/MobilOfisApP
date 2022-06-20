@@ -82,16 +82,6 @@ fun MobilOfisTheme(
         else -> LightColorScheme
     }
 
-    /*
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            (view.context as Activity).window.statusBarColor = colorScheme.primary.toArgb()
-            ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = darkTheme
-        }
-    }
-     */
-
     CompositionLocalProvider(LocalSpacing provides Spacing()) {
         MaterialTheme(
             colorScheme = colorScheme,
