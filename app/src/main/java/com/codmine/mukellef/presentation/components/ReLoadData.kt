@@ -14,7 +14,7 @@ import com.codmine.mukellef.ui.theme.spacing
 @Composable
 fun ReLoadData(
     modifier: Modifier,
-    errorMsg: String,
+    errorMsg: UiText,
     onRetry: () -> Unit
 ) {
     Column(
@@ -23,7 +23,7 @@ fun ReLoadData(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = errorMsg,
+            text = errorMsg.asString(),
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodyMedium
         )

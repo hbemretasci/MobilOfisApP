@@ -1,17 +1,19 @@
 package com.codmine.mukellef.presentation.chat_screen.person
 
 import android.content.Context
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.codmine.mukellef.R
 import com.codmine.mukellef.data.local.AppSettings
 import com.codmine.mukellef.domain.model.chat.UnreadNotification
 import com.codmine.mukellef.domain.use_case.chat_screen.GetRelatedUsers
 import com.codmine.mukellef.domain.use_case.chat_screen.GetUnreadMessagesCount
 import com.codmine.mukellef.domain.use_case.splash_screen.GetUserLoginData
 import com.codmine.mukellef.domain.util.Resource
+import com.codmine.mukellef.presentation.balance_screen.BalanceScreenDataState
+import com.codmine.mukellef.presentation.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -24,11 +26,11 @@ class PersonViewModel @Inject constructor(
     private val getUnreadMessagesCount: GetUnreadMessagesCount,
     private val getUserLoginData: GetUserLoginData
 ): ViewModel() {
-    var state by mutableStateOf(PersonScreenDataState())
+
+    private val _dataState = mutableStateOf(PersonScreenDataState())
+    val dataState: MutableState<PersonScreenDataState> = _dataState
 
     private val _appSettings = mutableStateOf(AppSettings())
-
-    private var unReadList: List<UnreadNotification>? = emptyList()
 
     fun onEvent(event: PersonEvent, context: Context) {
         when(event) {
@@ -44,7 +46,7 @@ class PersonViewModel @Inject constructor(
 
     private fun getChatPersons() {
         viewModelScope.launch {
-            state = state.copy(isLoading = true)
+            _dataState.value = PersonScreenDataState(isLoading = true)
             val unRead = getUnreadMessagesCount(
                 _appSettings.value.gib, _appSettings.value.vk, _appSettings.value.password, _appSettings.value.user
             )
@@ -54,21 +56,25 @@ class PersonViewModel @Inject constructor(
                         _appSettings.value.gib, _appSettings.value.vk, _appSettings.value.password, unRead.data ?: emptyList()
                     )) {
                         is Resource.Success -> {
-                            state = state.copy(
-                                relatedUsers = persons.data ?: emptyList(),
+                            _dataState.value = PersonScreenDataState(
                                 isLoading = false,
-                                error = null
+                                relatedUsers = persons.data ?: emptyList(),
                             )
                         }
                         is Resource.Error -> {
-                            state = state.copy(
-                                relatedUsers = null,
-                                isLoading = false,
-                                error = persons.message
+                            _dataState.value = PersonScreenDataState(
+                                errorStatus = true,
+                                errorText = ((persons.message ?: UiText.StringResources(R.string.unexpected_error)))
                             )
                         }
                         else -> Unit
                     }
+                }
+                is Resource.Error -> {
+                    _dataState.value = PersonScreenDataState(
+                        errorStatus = true,
+                        errorText = ((unRead.message ?: UiText.StringResources(R.string.unexpected_error)))
+                    )
                 }
                 else -> Unit
             }

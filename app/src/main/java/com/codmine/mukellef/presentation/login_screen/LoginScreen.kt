@@ -46,7 +46,7 @@ fun LoginScreen(
                     }
                 }
                 is LoginUiEvent.ShowSnackbar -> {
-                    snackbarHostState.showSnackbar(message = event.message)
+                    snackbarHostState.showSnackbar(message = event.message.asString(context))
                 }
                 is LoginUiEvent.ValidationSuccess -> {
                     viewModel.onEvent(LoginEvent.CheckLogin, context)
@@ -97,7 +97,7 @@ fun LoginScreen(
             )
             if (viewState.gibError != null) {
                 Text(
-                    text = viewModel.viewState.value.gibError?: "",
+                    text = viewModel.viewState.value.gibError?.asString() ?: UiText.StringResources(R.string.gib_error).asString(),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.End)
@@ -122,7 +122,7 @@ fun LoginScreen(
             )
             if (viewState.vkError != null) {
                 Text(
-                    text = viewModel.viewState.value.vkError?: "",
+                    text = viewModel.viewState.value.vkError?.asString() ?: UiText.StringResources(R.string.vk_error).asString(),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.End)
@@ -152,7 +152,7 @@ fun LoginScreen(
             )
             if (viewState.passwordError != null) {
                 Text(
-                    text = viewModel.viewState.value.passwordError?: "",
+                    text = viewModel.viewState.value.passwordError?.asString() ?: UiText.StringResources(R.string.password_error).asString(),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.End)

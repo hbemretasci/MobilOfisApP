@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.codmine.mukellef.R
 import com.codmine.mukellef.domain.model.tax_payer.RelatedUser
 import com.codmine.mukellef.domain.util.Constants.ROUNDED_VALUE
 import com.codmine.mukellef.presentation.chat_screen.person.components.ReadMessages
@@ -25,6 +26,7 @@ import com.codmine.mukellef.presentation.chat_screen.person.components.UnReadMes
 import com.codmine.mukellef.presentation.components.GlowIndicator
 import com.codmine.mukellef.presentation.components.ReLoadData
 import com.codmine.mukellef.presentation.components.Screen
+import com.codmine.mukellef.presentation.util.UiText
 import com.codmine.mukellef.ui.theme.spacing
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -35,7 +37,7 @@ fun PersonScreen(
     paddingValues: PaddingValues,
     viewModel: PersonViewModel = hiltViewModel()
 ) {
-    val state = viewModel.state
+    val state = viewModel.dataState.value
     val context = LocalContext.current
     val swipeRefreshState = rememberSwipeRefreshState(
         isRefreshing = state.isRefreshing
@@ -49,47 +51,42 @@ fun PersonScreen(
         .fillMaxSize()
         .padding(paddingValues)
     ) {
-        if(state.error == null) {
-            SwipeRefresh(
-                state = swipeRefreshState,
-                onRefresh = { viewModel.onEvent(PersonEvent.Refresh, context) },
-                indicator = { state, trigger ->
-                    GlowIndicator(
-                        swipeRefreshState = state,
-                        refreshTriggerDistance = trigger
+        SwipeRefresh(
+            state = swipeRefreshState,
+            onRefresh = { viewModel.onEvent(PersonEvent.Refresh, context) },
+            indicator = { state, trigger ->
+                GlowIndicator(
+                    swipeRefreshState = state,
+                    refreshTriggerDistance = trigger
+                )
+            }
+        ) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
+                items(state.relatedUsers) { user ->
+                    UserItem(
+                        user = user,
+                        unRead = user.unReadCount,
+                        onItemClick = { clickedUser ->
+                            val opponentId = clickedUser.id
+                            val opponentName = clickedUser.name
+                            navController.navigate(Screen.ChatMessageScreen.route + "/${opponentId}/${opponentName}")
+                        }
                     )
                 }
-            ) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    state.relatedUsers?.let { users ->
-                        item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
-                        items(users) { user ->
-                            UserItem(
-                                user = user,
-                                unRead = user.unReadCount,
-                                onItemClick = { clickedUser ->
-                                    val opponentId = clickedUser.id
-                                    val opponentName = clickedUser.name
-                                    navController.navigate(Screen.ChatMessageScreen.route + "/${opponentId}/${opponentName}")
-                                }
-                            )
-                        }
-                        item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
-                    }
-                }
+                item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
             }
-            if(state.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            }
-        } else {
+        }
+        if(state.isLoading) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        }
+        if(state.errorStatus) {
             ReLoadData(
                 modifier = Modifier.fillMaxSize(),
-                errorMsg = state.error,
-                onRetry = {
-                    viewModel.onEvent(PersonEvent.Refresh, context)
-                }
+                errorMsg = state.errorText ?: UiText.StringResources(R.string.unexpected_error),
+                onRetry = { viewModel.onEvent(PersonEvent.Refresh, context) }
             )
         }
     }

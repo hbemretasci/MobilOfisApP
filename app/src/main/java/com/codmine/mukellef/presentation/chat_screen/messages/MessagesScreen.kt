@@ -37,7 +37,7 @@ fun MessagesScreen(
     paddingValues: PaddingValues,
     viewModel: MessagesViewModel = hiltViewModel()
 ) {
-    val state = viewModel.state
+    val state = viewModel.dataState.value
     val context = LocalContext.current
     val scrollState = rememberLazyListState()
     val scope = rememberCoroutineScope()
@@ -56,7 +56,6 @@ fun MessagesScreen(
            title = state.receiverName,
            modifier = Modifier.padding(MaterialTheme.spacing.medium),
        )
-
        Column(
            modifier = Modifier.fillMaxSize(),
            horizontalAlignment = Alignment.CenterHorizontally
@@ -124,22 +123,20 @@ fun MessagesScreen(
                    }
                }
            )
-           if((!state.isLoading) && ((state.error.isBlank())) && (state.messages.isEmpty())) {
-               DataNotFound(message = UiText.StringResources(R.string.messages_not_found).asString())
-           }
-           if(state.error.isNotBlank()) {
-               ReLoadData(
-                   modifier = Modifier.fillMaxSize(),
-                   errorMsg = state.error,
-                   onRetry = {
-                       viewModel.onEvent(MessagesEvent.Refresh, context)
-                   }
-               )
-           }
            if(state.isLoading) {
                Box(modifier = Modifier.fillMaxSize()) {
                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                }
+           }
+           if(state.errorStatus) {
+               ReLoadData(
+                   modifier = Modifier.fillMaxSize(),
+                   errorMsg = state.errorText ?: UiText.StringResources(R.string.unexpected_error),
+                   onRetry = { viewModel.onEvent(MessagesEvent.Refresh, context) }
+               )
+           }
+           if((!state.isLoading) && (!state.errorStatus) && (state.messages.isEmpty())) {
+               DataNotFound(message = UiText.StringResources(R.string.messages_not_found))
            }
        }
    }

@@ -1,10 +1,12 @@
 package com.codmine.mukellef.presentation.login_screen
 
+import com.codmine.mukellef.presentation.util.UiText
+
 data class LoginScreenViewState(
     val gib: String = "",
-    val gibError: String? = null,
+    val gibError: UiText? = null,
     val vk: String = "",
-    val vkError: String? = null,
+    val vkError: UiText? = null,
     val password: String = "",
-    val passwordError: String? = null
+    val passwordError: UiText? = null
 )

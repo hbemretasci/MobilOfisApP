@@ -1,10 +1,12 @@
 package com.codmine.mukellef.domain.use_case.chat_screen
 
+import com.codmine.mukellef.R
 import com.codmine.mukellef.data.remote.dto.messages.toMessage
 import com.codmine.mukellef.domain.model.chat.Message
 import com.codmine.mukellef.domain.repository.MobileOfficeRepository
 import com.codmine.mukellef.domain.util.Constants
 import com.codmine.mukellef.domain.util.Resource
+import com.codmine.mukellef.presentation.util.UiText
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
@@ -24,9 +26,9 @@ class GetMessagesById @Inject constructor(
             ).messages.map { it.toMessage() }.reversed()
             emit(Resource.Success(messages))
         } catch(e: HttpException) {
-            emit(Resource.Error(e.localizedMessage ?: "Beklenmeyen hata."))
+            emit(Resource.Error((e.localizedMessage ?: UiText.StringResources(R.string.unexpected_error)) as UiText))
         } catch(e: IOException) {
-            emit(Resource.Error("Sunucuya erişilemiyor, bağlantı hatası."))
+            emit(Resource.Error(UiText.StringResources(R.string.internet_error)))
         }
     }
 }

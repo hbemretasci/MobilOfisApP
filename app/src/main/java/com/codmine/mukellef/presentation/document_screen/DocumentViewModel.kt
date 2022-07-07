@@ -5,6 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.codmine.mukellef.R
 import com.codmine.mukellef.data.local.AppSettings
 import com.codmine.mukellef.domain.model.documents.Document
 import com.codmine.mukellef.domain.use_case.document_screen.GetDocuments
@@ -14,6 +15,7 @@ import com.codmine.mukellef.domain.util.Resource
 import com.codmine.mukellef.domain.util.downloadFile
 import com.codmine.mukellef.domain.util.fileExist
 import com.codmine.mukellef.domain.util.showFile
+import com.codmine.mukellef.presentation.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -65,10 +67,15 @@ class DocumentViewModel @Inject constructor(
         ).onEach { result ->
             when(result) {
                 is Resource.Success -> {
-                    _dataState.value = DocumentScreenDataState(documents = result.data ?: emptyList() )
+                    _dataState.value = DocumentScreenDataState(
+                        documents = result.data ?: emptyList()
+                    )
                 }
                 is Resource.Error -> {
-                    _dataState.value = DocumentScreenDataState(error = result.message ?: "Beklenmeyen hata.")
+                    _dataState.value = DocumentScreenDataState(
+                        errorStatus = true,
+                        errorText = result.message ?: UiText.StringResources(R.string.unexpected_error)
+                    )
                 }
                 is Resource.Loading -> {
                     _dataState.value = DocumentScreenDataState(isLoading = true)
@@ -86,7 +93,10 @@ class DocumentViewModel @Inject constructor(
                     _readingDocumentState.value = ReadingDocumentState(readingDocument = result.data)
                 }
                 is Resource.Error -> {
-                    _readingDocumentState.value = ReadingDocumentState(error = result.message ?: "Beklenmeyen hata.")
+                    _readingDocumentState.value = ReadingDocumentState(
+                        errorStatus = true,
+                        errorText = result.message ?: UiText.StringResources(R.string.unexpected_error)
+                    )
                 }
                 is Resource.Loading -> {
                     _readingDocumentState.value = ReadingDocumentState(isLoading = true)

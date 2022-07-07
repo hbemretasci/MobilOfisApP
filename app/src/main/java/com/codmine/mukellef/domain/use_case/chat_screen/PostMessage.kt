@@ -1,11 +1,13 @@
 package com.codmine.mukellef.domain.use_case.chat_screen
 
+import com.codmine.mukellef.R
 import com.codmine.mukellef.data.remote.dto.notifications.toMessage
 import com.codmine.mukellef.domain.model.chat.Message
 import com.codmine.mukellef.domain.repository.MobileOfficeRepository
 import com.codmine.mukellef.domain.util.Constants
 import com.codmine.mukellef.domain.util.Constants.NOTIFICATION_TYPE_MESSAGE
 import com.codmine.mukellef.domain.util.Resource
+import com.codmine.mukellef.presentation.util.UiText
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -21,9 +23,9 @@ class PostMessage @Inject constructor(
             ).notifications.map { it.toMessage() }.reversed()
             Resource.Success(messages)
         } catch(e: HttpException) {
-            Resource.Error(e.localizedMessage ?: "Beklenmeyen hata.")
+            Resource.Error((e.localizedMessage ?: UiText.StringResources(R.string.unexpected_error)) as UiText)
         } catch(e: IOException) {
-            Resource.Error("Sunucuya erişilemiyor, bağlantı hatası.")
+            Resource.Error(UiText.StringResources(R.string.internet_error))
         }
     }
 }

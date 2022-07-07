@@ -28,7 +28,7 @@
     <string name="document_title_post_time">Yayınlanma</string>
     <string name="document_title_read_time">Okunma</string>
     <string name="document_icon_content_description">Evrak</string>
-    <string name="document_is_loading">Mobil Ofis Evrak yükleniyor...</string>
+    <string name="document_is_loading">Mobil Ofis Evrak yükleniyor…</string>
     <string name="exit_dialog_message">Çıkmak istediğinizden emin misiniz?</string>
     <string name="exit_dialog_confirm_message">Evet</string>
     <string name="exit_dialog_cancel_message">Hayır</string>
@@ -43,5 +43,9 @@
     <string name="messages_not_found">Gösterilecek mesaj bulunamadı.</string>
     <string name="send_message_place_holder">Mesaj</string>
     <string name="send_message_content_description">Gönder</string>
+
+    <string name="gib_error">Gib kodu giriş hatası.</string>
+    <string name="vk_error">Vk kodu giriş hatası.</string>
+    <string name="password_error">Şifre giriş hatası.</string>
 
 </resources>

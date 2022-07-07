@@ -5,6 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.codmine.mukellef.R
 import com.codmine.mukellef.data.local.AppSettings
 import com.codmine.mukellef.domain.model.notifications.Notification
 import com.codmine.mukellef.domain.use_case.notification_screen.GetNotifications
@@ -14,6 +15,7 @@ import com.codmine.mukellef.domain.util.Resource
 import com.codmine.mukellef.domain.util.downloadFile
 import com.codmine.mukellef.domain.util.fileExist
 import com.codmine.mukellef.domain.util.showFile
+import com.codmine.mukellef.presentation.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -69,7 +71,10 @@ class NotificationViewModel @Inject constructor(
                     _dataState.value = NotificationScreenDataState(notifications = result.data ?: emptyList() )
                 }
                 is Resource.Error -> {
-                    _dataState.value = NotificationScreenDataState(error = result.message ?: "Beklenmeyen hata.")
+                    _dataState.value = NotificationScreenDataState(
+                        errorStatus = true,
+                        errorText = result.message ?: UiText.StringResources(R.string.unexpected_error)
+                    )
                 }
                 is Resource.Loading -> {
                     _dataState.value = NotificationScreenDataState(isLoading = true)
@@ -87,7 +92,10 @@ class NotificationViewModel @Inject constructor(
                     _readingNotificationState.value = ReadingNotificationState(readingNotification = result.data)
                 }
                 is Resource.Error -> {
-                    _readingNotificationState.value = ReadingNotificationState(error = result.message ?: "Beklenmeyen hata.")
+                    _readingNotificationState.value = ReadingNotificationState(
+                        errorStatus = true,
+                        errorText = result.message ?: UiText.StringResources(R.string.unexpected_error)
+                    )
                 }
                 is Resource.Loading -> {
                     _readingNotificationState.value = ReadingNotificationState(isLoading = true)

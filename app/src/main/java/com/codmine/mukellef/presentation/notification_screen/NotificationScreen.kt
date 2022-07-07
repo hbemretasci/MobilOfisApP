@@ -35,10 +35,10 @@ fun NotificationScreen(
     paddingValues: PaddingValues,
     viewModel: NotificationViewModel = hiltViewModel()
 ) {
-    val state = viewModel.dataState
+    val state = viewModel.dataState.value
     val context = LocalContext.current
     val swipeRefreshState = rememberSwipeRefreshState(
-        isRefreshing = state.value.isRefreshing
+        isRefreshing = state.isRefreshing
     )
 
     var expandedNotification by remember { mutableStateOf<String?>(null) }
@@ -65,7 +65,7 @@ fun NotificationScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
-                items(state.value.notifications) { notification ->
+                items(state.notifications) { notification ->
                     NotificationItem(
                         notification = notification,
                         expanded = expandedNotification == notification.id,
@@ -83,20 +83,18 @@ fun NotificationScreen(
                 item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
             }
         }
-        if((!state.value.isLoading) && ((state.value.error.isBlank())) && (state.value.notifications.isEmpty())) {
-            DataNotFound(message = UiText.StringResources(R.string.notification_not_found).asString())
+        if(state.isLoading) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
-        if(state.value.error.isNotBlank()) {
+        if(state.errorStatus) {
             ReLoadData(
                 modifier = Modifier.fillMaxSize(),
-                errorMsg = state.value.error,
-                onRetry = {
-                    viewModel.onEvent(NotificationEvent.Refresh, context)
-                }
+                errorMsg = state.errorText ?: UiText.StringResources(R.string.unexpected_error),
+                onRetry = { viewModel.onEvent(NotificationEvent.Refresh, context) }
             )
         }
-        if(state.value.isLoading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        if((!state.isLoading) && (!state.errorStatus) && (state.notifications.isEmpty())) {
+            DataNotFound(message = UiText.StringResources(R.string.notification_not_found))
         }
     }
 }

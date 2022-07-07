@@ -48,7 +48,7 @@ class LoginViewModel @Inject constructor(
                 _viewState.value = _viewState.value.copy(password = event.passwordValue)
             }
             is LoginEvent.Validate -> {
-                validationData(context)
+                validationData()
             }
             is LoginEvent.CheckLogin -> {
                 checkLogin(context)
@@ -56,10 +56,10 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun validationData(context: Context) {
-        val gibResult = validateGib.execute(_viewState.value.gib, context)
-        val vkResult = validateVk.execute(_viewState.value.vk, context)
-        val passwordResult = validatePassword.execute(_viewState.value.password, context)
+    private fun validationData() {
+        val gibResult = validateGib.execute(_viewState.value.gib)
+        val vkResult = validateVk.execute(_viewState.value.vk)
+        val passwordResult = validatePassword.execute(_viewState.value.password)
 
         val hasError = listOf(
             gibResult,
@@ -80,7 +80,7 @@ class LoginViewModel @Inject constructor(
 
     private fun checkLogin(context: Context) {
         getTaxPayer(
-            _viewState.value.gib, _viewState.value.vk, _viewState.value.password, context
+            _viewState.value.gib, _viewState.value.vk, _viewState.value.password
         ).onEach { result ->
             when (result) {
                 is Resource.Success -> {
@@ -99,21 +99,18 @@ class LoginViewModel @Inject constructor(
                             _uiEventChannel.send(LoginUiEvent.Login)
                         } else {
                             _uiEventChannel.send(
-                                LoginUiEvent.ShowSnackbar(
-                                    UiText.DynamicString(it.loginMessage).asString(context)
-                                )
+                                LoginUiEvent.ShowSnackbar(UiText.DynamicString(it.loginMessage))
                             )
                         }
                     }
                 }
                 is Resource.Error -> {
                     _dataState.value = LoginScreenDataState(
-                        error = result.message ?: UiText.StringResources(R.string.unexpected_error).asString(context)
+                        errorStatus = true,
+                        errorText = result.message ?: UiText.StringResources(R.string.unexpected_error)
                     )
                     _uiEventChannel.send(
-                        LoginUiEvent.ShowSnackbar(
-                            UiText.DynamicString(_dataState.value.error).asString(context)
-                        )
+                        LoginUiEvent.ShowSnackbar(_dataState.value.errorText ?: UiText.StringResources(R.string.unexpected_error))
                     )
                 }
                 is Resource.Loading -> {

@@ -2,12 +2,15 @@ package com.codmine.mukellef.presentation.balance_screen
 
 import android.content.Context
 import androidx.compose.runtime.*
+import androidx.compose.runtime.internal.isLiveLiteralsEnabled
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.codmine.mukellef.R
 import com.codmine.mukellef.data.local.AppSettings
 import com.codmine.mukellef.domain.use_case.balance_screen.GetTransactions
 import com.codmine.mukellef.domain.use_case.splash_screen.GetUserLoginData
 import com.codmine.mukellef.domain.util.Resource
+import com.codmine.mukellef.presentation.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -41,10 +44,15 @@ class BalanceViewModel @Inject constructor(
         ).onEach { result ->
             when(result) {
                 is Resource.Success -> {
-                    _dataState.value = BalanceScreenDataState(transactions = result.data ?: emptyList() )
+                    _dataState.value = BalanceScreenDataState(
+                        transactions = result.data ?: emptyList()
+                    )
                 }
                 is Resource.Error -> {
-                    _dataState.value = BalanceScreenDataState(error = result.message ?: "Beklenmeyen hata.")
+                    _dataState.value = BalanceScreenDataState(
+                        errorStatus = true,
+                        errorText = result.message ?: UiText.StringResources(R.string.unexpected_error)
+                    )
                 }
                 is Resource.Loading -> {
                     _dataState.value = BalanceScreenDataState(isLoading = true)
