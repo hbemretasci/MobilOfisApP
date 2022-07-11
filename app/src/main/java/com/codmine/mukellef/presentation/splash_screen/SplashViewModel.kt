@@ -1,10 +1,9 @@
 package com.codmine.mukellef.presentation.splash_screen
 
-import android.content.Context
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.codmine.mukellef.data.local.AppSettings
+import com.codmine.mukellef.domain.model.datastore.AppSettings
 import com.codmine.mukellef.domain.use_case.splash_screen.GetUserLoginData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -27,10 +26,10 @@ class SplashViewModel @Inject constructor(
     private val _uiEventChannel = Channel<SplashUiEvent>()
     val uiEvents = _uiEventChannel.receiveAsFlow()
 
-    fun onEvent(event: SplashEvent, context: Context) {
+    fun onEvent(event: SplashEvent) {
         when(event) {
             is SplashEvent.LoadData -> {
-                getAppSettings(context)
+                getAppSettings()
             }
             is SplashEvent.ShowLogo -> {
                 _logoState.value = true
@@ -52,8 +51,8 @@ class SplashViewModel @Inject constructor(
         }
     }
 
-    private fun getAppSettings(context: Context) {
-        getUserLoginData(context).onEach { result ->
+    private fun getAppSettings() {
+        getUserLoginData().onEach { result ->
             _appSettings.value = result
         }.launchIn(viewModelScope)
     }

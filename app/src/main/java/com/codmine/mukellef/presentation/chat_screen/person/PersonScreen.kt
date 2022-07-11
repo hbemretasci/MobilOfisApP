@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -38,13 +37,12 @@ fun PersonScreen(
     viewModel: PersonViewModel = hiltViewModel()
 ) {
     val state = viewModel.dataState.value
-    val context = LocalContext.current
     val swipeRefreshState = rememberSwipeRefreshState(
         isRefreshing = state.isRefreshing
     )
 
     LaunchedEffect(key1 = true) {
-        viewModel.onEvent(PersonEvent.LoadData, context)
+        viewModel.onEvent(PersonEvent.LoadData)
     }
 
     Box(modifier = Modifier
@@ -53,7 +51,7 @@ fun PersonScreen(
     ) {
         SwipeRefresh(
             state = swipeRefreshState,
-            onRefresh = { viewModel.onEvent(PersonEvent.Refresh, context) },
+            onRefresh = { viewModel.onEvent(PersonEvent.Refresh) },
             indicator = { state, trigger ->
                 GlowIndicator(
                     swipeRefreshState = state,
@@ -86,7 +84,7 @@ fun PersonScreen(
             ReLoadData(
                 modifier = Modifier.fillMaxSize(),
                 errorMsg = state.errorText ?: UiText.StringResources(R.string.unexpected_error),
-                onRetry = { viewModel.onEvent(PersonEvent.Refresh, context) }
+                onRetry = { viewModel.onEvent(PersonEvent.Refresh) }
             )
         }
     }

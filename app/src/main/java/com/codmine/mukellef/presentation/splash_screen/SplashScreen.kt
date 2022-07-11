@@ -18,9 +18,6 @@ import androidx.navigation.NavController
 import com.codmine.mukellef.R
 import com.codmine.mukellef.domain.util.Constants.LOGO_DISPLAY_TIME
 import com.codmine.mukellef.presentation.components.Screen
-import com.codmine.mukellef.presentation.login_screen.LoginEvent
-import com.codmine.mukellef.presentation.login_screen.LoginUiEvent
-import com.codmine.mukellef.presentation.notification_screen.NotificationEvent
 import com.codmine.mukellef.presentation.util.UiText
 import kotlinx.coroutines.delay
 
@@ -33,11 +30,11 @@ fun SplashScreen(
     val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
-        viewModel.onEvent(SplashEvent.LoadData, context)
-        viewModel.onEvent(SplashEvent.ShowLogo, context)
+        viewModel.onEvent(SplashEvent.LoadData)
+        viewModel.onEvent(SplashEvent.ShowLogo)
         delay(LOGO_DISPLAY_TIME)
-        viewModel.onEvent(SplashEvent.HideLogo, context)
-        viewModel.onEvent(SplashEvent.Navigate, context)
+        viewModel.onEvent(SplashEvent.HideLogo)
+        viewModel.onEvent(SplashEvent.Navigate)
     }
 
     LaunchedEffect(key1 = context) {

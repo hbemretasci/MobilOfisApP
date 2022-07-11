@@ -7,10 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -41,7 +38,6 @@ class MainActivity : ComponentActivity() {
                     ) {
                         val navController = rememberNavController()
                         val navBackStackEntry by navController.currentBackStackEntryAsState()
-                        val context = LocalContext.current
                         val openExitAppDialog = viewModel.exitDialogState.value
 
                         OfisScaffold(
@@ -50,16 +46,16 @@ class MainActivity : ComponentActivity() {
                             showBars = !shouldNotShowBars(navBackStackEntry),
                             modifier = Modifier.fillMaxSize(),
                             onActIconPressed = {
-                                viewModel.onEvent(MainEvent.ExitDialog, context)
+                                viewModel.onEvent(MainEvent.ExitDialog)
                             }
                         )
                         if (openExitAppDialog) {
                             ExitDialog(
                                 onConfirmClick = {
-                                    viewModel.onEvent(MainEvent.ExitConfirm, context)
+                                    viewModel.onEvent(MainEvent.ExitConfirm)
                                 },
                                 onDismissClick = {
-                                    viewModel.onEvent(MainEvent.ExitCancel, context)
+                                    viewModel.onEvent(MainEvent.ExitCancel)
                                 }
                             )
                         }

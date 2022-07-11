@@ -1,14 +1,12 @@
 package com.codmine.mukellef.presentation.chat_screen.messages
 
-import android.content.Context
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codmine.mukellef.R
-import com.codmine.mukellef.data.local.AppSettings
-import com.codmine.mukellef.domain.model.chat.Message
+import com.codmine.mukellef.domain.model.datastore.AppSettings
 import com.codmine.mukellef.domain.use_case.chat_screen.GetMessagesById
 import com.codmine.mukellef.domain.use_case.chat_screen.PostMessage
 import com.codmine.mukellef.domain.use_case.chat_screen.PostMessageReadingInfo
@@ -40,12 +38,12 @@ class MessagesViewModel @Inject constructor(
     private var _receiverId: String = ""
     private var _receiverName: String = ""
 
-    fun onEvent(event: MessagesEvent, context: Context) {
+    fun onEvent(event: MessagesEvent) {
         when(event) {
             is MessagesEvent.LoadData -> {
                 _receiverId = savedStateHandle.get<String>(NAV_CHAT_MESSAGES_USER_ID) ?: ""
                 _receiverName = savedStateHandle.get<String>(NAV_CHAT_MESSAGES_USER_NAME) ?: ""
-                getAppSettings(context)
+                getAppSettings()
                 initializeDataState()
                 getMessageList()
             }
@@ -137,8 +135,8 @@ class MessagesViewModel @Inject constructor(
         )
     }
 
-    private fun getAppSettings(context: Context) {
-        getUserLoginData(context).onEach { result ->
+    private fun getAppSettings() {
+        getUserLoginData().onEach { result ->
             _appSettings.value = result
         }.launchIn(viewModelScope)
     }

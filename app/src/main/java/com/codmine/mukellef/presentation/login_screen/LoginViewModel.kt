@@ -93,8 +93,7 @@ class LoginViewModel @Inject constructor(
                                 _viewState.value.vk,
                                 _viewState.value.password,
                                 it.userId?: "",
-                                it.accountantId?: "",
-                                context
+                                it.accountantId?: ""
                             )
                             _uiEventChannel.send(LoginUiEvent.Login)
                         } else {
@@ -121,8 +120,8 @@ class LoginViewModel @Inject constructor(
     }
 
     private suspend fun setAppSettings(loginStatus: Boolean, gib: String, vk: String, password: String,
-        user: String, accountant: String, context: Context
+        user: String, accountant: String
     ) {
-        setUserLoginData(loginStatus, gib, vk, password, user, accountant, context)
+        setUserLoginData(loginStatus, gib, vk, password, user, accountant)
     }
 }

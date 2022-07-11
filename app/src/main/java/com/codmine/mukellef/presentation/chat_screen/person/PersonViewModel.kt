@@ -1,18 +1,15 @@
 package com.codmine.mukellef.presentation.chat_screen.person
 
-import android.content.Context
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codmine.mukellef.R
-import com.codmine.mukellef.data.local.AppSettings
-import com.codmine.mukellef.domain.model.chat.UnreadNotification
+import com.codmine.mukellef.domain.model.datastore.AppSettings
 import com.codmine.mukellef.domain.use_case.chat_screen.GetRelatedUsers
 import com.codmine.mukellef.domain.use_case.chat_screen.GetUnreadMessagesCount
 import com.codmine.mukellef.domain.use_case.splash_screen.GetUserLoginData
 import com.codmine.mukellef.domain.util.Resource
-import com.codmine.mukellef.presentation.balance_screen.BalanceScreenDataState
 import com.codmine.mukellef.presentation.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -32,10 +29,10 @@ class PersonViewModel @Inject constructor(
 
     private val _appSettings = mutableStateOf(AppSettings())
 
-    fun onEvent(event: PersonEvent, context: Context) {
+    fun onEvent(event: PersonEvent) {
         when(event) {
             is PersonEvent.LoadData -> {
-                getAppSettings(context)
+                getAppSettings()
                 getChatPersons()
             }
             is PersonEvent.Refresh -> {
@@ -129,8 +126,8 @@ class PersonViewModel @Inject constructor(
     }
      */
 
-    private fun getAppSettings(context: Context) {
-        getUserLoginData(context).onEach { result ->
+    private fun getAppSettings() {
+        getUserLoginData().onEach { result ->
             _appSettings.value = result
         }.launchIn(viewModelScope)
     }

@@ -1,4 +1,4 @@
-package com.codmine.mukellef.data.local
+package com.codmine.mukellef.domain.model.datastore
 
 data class AppSettings(
     val login: Boolean = false,

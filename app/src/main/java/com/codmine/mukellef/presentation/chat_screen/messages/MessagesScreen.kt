@@ -38,13 +38,12 @@ fun MessagesScreen(
     viewModel: MessagesViewModel = hiltViewModel()
 ) {
     val state = viewModel.dataState.value
-    val context = LocalContext.current
     val scrollState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val focusRequester = FocusRequester()
 
     LaunchedEffect(key1 = true) {
-        viewModel.onEvent(MessagesEvent.LoadData, context)
+        viewModel.onEvent(MessagesEvent.LoadData)
     }
 
    Column(
@@ -70,7 +69,7 @@ fun MessagesScreen(
                    for (i in state.messages.indices) {
                        item {
                            if ((state.messages[i].readingTime.isEmpty()) && (state.messages[i].senderUserId == state.receiverId)) {
-                               viewModel.onEvent(MessagesEvent.PostReadingMessage(state.messages[i].id), context)
+                               viewModel.onEvent(MessagesEvent.PostReadingMessage(state.messages[i].id))
                            }
                            MessageItem(state.messages[i], state.messages[i].senderUserId == state.userId)
                            if (i + 1 < state.messages.size) {
@@ -114,11 +113,11 @@ fun MessagesScreen(
                modifier = Modifier.weight(.15f),
                focusRequester = focusRequester,
                onValueChange = {
-                   viewModel.onEvent(MessagesEvent.MessageChanged(it), context)
+                   viewModel.onEvent(MessagesEvent.MessageChanged(it))
                },
                sendMessage = {
                    scope.launch {
-                       viewModel.onEvent(MessagesEvent.PostMessage(it), context)
+                       viewModel.onEvent(MessagesEvent.PostMessage(it))
                        scrollState.scrollToItem(0)
                    }
                }
@@ -132,7 +131,7 @@ fun MessagesScreen(
                ReLoadData(
                    modifier = Modifier.fillMaxSize(),
                    errorMsg = state.errorText ?: UiText.StringResources(R.string.unexpected_error),
-                   onRetry = { viewModel.onEvent(MessagesEvent.Refresh, context) }
+                   onRetry = { viewModel.onEvent(MessagesEvent.Refresh) }
                )
            }
            if((!state.isLoading) && (!state.errorStatus) && (state.messages.isEmpty())) {

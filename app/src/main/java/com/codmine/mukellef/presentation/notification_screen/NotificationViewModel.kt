@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codmine.mukellef.R
-import com.codmine.mukellef.data.local.AppSettings
+import com.codmine.mukellef.domain.model.datastore.AppSettings
 import com.codmine.mukellef.domain.model.notifications.Notification
 import com.codmine.mukellef.domain.use_case.notification_screen.GetNotifications
 import com.codmine.mukellef.domain.use_case.notification_screen.PostNotificationReadingInfo
@@ -35,7 +35,7 @@ class NotificationViewModel @Inject constructor(
     fun onEvent(event: NotificationEvent, context: Context) {
         when(event) {
             is NotificationEvent.LoadData -> {
-                getAppSettings(context)
+                getAppSettings()
                 getNotificationList()
             }
             is NotificationEvent.Refresh -> {
@@ -104,8 +104,8 @@ class NotificationViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun getAppSettings(context: Context) {
-        getUserLoginData(context).onEach { result ->
+    private fun getAppSettings() {
+        getUserLoginData().onEach { result ->
             _appSettings.value = result
         }.launchIn(viewModelScope)
     }

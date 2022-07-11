@@ -26,13 +26,12 @@ fun BalanceScreen(
     viewModel: BalanceViewModel = hiltViewModel()
 ) {
     val state = viewModel.dataState.value
-    val context = LocalContext.current
     val swipeRefreshState = rememberSwipeRefreshState(
         isRefreshing = state.isRefreshing
     )
 
     LaunchedEffect(key1 = true) {
-        viewModel.onEvent(BalanceEvent.LoadData, context)
+        viewModel.onEvent(BalanceEvent.LoadData)
     }
 
     Box(modifier = Modifier
@@ -41,7 +40,7 @@ fun BalanceScreen(
     ) {
         SwipeRefresh(
             state = swipeRefreshState,
-            onRefresh = { viewModel.onEvent(BalanceEvent.Refresh, context) },
+            onRefresh = { viewModel.onEvent(BalanceEvent.Refresh) },
             indicator = { state, trigger ->
                 GlowIndicator(
                     swipeRefreshState = state,
@@ -65,7 +64,7 @@ fun BalanceScreen(
             ReLoadData(
                 modifier = Modifier.fillMaxSize(),
                 errorMsg = state.errorText ?: UiText.StringResources(R.string.unexpected_error),
-                onRetry = { viewModel.onEvent(BalanceEvent.Refresh, context) }
+                onRetry = { viewModel.onEvent(BalanceEvent.Refresh) }
             )
         }
         if((!state.isLoading) && (!state.errorStatus) && (state.transactions.isEmpty())) {

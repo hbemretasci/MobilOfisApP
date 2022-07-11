@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codmine.mukellef.R
-import com.codmine.mukellef.data.local.AppSettings
+import com.codmine.mukellef.domain.model.datastore.AppSettings
 import com.codmine.mukellef.domain.model.documents.Document
 import com.codmine.mukellef.domain.use_case.document_screen.GetDocuments
 import com.codmine.mukellef.domain.use_case.document_screen.PostDocumentReadingInfo
@@ -18,7 +18,6 @@ import com.codmine.mukellef.domain.util.showFile
 import com.codmine.mukellef.presentation.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,7 +35,7 @@ class DocumentViewModel @Inject constructor(
     fun onEvent(event: DocumentEvent, context: Context) {
         when(event) {
             is DocumentEvent.LoadData -> {
-                getAppSettings(context)
+                getAppSettings()
                 getDocumentList()
             }
             is DocumentEvent.Refresh -> {
@@ -105,8 +104,8 @@ class DocumentViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun getAppSettings(context: Context) {
-        getUserLoginData(context).onEach { result ->
+    private fun getAppSettings() {
+        getUserLoginData().onEach { result ->
             _appSettings.value = result
         }.launchIn(viewModelScope)
     }

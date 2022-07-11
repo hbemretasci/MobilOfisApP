@@ -5,8 +5,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorScheme = darkColorScheme(
     primary = Blue80,
@@ -87,6 +89,13 @@ fun MobilOfisTheme(
             colorScheme = colorScheme,
             typography = Typography,
             content = content
+        )
+    }
+
+    val systemUiColor = rememberSystemUiController()
+    SideEffect {
+        systemUiColor.setSystemBarsColor(
+            color = DarkBlue90
         )
     }
 

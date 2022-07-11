@@ -19,7 +19,7 @@ class MainViewModel @Inject constructor(
     private val _exitDialogState = mutableStateOf(false)
     val exitDialogState: State<Boolean> = _exitDialogState
 
-    fun onEvent(event: MainEvent, context: Context) {
+    fun onEvent(event: MainEvent) {
         when(event) {
             is MainEvent.ExitDialog -> {
                 _exitDialogState.value = true
@@ -29,7 +29,7 @@ class MainViewModel @Inject constructor(
             }
             is MainEvent.ExitConfirm -> {
                 viewModelScope.launch {
-                    setAppSettings(false, "", "", "", "", "", context)
+                    setAppSettings(false, "", "", "", "", "")
                     exitProcess(0)
                 }
             }
@@ -37,9 +37,9 @@ class MainViewModel @Inject constructor(
     }
 
     private suspend fun setAppSettings(loginStatus: Boolean, gib: String, vk: String, password: String,
-                                       user: String, accountant: String, context: Context
+                                       user: String, accountant: String
     ) {
-        setUserLoginData(loginStatus, gib, vk, password, user, accountant, context)
+        setUserLoginData(loginStatus, gib, vk, password, user, accountant)
     }
 
 }

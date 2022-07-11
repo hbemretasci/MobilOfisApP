@@ -1,12 +1,10 @@
 package com.codmine.mukellef.presentation.balance_screen
 
-import android.content.Context
 import androidx.compose.runtime.*
-import androidx.compose.runtime.internal.isLiveLiteralsEnabled
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codmine.mukellef.R
-import com.codmine.mukellef.data.local.AppSettings
+import com.codmine.mukellef.domain.model.datastore.AppSettings
 import com.codmine.mukellef.domain.use_case.balance_screen.GetTransactions
 import com.codmine.mukellef.domain.use_case.splash_screen.GetUserLoginData
 import com.codmine.mukellef.domain.util.Resource
@@ -26,10 +24,10 @@ class BalanceViewModel @Inject constructor(
 
     private val _appSettings = mutableStateOf(AppSettings())
 
-    fun onEvent(event: BalanceEvent, context: Context) {
+    fun onEvent(event: BalanceEvent) {
         when(event) {
             is BalanceEvent.LoadData -> {
-                getAppSettings(context)
+                getAppSettings()
                 getTransactionList()
             }
             is BalanceEvent.Refresh -> {
@@ -61,8 +59,8 @@ class BalanceViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun getAppSettings(context: Context) {
-        getUserLoginData(context).onEach { result ->
+    private fun getAppSettings() {
+        getUserLoginData().onEach { result ->
             _appSettings.value = result
         }.launchIn(viewModelScope)
     }
