@@ -1,6 +1,5 @@
 package com.codmine.mukellef.presentation.document_screen
 
-import android.content.Context
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -10,12 +9,10 @@ import com.codmine.mukellef.domain.model.datastore.AppSettings
 import com.codmine.mukellef.domain.model.documents.Document
 import com.codmine.mukellef.domain.use_case.document_screen.GetDocuments
 import com.codmine.mukellef.domain.use_case.document_screen.PostDocumentReadingInfo
+import com.codmine.mukellef.domain.use_case.files.ShowDocument
 import com.codmine.mukellef.domain.use_case.splash_screen.GetUserLoginData
 import com.codmine.mukellef.domain.util.Resource
-import com.codmine.mukellef.domain.util.downloadFile
-import com.codmine.mukellef.domain.util.fileExist
-import com.codmine.mukellef.domain.util.showFile
-import com.codmine.mukellef.presentation.util.UiText
+import com.codmine.mukellef.domain.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -24,7 +21,8 @@ import javax.inject.Inject
 class DocumentViewModel @Inject constructor(
     private val getDocuments: GetDocuments,
     private val postDocumentReadingInfo: PostDocumentReadingInfo,
-    private val getUserLoginData: GetUserLoginData
+    private val getUserLoginData: GetUserLoginData,
+    private val showDocument: ShowDocument
 ): ViewModel() {
     private val _dataState = mutableStateOf(DocumentScreenDataState())
     val dataState: State<DocumentScreenDataState> = _dataState
@@ -32,7 +30,7 @@ class DocumentViewModel @Inject constructor(
     private val _readingDocumentState = mutableStateOf(ReadingDocumentState())
     private val _appSettings = mutableStateOf(AppSettings())
 
-    fun onEvent(event: DocumentEvent, context: Context) {
+    fun onEvent(event: DocumentEvent) {
         when(event) {
             is DocumentEvent.LoadData -> {
                 getAppSettings()
@@ -46,18 +44,14 @@ class DocumentViewModel @Inject constructor(
                     postReadingInfo(event.document)
                 }
                 if (event.document.documentName.isNotEmpty()) {
-                    showDocument(_appSettings.value.gib, event.document, context)
+                    showDocument(_appSettings.value.gib, event.document)
                 }
             }
         }
     }
 
-    private fun showDocument(gib: String, document: Document, context: Context) {
-        if (!fileExist(document.documentName, context)) {
-            downloadFile(gib, document.documentName, context)
-        } else {
-            showFile(document.documentName, context)
-        }
+    private fun showDocument(gib: String, document: Document) {
+        showDocument(gib, document.documentName)
     }
 
     private fun getDocumentList() {

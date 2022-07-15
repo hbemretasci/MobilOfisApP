@@ -1,7 +1,7 @@
 package com.codmine.mukellef.presentation.balance_screen
 
 import com.codmine.mukellef.domain.model.balance.Transaction
-import com.codmine.mukellef.presentation.util.UiText
+import com.codmine.mukellef.domain.util.UiText
 
 data class BalanceScreenDataState(
     val isLoading: Boolean = false,

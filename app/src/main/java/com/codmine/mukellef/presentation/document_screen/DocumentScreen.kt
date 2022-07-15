@@ -14,7 +14,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,7 +24,7 @@ import com.codmine.mukellef.domain.util.dateAndTime
 import com.codmine.mukellef.presentation.components.DataNotFound
 import com.codmine.mukellef.presentation.components.GlowIndicator
 import com.codmine.mukellef.presentation.components.ReLoadData
-import com.codmine.mukellef.presentation.util.UiText
+import com.codmine.mukellef.domain.util.UiText
 import com.codmine.mukellef.ui.theme.spacing
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -36,13 +35,12 @@ fun DocumentScreen(
     viewModel: DocumentViewModel = hiltViewModel()
 ) {
     val state = viewModel.dataState.value
-    val context = LocalContext.current
     val swipeRefreshState = rememberSwipeRefreshState(
         isRefreshing = state.isRefreshing
     )
 
     LaunchedEffect(key1 = true) {
-        viewModel.onEvent(DocumentEvent.LoadData, context)
+        viewModel.onEvent(DocumentEvent.LoadData)
     }
 
     Box(modifier = Modifier
@@ -51,7 +49,7 @@ fun DocumentScreen(
     ) {
         SwipeRefresh(
             state = swipeRefreshState,
-            onRefresh = { viewModel.onEvent(DocumentEvent.Refresh, context) },
+            onRefresh = { viewModel.onEvent(DocumentEvent.Refresh) },
             indicator = { state, trigger ->
                 GlowIndicator(
                     swipeRefreshState = state,
@@ -68,7 +66,7 @@ fun DocumentScreen(
                         document = document,
                         readingStatus = document.readingTime.isNotEmpty(),
                         onDocumentClick = {
-                            viewModel.onEvent(DocumentEvent.ShowAndReadDocument(it), context)
+                            viewModel.onEvent(DocumentEvent.ShowAndReadDocument(it))
                         }
                     )
                 }
@@ -81,7 +79,7 @@ fun DocumentScreen(
             ReLoadData(
                 modifier = Modifier.fillMaxSize(),
                 errorMsg = state.errorText ?: UiText.StringResources(R.string.unexpected_error),
-                onRetry = { viewModel.onEvent(DocumentEvent.Refresh, context) }
+                onRetry = { viewModel.onEvent(DocumentEvent.Refresh) }
             )
         }
         if((!state.isLoading) && (!state.errorStatus) && (state.documents.isEmpty())) {

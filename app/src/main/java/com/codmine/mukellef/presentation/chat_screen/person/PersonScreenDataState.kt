@@ -1,7 +1,7 @@
 package com.codmine.mukellef.presentation.chat_screen.person
 
 import com.codmine.mukellef.domain.model.tax_payer.RelatedUser
-import com.codmine.mukellef.presentation.util.UiText
+import com.codmine.mukellef.domain.util.UiText
 
 data class PersonScreenDataState(
     val isLoading: Boolean = false,

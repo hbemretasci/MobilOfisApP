@@ -8,14 +8,12 @@ import androidx.lifecycle.viewModelScope
 import com.codmine.mukellef.R
 import com.codmine.mukellef.domain.model.datastore.AppSettings
 import com.codmine.mukellef.domain.model.notifications.Notification
+import com.codmine.mukellef.domain.use_case.files.ShowDocument
 import com.codmine.mukellef.domain.use_case.notification_screen.GetNotifications
 import com.codmine.mukellef.domain.use_case.notification_screen.PostNotificationReadingInfo
 import com.codmine.mukellef.domain.use_case.splash_screen.GetUserLoginData
 import com.codmine.mukellef.domain.util.Resource
-import com.codmine.mukellef.domain.util.downloadFile
-import com.codmine.mukellef.domain.util.fileExist
-import com.codmine.mukellef.domain.util.showFile
-import com.codmine.mukellef.presentation.util.UiText
+import com.codmine.mukellef.domain.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -24,7 +22,8 @@ import javax.inject.Inject
 class NotificationViewModel @Inject constructor(
     private val getNotifications: GetNotifications,
     private val postNotificationReadingInfo: PostNotificationReadingInfo,
-    private val getUserLoginData: GetUserLoginData
+    private val getUserLoginData: GetUserLoginData,
+    private val showDocument: ShowDocument
 ): ViewModel() {
     private val _dataState = mutableStateOf(NotificationScreenDataState())
     val dataState: State<NotificationScreenDataState> = _dataState
@@ -32,7 +31,7 @@ class NotificationViewModel @Inject constructor(
     private val _readingNotificationState = mutableStateOf(ReadingNotificationState())
     private val _appSettings = mutableStateOf(AppSettings())
 
-    fun onEvent(event: NotificationEvent, context: Context) {
+    fun onEvent(event: NotificationEvent) {
         when(event) {
             is NotificationEvent.LoadData -> {
                 getAppSettings()
@@ -48,18 +47,14 @@ class NotificationViewModel @Inject constructor(
             }
             is NotificationEvent.ShowNotification -> {
                 if (event.notification.documentName.isNotEmpty()) {
-                    showNotification(_appSettings.value.gib, event.notification, context)
+                    showNotification(_appSettings.value.gib, event.notification)
                 }
             }
         }
     }
 
-    private fun showNotification(gib: String, notification: Notification, context: Context) {
-        if (!fileExist(notification.documentName, context)) {
-            downloadFile(gib, notification.documentName, context)
-        } else {
-            showFile(notification.documentName, context)
-        }
+    private fun showNotification(gib: String, notification: Notification) {
+        showDocument(gib, notification.documentName)
     }
 
     private fun getNotificationList() {

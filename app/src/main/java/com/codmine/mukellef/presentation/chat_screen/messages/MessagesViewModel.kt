@@ -14,7 +14,7 @@ import com.codmine.mukellef.domain.use_case.splash_screen.GetUserLoginData
 import com.codmine.mukellef.domain.util.Constants.NAV_CHAT_MESSAGES_USER_ID
 import com.codmine.mukellef.domain.util.Constants.NAV_CHAT_MESSAGES_USER_NAME
 import com.codmine.mukellef.domain.util.Resource
-import com.codmine.mukellef.presentation.util.UiText
+import com.codmine.mukellef.domain.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

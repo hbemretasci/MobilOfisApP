@@ -11,7 +11,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -25,7 +24,7 @@ import com.codmine.mukellef.presentation.components.ReLoadData
 import com.codmine.mukellef.presentation.notification_screen.components.NotificationDocumentIcon
 import com.codmine.mukellef.presentation.notification_screen.components.ReadNotificationIcon
 import com.codmine.mukellef.presentation.notification_screen.components.UnReadNotificationIcon
-import com.codmine.mukellef.presentation.util.UiText
+import com.codmine.mukellef.domain.util.UiText
 import com.codmine.mukellef.ui.theme.spacing
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -36,7 +35,6 @@ fun NotificationScreen(
     viewModel: NotificationViewModel = hiltViewModel()
 ) {
     val state = viewModel.dataState.value
-    val context = LocalContext.current
     val swipeRefreshState = rememberSwipeRefreshState(
         isRefreshing = state.isRefreshing
     )
@@ -44,7 +42,7 @@ fun NotificationScreen(
     var expandedNotification by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(key1 = true) {
-        viewModel.onEvent(NotificationEvent.LoadData, context)
+        viewModel.onEvent(NotificationEvent.LoadData)
     }
 
     Box(modifier = Modifier
@@ -53,7 +51,7 @@ fun NotificationScreen(
     ) {
         SwipeRefresh(
             state = swipeRefreshState,
-            onRefresh = { viewModel.onEvent(NotificationEvent.Refresh, context) },
+            onRefresh = { viewModel.onEvent(NotificationEvent.Refresh) },
             indicator = { state, trigger ->
                 GlowIndicator(
                     swipeRefreshState = state,
@@ -72,11 +70,11 @@ fun NotificationScreen(
                         onItemClick = {
                             expandedNotification = if (expandedNotification == it.id) null else it.id
                             if (it.readingTime.isEmpty()) {
-                                viewModel.onEvent(NotificationEvent.ReadNotification(it), context)
+                                viewModel.onEvent(NotificationEvent.ReadNotification(it))
                             }
                         },
                         onDocumentClick = {
-                            viewModel.onEvent(NotificationEvent.ShowNotification(it), context)
+                            viewModel.onEvent(NotificationEvent.ShowNotification(it))
                         }
                     )
                 }
@@ -90,7 +88,7 @@ fun NotificationScreen(
             ReLoadData(
                 modifier = Modifier.fillMaxSize(),
                 errorMsg = state.errorText ?: UiText.StringResources(R.string.unexpected_error),
-                onRetry = { viewModel.onEvent(NotificationEvent.Refresh, context) }
+                onRetry = { viewModel.onEvent(NotificationEvent.Refresh) }
             )
         }
         if((!state.isLoading) && (!state.errorStatus) && (state.notifications.isEmpty())) {

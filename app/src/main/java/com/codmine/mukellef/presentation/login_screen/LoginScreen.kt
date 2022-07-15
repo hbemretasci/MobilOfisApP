@@ -19,7 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.codmine.mukellef.R
 import com.codmine.mukellef.presentation.components.Screen
-import com.codmine.mukellef.presentation.util.UiText
+import com.codmine.mukellef.domain.util.UiText
 import com.codmine.mukellef.ui.theme.spacing
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -49,7 +49,7 @@ fun LoginScreen(
                     snackbarHostState.showSnackbar(message = event.message.asString(context))
                 }
                 is LoginUiEvent.ValidationSuccess -> {
-                    viewModel.onEvent(LoginEvent.CheckLogin, context)
+                    viewModel.onEvent(LoginEvent.CheckLogin)
                 }
             }
         }
@@ -83,7 +83,7 @@ fun LoginScreen(
             TextField(
                 value = viewState.gib,
                 onValueChange = {
-                    viewModel.onEvent(LoginEvent.GibChanged(it), context)
+                    viewModel.onEvent(LoginEvent.GibChanged(it))
                 },
                 isError = viewState.gibError != null,
                 modifier = Modifier.fillMaxWidth(),
@@ -108,7 +108,7 @@ fun LoginScreen(
             TextField(
                 value = viewState.vk,
                 onValueChange = {
-                    viewModel.onEvent(LoginEvent.VkChanged(it), context)
+                    viewModel.onEvent(LoginEvent.VkChanged(it))
                 },
                 isError = viewState.vkError != null,
                 modifier = Modifier.fillMaxWidth(),
@@ -133,7 +133,7 @@ fun LoginScreen(
             TextField(
                 value = viewState.password,
                 onValueChange = {
-                    viewModel.onEvent(LoginEvent.PasswordChanged(it), context)
+                    viewModel.onEvent(LoginEvent.PasswordChanged(it))
                 },
                 isError = viewState.passwordError != null,
                 modifier = Modifier.fillMaxWidth(),
@@ -144,7 +144,7 @@ fun LoginScreen(
                 keyboardActions = KeyboardActions(
                     onDone = {
                         keyboardController?.hide()
-                        viewModel.onEvent(LoginEvent.Validate, context)
+                        viewModel.onEvent(LoginEvent.Validate)
                     }
                 ),
                 maxLines = 1,
@@ -163,7 +163,7 @@ fun LoginScreen(
             Button(
                 onClick = {
                     keyboardController?.hide()
-                    viewModel.onEvent(LoginEvent.Validate, context)
+                    viewModel.onEvent(LoginEvent.Validate)
                 },
                 modifier = Modifier
                     .align(Alignment.End)

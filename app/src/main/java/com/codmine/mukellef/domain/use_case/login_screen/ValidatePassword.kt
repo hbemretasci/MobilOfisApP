@@ -3,7 +3,7 @@ package com.codmine.mukellef.domain.use_case.login_screen
 import com.codmine.mukellef.R
 import com.codmine.mukellef.domain.use_case.ValidationResult
 import com.codmine.mukellef.domain.util.Constants.MAX_PASSWORD_LENGTH
-import com.codmine.mukellef.presentation.util.UiText
+import com.codmine.mukellef.domain.util.UiText
 import javax.inject.Inject
 
 class ValidatePassword @Inject constructor() {

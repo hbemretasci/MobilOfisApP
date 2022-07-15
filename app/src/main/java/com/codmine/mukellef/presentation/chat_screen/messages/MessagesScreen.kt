@@ -14,7 +14,6 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,7 +27,7 @@ import com.codmine.mukellef.presentation.chat_screen.messages.components.Message
 import com.codmine.mukellef.presentation.chat_screen.messages.components.MessageInput
 import com.codmine.mukellef.presentation.components.DataNotFound
 import com.codmine.mukellef.presentation.components.ReLoadData
-import com.codmine.mukellef.presentation.util.UiText
+import com.codmine.mukellef.domain.util.UiText
 import com.codmine.mukellef.ui.theme.spacing
 import kotlinx.coroutines.launch
 

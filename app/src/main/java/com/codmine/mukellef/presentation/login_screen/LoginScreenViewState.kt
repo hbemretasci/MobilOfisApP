@@ -1,6 +1,6 @@
 package com.codmine.mukellef.presentation.login_screen
 
-import com.codmine.mukellef.presentation.util.UiText
+import com.codmine.mukellef.domain.util.UiText
 
 data class LoginScreenViewState(
     val gib: String = "",

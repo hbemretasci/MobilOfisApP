@@ -1,4 +1,4 @@
-package com.codmine.mukellef.presentation.util
+package com.codmine.mukellef.domain.util
 
 import android.content.Context
 import androidx.annotation.StringRes

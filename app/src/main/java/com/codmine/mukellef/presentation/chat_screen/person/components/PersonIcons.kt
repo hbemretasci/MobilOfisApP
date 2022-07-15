@@ -1,8 +1,5 @@
 package com.codmine.mukellef.presentation.chat_screen.person.components
 
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.MarkChatRead
@@ -10,10 +7,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.res.stringResource
 import com.codmine.mukellef.R
-import com.codmine.mukellef.presentation.util.UiText
-import com.codmine.mukellef.ui.theme.spacing
+import com.codmine.mukellef.domain.util.UiText
 
 @Composable
 fun UnReadMessages(messageCount: String) {

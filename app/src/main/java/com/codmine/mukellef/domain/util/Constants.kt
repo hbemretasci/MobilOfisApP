@@ -2,7 +2,6 @@ package com.codmine.mukellef.domain.util
 
 object Constants {
     const val BASE_URL = "http://www.ipeksu.com/mobil/"
-    const val DOWNLOAD_URL = "http://ipeksu.com/mobil/files/"
 
     const val LOGO_DISPLAY_TIME = 2000L
     const val ROUNDED_VALUE = 8

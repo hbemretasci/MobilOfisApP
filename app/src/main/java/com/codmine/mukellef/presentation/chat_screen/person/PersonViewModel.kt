@@ -10,7 +10,7 @@ import com.codmine.mukellef.domain.use_case.chat_screen.GetRelatedUsers
 import com.codmine.mukellef.domain.use_case.chat_screen.GetUnreadMessagesCount
 import com.codmine.mukellef.domain.use_case.splash_screen.GetUserLoginData
 import com.codmine.mukellef.domain.util.Resource
-import com.codmine.mukellef.presentation.util.UiText
+import com.codmine.mukellef.domain.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

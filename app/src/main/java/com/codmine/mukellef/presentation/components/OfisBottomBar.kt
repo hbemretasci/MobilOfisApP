@@ -1,6 +1,5 @@
 package com.codmine.mukellef.presentation.components
 
-import android.graphics.Color
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -12,7 +11,6 @@ import androidx.compose.material.icons.filled.QuestionAnswer
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
@@ -20,7 +18,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.codmine.mukellef.R
-import com.codmine.mukellef.presentation.util.UiText
+import com.codmine.mukellef.domain.util.UiText
 
 sealed class BottomNavItem (val title: Int, val route: String, val icon: ImageVector, val cont: Int) {
     object Notification: BottomNavItem(R.string.bottom_title_notification, Screen.NotificationScreen.route, Icons.Filled.MarkChatUnread, R.string.bottom_title_notification)

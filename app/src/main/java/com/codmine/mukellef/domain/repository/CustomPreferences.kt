@@ -16,7 +16,7 @@ interface CustomPreferences {
         const val KEY_PASSWORD = "password"
         const val KEY_USER = "user"
         const val KEY_ACCOUNTANT = "accountant"
-
         const val DATA_FILE_KEY = "com.codmine.mukellef.SETTINGS"
     }
+
 }

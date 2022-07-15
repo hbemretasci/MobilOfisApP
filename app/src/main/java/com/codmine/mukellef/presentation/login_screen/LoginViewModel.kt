@@ -1,6 +1,5 @@
 package com.codmine.mukellef.presentation.login_screen
 
-import android.content.Context
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -9,7 +8,7 @@ import com.codmine.mukellef.R
 import com.codmine.mukellef.domain.use_case.login_screen.*
 import com.codmine.mukellef.domain.util.Constants.RESULT_USER_LOGIN
 import com.codmine.mukellef.domain.util.Resource
-import com.codmine.mukellef.presentation.util.UiText
+import com.codmine.mukellef.domain.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
@@ -36,7 +35,7 @@ class LoginViewModel @Inject constructor(
     private val _uiEventChannel = Channel<LoginUiEvent>()
     val uiEvents = _uiEventChannel.receiveAsFlow()
 
-    fun onEvent(event: LoginEvent, context: Context) {
+    fun onEvent(event: LoginEvent) {
         when(event) {
             is LoginEvent.GibChanged -> {
                 _viewState.value = _viewState.value.copy(gib = event.gibValue)
@@ -51,7 +50,7 @@ class LoginViewModel @Inject constructor(
                 validationData()
             }
             is LoginEvent.CheckLogin -> {
-                checkLogin(context)
+                checkLogin()
             }
         }
     }
@@ -78,7 +77,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun checkLogin(context: Context) {
+    private fun checkLogin() {
         getTaxPayer(
             _viewState.value.gib, _viewState.value.vk, _viewState.value.password
         ).onEach { result ->

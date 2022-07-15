@@ -1,7 +1,7 @@
 package com.codmine.mukellef.presentation.chat_screen.messages
 
 import com.codmine.mukellef.domain.model.chat.Message
-import com.codmine.mukellef.presentation.util.UiText
+import com.codmine.mukellef.domain.util.UiText
 
 data class MessagesScreenDataState(
     val userId: String = "",

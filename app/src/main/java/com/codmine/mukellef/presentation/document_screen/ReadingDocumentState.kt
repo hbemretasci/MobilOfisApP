@@ -1,7 +1,7 @@
 package com.codmine.mukellef.presentation.document_screen
 
 import com.codmine.mukellef.domain.model.documents.ReadingDocument
-import com.codmine.mukellef.presentation.util.UiText
+import com.codmine.mukellef.domain.util.UiText
 
 data class ReadingDocumentState(
     val isLoading: Boolean = false,

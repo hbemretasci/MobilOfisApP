@@ -1,7 +1,7 @@
 package com.codmine.mukellef.presentation.notification_screen
 
 import com.codmine.mukellef.domain.model.notifications.Notification
-import com.codmine.mukellef.presentation.util.UiText
+import com.codmine.mukellef.domain.util.UiText
 
 data class NotificationScreenDataState(
     val isLoading: Boolean = false,

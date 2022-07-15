@@ -18,7 +18,7 @@ import androidx.navigation.NavController
 import com.codmine.mukellef.R
 import com.codmine.mukellef.domain.util.Constants.LOGO_DISPLAY_TIME
 import com.codmine.mukellef.presentation.components.Screen
-import com.codmine.mukellef.presentation.util.UiText
+import com.codmine.mukellef.domain.util.UiText
 import kotlinx.coroutines.delay
 
 @Composable
