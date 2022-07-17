@@ -36,7 +36,7 @@ fun MessagesScreen(
     paddingValues: PaddingValues,
     viewModel: MessagesViewModel = hiltViewModel()
 ) {
-    val state = viewModel.dataState.value
+    val uiState = viewModel.uiState
     val scrollState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val focusRequester = FocusRequester()
@@ -51,7 +51,7 @@ fun MessagesScreen(
            .padding(paddingValues)
    ) {
        MessageHeader(
-           title = state.receiverName,
+           title = uiState.receiverName,
            modifier = Modifier.padding(MaterialTheme.spacing.medium),
        )
        Column(
@@ -65,18 +65,18 @@ fun MessagesScreen(
                    reverseLayout = true,
                    state = scrollState,
                ) {
-                   for (i in state.messages.indices) {
+                   for (i in uiState.messages.indices) {
                        item {
-                           if ((state.messages[i].readingTime.isEmpty()) && (state.messages[i].senderUserId == state.receiverId)) {
-                               viewModel.onEvent(MessagesEvent.PostReadingMessage(state.messages[i].id))
+                           if ((uiState.messages[i].readingTime.isEmpty()) && (uiState.messages[i].senderUserId == uiState.receiverId)) {
+                               viewModel.onEvent(MessagesEvent.PostReadingMessage(uiState.messages[i].id))
                            }
-                           MessageItem(state.messages[i], state.messages[i].senderUserId == state.userId)
-                           if (i + 1 < state.messages.size) {
-                               if (postDate(state.messages[i].postTime) != postDate(state.messages[i + 1].postTime)) {
-                                   DayHeader(postDate(state.messages[i].postTime))
+                           MessageItem(uiState.messages[i], uiState.messages[i].senderUserId == uiState.userId)
+                           if (i + 1 < uiState.messages.size) {
+                               if (postDate(uiState.messages[i].postTime) != postDate(uiState.messages[i + 1].postTime)) {
+                                   DayHeader(postDate(uiState.messages[i].postTime))
                                }
                            } else {
-                               DayHeader(postDate(state.messages[i].postTime))
+                               DayHeader(postDate(uiState.messages[i].postTime))
                            }
                        }
                    }
@@ -108,7 +108,7 @@ fun MessagesScreen(
                )
            }
            MessageInput(
-               text = state.message,
+               text = uiState.message,
                modifier = Modifier.weight(.15f),
                focusRequester = focusRequester,
                onValueChange = {
@@ -121,19 +121,19 @@ fun MessagesScreen(
                    }
                }
            )
-           if(state.isLoading) {
+           if(uiState.isLoading) {
                Box(modifier = Modifier.fillMaxSize()) {
                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                }
            }
-           if(state.errorStatus) {
+           if(uiState.errorStatus) {
                ReLoadData(
                    modifier = Modifier.fillMaxSize(),
-                   errorMsg = state.errorText ?: UiText.StringResources(R.string.unexpected_error),
+                   errorMsg = uiState.errorText ?: UiText.StringResources(R.string.unexpected_error),
                    onRetry = { viewModel.onEvent(MessagesEvent.Refresh) }
                )
            }
-           if((!state.isLoading) && (!state.errorStatus) && (state.messages.isEmpty())) {
+           if((!uiState.isLoading) && (!uiState.errorStatus) && (uiState.messages.isEmpty())) {
                DataNotFound(message = UiText.StringResources(R.string.messages_not_found))
            }
        }

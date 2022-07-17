@@ -29,8 +29,7 @@ fun LoginScreen(
     snackbarHostState: SnackbarHostState,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
-    val dataState = viewModel.dataState.value
-    val viewState = viewModel.viewState.value
+    val uiState = viewModel.uiState
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -71,7 +70,6 @@ fun LoginScreen(
                 style = MaterialTheme.typography.displayMedium
             )
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxLarge))
-
             Text(
                 modifier = Modifier.padding(start = MaterialTheme.spacing.medium),
                 text = UiText.StringResources(R.string.login_screen_text).asString(),
@@ -81,11 +79,11 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
 
             TextField(
-                value = viewState.gib,
+                value = uiState.gib,
                 onValueChange = {
                     viewModel.onEvent(LoginEvent.GibChanged(it))
                 },
-                isError = viewState.gibError != null,
+                isError = uiState.gibError != null,
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = {
                     Text(UiText.StringResources(R.string.gib_place_holder).asString())
@@ -95,9 +93,9 @@ fun LoginScreen(
                 maxLines = 1,
                 singleLine = true
             )
-            if (viewState.gibError != null) {
+            if (uiState.gibError != null) {
                 Text(
-                    text = viewModel.viewState.value.gibError?.asString() ?: UiText.StringResources(R.string.gib_error).asString(),
+                    text = viewModel.uiState.gibError?.asString() ?: UiText.StringResources(R.string.gib_error).asString(),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.End)
@@ -106,11 +104,11 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
 
             TextField(
-                value = viewState.vk,
+                value = uiState.vk,
                 onValueChange = {
                     viewModel.onEvent(LoginEvent.VkChanged(it))
                 },
-                isError = viewState.vkError != null,
+                isError = uiState.vkError != null,
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = {
                     Text(UiText.StringResources(R.string.vk_place_holder).asString())
@@ -120,9 +118,9 @@ fun LoginScreen(
                 maxLines = 1,
                 singleLine = true
             )
-            if (viewState.vkError != null) {
+            if (uiState.vkError != null) {
                 Text(
-                    text = viewModel.viewState.value.vkError?.asString() ?: UiText.StringResources(R.string.vk_error).asString(),
+                    text = viewModel.uiState.vkError?.asString() ?: UiText.StringResources(R.string.vk_error).asString(),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.End)
@@ -131,11 +129,11 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
 
             TextField(
-                value = viewState.password,
+                value = uiState.password,
                 onValueChange = {
                     viewModel.onEvent(LoginEvent.PasswordChanged(it))
                 },
-                isError = viewState.passwordError != null,
+                isError = uiState.passwordError != null,
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = {
                     Text(UiText.StringResources(R.string.password_place_holder).asString())
@@ -150,9 +148,9 @@ fun LoginScreen(
                 maxLines = 1,
                 singleLine = true
             )
-            if (viewState.passwordError != null) {
+            if (uiState.passwordError != null) {
                 Text(
-                    text = viewModel.viewState.value.passwordError?.asString() ?: UiText.StringResources(R.string.password_error).asString(),
+                    text = viewModel.uiState.passwordError?.asString() ?: UiText.StringResources(R.string.password_error).asString(),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.End)
@@ -175,7 +173,7 @@ fun LoginScreen(
                 )
             }
         }
-        if(dataState.isLoading) {
+        if(uiState.isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
     }

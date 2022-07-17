@@ -36,9 +36,9 @@ fun PersonScreen(
     paddingValues: PaddingValues,
     viewModel: PersonViewModel = hiltViewModel()
 ) {
-    val state = viewModel.dataState.value
+    val uiState = viewModel.uiState
     val swipeRefreshState = rememberSwipeRefreshState(
-        isRefreshing = state.isRefreshing
+        isRefreshing = uiState.isRefreshing
     )
 
     LaunchedEffect(key1 = true) {
@@ -63,7 +63,7 @@ fun PersonScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
-                items(state.relatedUsers) { user ->
+                items(uiState.relatedUsers) { user ->
                     UserItem(
                         user = user,
                         unRead = user.unReadCount,
@@ -77,13 +77,13 @@ fun PersonScreen(
                 item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
             }
         }
-        if(state.isLoading) {
+        if(uiState.isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
-        if(state.errorStatus) {
+        if(uiState.errorStatus) {
             ReLoadData(
                 modifier = Modifier.fillMaxSize(),
-                errorMsg = state.errorText ?: UiText.StringResources(R.string.unexpected_error),
+                errorMsg = uiState.errorText ?: UiText.StringResources(R.string.unexpected_error),
                 onRetry = { viewModel.onEvent(PersonEvent.Refresh) }
             )
         }

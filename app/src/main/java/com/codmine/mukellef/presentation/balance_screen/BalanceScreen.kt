@@ -24,9 +24,9 @@ fun BalanceScreen(
     paddingValues: PaddingValues,
     viewModel: BalanceViewModel = hiltViewModel()
 ) {
-    val state = viewModel.dataState.value
+    val uiState = viewModel.uiState
     val swipeRefreshState = rememberSwipeRefreshState(
-        isRefreshing = state.isRefreshing
+        isRefreshing = uiState.isRefreshing
     )
 
     LaunchedEffect(key1 = true) {
@@ -51,22 +51,22 @@ fun BalanceScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
-                items(state.transactions) { transaction ->
+                items(uiState.transactions) { transaction ->
                     TransactionItem(transaction = transaction)
                 }
             }
         }
-        if(state.isLoading) {
+        if(uiState.isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
-        if(state.errorStatus) {
+        if(uiState.errorStatus) {
             ReLoadData(
                 modifier = Modifier.fillMaxSize(),
-                errorMsg = state.errorText ?: UiText.StringResources(R.string.unexpected_error),
+                errorMsg = uiState.errorText ?: UiText.StringResources(R.string.unexpected_error),
                 onRetry = { viewModel.onEvent(BalanceEvent.Refresh) }
             )
         }
-        if((!state.isLoading) && (!state.errorStatus) && (state.transactions.isEmpty())) {
+        if((!uiState.isLoading) && (!uiState.errorStatus) && (uiState.transactions.isEmpty())) {
             DataNotFound(message = UiText.StringResources(R.string.transaction_not_found))
         }
     }

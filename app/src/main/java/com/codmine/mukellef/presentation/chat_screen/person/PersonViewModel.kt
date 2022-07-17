@@ -1,7 +1,8 @@
 package com.codmine.mukellef.presentation.chat_screen.person
 
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codmine.mukellef.R
@@ -24,8 +25,8 @@ class PersonViewModel @Inject constructor(
     private val getUserLoginData: GetUserLoginData
 ): ViewModel() {
 
-    private val _dataState = mutableStateOf(PersonScreenDataState())
-    val dataState: MutableState<PersonScreenDataState> = _dataState
+    var uiState by mutableStateOf(PersonScreenDataState())
+        private set
 
     private val _appSettings = mutableStateOf(AppSettings())
 
@@ -43,7 +44,6 @@ class PersonViewModel @Inject constructor(
 
     private fun getChatPersons() {
         viewModelScope.launch {
-            _dataState.value = PersonScreenDataState(isLoading = true)
             val unRead = getUnreadMessagesCount(
                 _appSettings.value.gib, _appSettings.value.vk, _appSettings.value.password, _appSettings.value.user
             )
@@ -53,27 +53,38 @@ class PersonViewModel @Inject constructor(
                         _appSettings.value.gib, _appSettings.value.vk, _appSettings.value.password, unRead.data ?: emptyList()
                     )) {
                         is Resource.Success -> {
-                            _dataState.value = PersonScreenDataState(
+                            uiState = uiState.copy(
                                 isLoading = false,
+                                errorStatus = false,
                                 relatedUsers = persons.data ?: emptyList(),
                             )
                         }
                         is Resource.Error -> {
-                            _dataState.value = PersonScreenDataState(
+                            uiState = uiState.copy(
+                                isLoading = false,
                                 errorStatus = true,
-                                errorText = ((persons.message ?: UiText.StringResources(R.string.unexpected_error)))
+                                errorText = ((persons.message ?: UiText.StringResources(R.string.unexpected_error))),
+                                relatedUsers = emptyList()
                             )
                         }
                         else -> Unit
                     }
                 }
                 is Resource.Error -> {
-                    _dataState.value = PersonScreenDataState(
+                    uiState = uiState.copy(
+                        isLoading = false,
                         errorStatus = true,
-                        errorText = ((unRead.message ?: UiText.StringResources(R.string.unexpected_error)))
+                        errorText = unRead.message ?: UiText.StringResources(R.string.unexpected_error),
+                        relatedUsers = emptyList()
                     )
                 }
-                else -> Unit
+                is Resource.Loading -> {
+                    uiState = uiState.copy(
+                        isLoading = true,
+                        errorStatus = false,
+                        relatedUsers = emptyList()
+                    )
+                }
             }
         }
     }

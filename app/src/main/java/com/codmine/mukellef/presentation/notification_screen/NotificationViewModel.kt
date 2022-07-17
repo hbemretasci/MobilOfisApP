@@ -1,8 +1,9 @@
 package com.codmine.mukellef.presentation.notification_screen
 
-import android.content.Context
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codmine.mukellef.R
@@ -25,10 +26,12 @@ class NotificationViewModel @Inject constructor(
     private val getUserLoginData: GetUserLoginData,
     private val showDocument: ShowDocument
 ): ViewModel() {
-    private val _dataState = mutableStateOf(NotificationScreenDataState())
-    val dataState: State<NotificationScreenDataState> = _dataState
+    var uiState by mutableStateOf(NotificationScreenDataState())
+        private set
 
-    private val _readingNotificationState = mutableStateOf(ReadingNotificationState())
+    var documentReadingState by mutableStateOf(ReadingNotificationState())
+        private set
+
     private val _appSettings = mutableStateOf(AppSettings())
 
     fun onEvent(event: NotificationEvent) {
@@ -63,16 +66,26 @@ class NotificationViewModel @Inject constructor(
         ).onEach { result ->
             when(result) {
                 is Resource.Success -> {
-                    _dataState.value = NotificationScreenDataState(notifications = result.data ?: emptyList() )
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        errorStatus = false,
+                        notifications = result.data ?: emptyList()
+                    )
                 }
                 is Resource.Error -> {
-                    _dataState.value = NotificationScreenDataState(
+                    uiState = uiState.copy(
+                        isLoading = false,
                         errorStatus = true,
-                        errorText = result.message ?: UiText.StringResources(R.string.unexpected_error)
+                        errorText = result.message ?: UiText.StringResources(R.string.unexpected_error),
+                        notifications = emptyList()
                     )
                 }
                 is Resource.Loading -> {
-                    _dataState.value = NotificationScreenDataState(isLoading = true)
+                    uiState = uiState.copy(
+                        isLoading = true,
+                        errorStatus = false,
+                        notifications = emptyList()
+                    )
                 }
             }
         }.launchIn(viewModelScope)
@@ -84,16 +97,26 @@ class NotificationViewModel @Inject constructor(
         ).onEach { result ->
             when(result) {
                 is Resource.Success -> {
-                    _readingNotificationState.value = ReadingNotificationState(readingNotification = result.data)
+                    documentReadingState = documentReadingState.copy(
+                        isLoading = false,
+                        errorStatus = false,
+                        readingNotification = result.data
+                    )
                 }
                 is Resource.Error -> {
-                    _readingNotificationState.value = ReadingNotificationState(
+                    documentReadingState = documentReadingState.copy(
+                        isLoading = false,
                         errorStatus = true,
-                        errorText = result.message ?: UiText.StringResources(R.string.unexpected_error)
+                        errorText = result.message ?: UiText.StringResources(R.string.unexpected_error),
+                        readingNotification = null
                     )
                 }
                 is Resource.Loading -> {
-                    _readingNotificationState.value = ReadingNotificationState(isLoading = true)
+                    documentReadingState = documentReadingState.copy(
+                        isLoading = true,
+                        errorStatus = false,
+                        readingNotification = null
+                    )
                 }
             }
         }.launchIn(viewModelScope)

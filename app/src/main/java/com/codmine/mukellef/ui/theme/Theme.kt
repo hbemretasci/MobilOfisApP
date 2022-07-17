@@ -95,7 +95,8 @@ fun MobilOfisTheme(
     val systemUiColor = rememberSystemUiController()
     SideEffect {
         systemUiColor.setSystemBarsColor(
-            color = DarkBlue90
+            color = DarkBlue90,
+            darkIcons = true
         )
     }
 

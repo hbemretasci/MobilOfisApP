@@ -34,9 +34,9 @@ fun DocumentScreen(
     paddingValues: PaddingValues,
     viewModel: DocumentViewModel = hiltViewModel()
 ) {
-    val state = viewModel.dataState.value
+    val uiState = viewModel.uiState
     val swipeRefreshState = rememberSwipeRefreshState(
-        isRefreshing = state.isRefreshing
+        isRefreshing = uiState.isRefreshing
     )
 
     LaunchedEffect(key1 = true) {
@@ -61,7 +61,7 @@ fun DocumentScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
-                items(state.documents) { document ->
+                items(uiState.documents) { document ->
                     DocumentItem(
                         document = document,
                         readingStatus = document.readingTime.isNotEmpty(),
@@ -72,17 +72,17 @@ fun DocumentScreen(
                 }
             }
         }
-        if(state.isLoading) {
+        if(uiState.isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
-        if(state.errorStatus) {
+        if(uiState.errorStatus) {
             ReLoadData(
                 modifier = Modifier.fillMaxSize(),
-                errorMsg = state.errorText ?: UiText.StringResources(R.string.unexpected_error),
+                errorMsg = uiState.errorText ?: UiText.StringResources(R.string.unexpected_error),
                 onRetry = { viewModel.onEvent(DocumentEvent.Refresh) }
             )
         }
-        if((!state.isLoading) && (!state.errorStatus) && (state.documents.isEmpty())) {
+        if((!uiState.isLoading) && (!uiState.errorStatus) && (uiState.documents.isEmpty())) {
             DataNotFound(message = UiText.StringResources(R.string.document_not_found))
         }
     }

@@ -1,7 +1,8 @@
 package com.codmine.mukellef.presentation.document_screen
 
-import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codmine.mukellef.R
@@ -24,10 +25,12 @@ class DocumentViewModel @Inject constructor(
     private val getUserLoginData: GetUserLoginData,
     private val showDocument: ShowDocument
 ): ViewModel() {
-    private val _dataState = mutableStateOf(DocumentScreenDataState())
-    val dataState: State<DocumentScreenDataState> = _dataState
+    var uiState by mutableStateOf(DocumentScreenDataState())
+        private set
 
-    private val _readingDocumentState = mutableStateOf(ReadingDocumentState())
+    var documentReadingState by mutableStateOf(ReadingDocumentState())
+        private set
+
     private val _appSettings = mutableStateOf(AppSettings())
 
     fun onEvent(event: DocumentEvent) {
@@ -60,18 +63,26 @@ class DocumentViewModel @Inject constructor(
         ).onEach { result ->
             when(result) {
                 is Resource.Success -> {
-                    _dataState.value = DocumentScreenDataState(
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        errorStatus = false,
                         documents = result.data ?: emptyList()
                     )
                 }
                 is Resource.Error -> {
-                    _dataState.value = DocumentScreenDataState(
+                    uiState = uiState.copy(
+                        isLoading = false,
                         errorStatus = true,
-                        errorText = result.message ?: UiText.StringResources(R.string.unexpected_error)
+                        errorText = result.message ?: UiText.StringResources(R.string.unexpected_error),
+                        documents = emptyList()
                     )
                 }
                 is Resource.Loading -> {
-                    _dataState.value = DocumentScreenDataState(isLoading = true)
+                    uiState = uiState.copy(
+                        isLoading = true,
+                        errorStatus = false,
+                        documents = emptyList()
+                    )
                 }
             }
         }.launchIn(viewModelScope)
@@ -83,16 +94,26 @@ class DocumentViewModel @Inject constructor(
         ).onEach { result ->
             when(result) {
                 is Resource.Success -> {
-                    _readingDocumentState.value = ReadingDocumentState(readingDocument = result.data)
+                    documentReadingState = documentReadingState.copy(
+                        isLoading = false,
+                        errorStatus = false,
+                        readingDocument = result.data
+                    )
                 }
                 is Resource.Error -> {
-                    _readingDocumentState.value = ReadingDocumentState(
+                    documentReadingState = documentReadingState.copy(
+                        isLoading = false,
                         errorStatus = true,
-                        errorText = result.message ?: UiText.StringResources(R.string.unexpected_error)
+                        errorText = result.message ?: UiText.StringResources(R.string.unexpected_error),
+                        readingDocument = null
                     )
                 }
                 is Resource.Loading -> {
-                    _readingDocumentState.value = ReadingDocumentState(isLoading = true)
+                    documentReadingState = documentReadingState.copy(
+                        isLoading = true,
+                        errorStatus = false,
+                        readingDocument = null
+                    )
                 }
             }
         }.launchIn(viewModelScope)

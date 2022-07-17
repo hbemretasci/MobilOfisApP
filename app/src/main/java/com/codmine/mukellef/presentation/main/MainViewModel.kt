@@ -1,7 +1,8 @@
 package com.codmine.mukellef.presentation.main
 
-import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codmine.mukellef.domain.use_case.login_screen.SetUserLoginData
@@ -14,17 +15,16 @@ import kotlin.system.exitProcess
 class MainViewModel @Inject constructor(
     private val setUserLoginData: SetUserLoginData
 ): ViewModel() {
-
-    private val _exitDialogState = mutableStateOf(false)
-    val exitDialogState: State<Boolean> = _exitDialogState
+    var exitDialogState by mutableStateOf(false)
+    private set
 
     fun onEvent(event: MainEvent) {
         when(event) {
             is MainEvent.ExitDialog -> {
-                _exitDialogState.value = true
+                exitDialogState = true
             }
             is MainEvent.ExitCancel -> {
-                _exitDialogState.value = false
+                exitDialogState = false
             }
             is MainEvent.ExitConfirm -> {
                 viewModelScope.launch {
@@ -35,8 +35,8 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private suspend fun setAppSettings(loginStatus: Boolean, gib: String, vk: String, password: String,
-                                       user: String, accountant: String
+    private suspend fun setAppSettings(
+        loginStatus: Boolean, gib: String, vk: String, password: String, user: String, accountant: String
     ) {
         setUserLoginData(loginStatus, gib, vk, password, user, accountant)
     }

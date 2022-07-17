@@ -30,6 +30,8 @@
 -keep class com.codmine.mukellef.data.remote.dto.unread.* { *; }
 -keep class com.codmine.mukellef.domain.model.balance.* { *; }
 -keep class com.codmine.mukellef.domain.model.chat.* { *; }
+-keep class com.codmine.mukellef.domain.model.datastore.* { *; }
 -keep class com.codmine.mukellef.domain.model.documents.* { *; }
 -keep class com.codmine.mukellef.domain.model.notifications.* { *; }
 -keep class com.codmine.mukellef.domain.model.tax_payer.* { *; }
+-keep class com.codmine.mukellef.domain.model.validation.* { *; }

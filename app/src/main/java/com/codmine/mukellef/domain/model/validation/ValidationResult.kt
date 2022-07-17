@@ -1,4 +1,4 @@
-package com.codmine.mukellef.domain.use_case
+package com.codmine.mukellef.domain.model.validation
 
 import com.codmine.mukellef.domain.util.UiText
 

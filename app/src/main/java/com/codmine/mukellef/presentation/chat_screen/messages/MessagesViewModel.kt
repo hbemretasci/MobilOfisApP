@@ -1,7 +1,8 @@
 package com.codmine.mukellef.presentation.chat_screen.messages
 
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,9 +30,8 @@ class MessagesViewModel @Inject constructor(
     private val postMessageReadingInfo: PostMessageReadingInfo,
     private val postMessage: PostMessage
 ):ViewModel() {
-
-    private val _dataState = mutableStateOf(MessagesScreenDataState())
-    val dataState: MutableState<MessagesScreenDataState> = _dataState
+    var uiState by mutableStateOf(MessagesScreenDataState())
+        private set
 
     private val _appSettings = mutableStateOf(AppSettings())
 
@@ -54,7 +54,7 @@ class MessagesViewModel @Inject constructor(
                 readMessage(event.messageId)
             }
             is MessagesEvent.MessageChanged -> {
-                _dataState.value = _dataState.value.copy(message = event.messageValue)
+                uiState = uiState.copy(message = event.messageValue)
             }
             is MessagesEvent.PostMessage -> {
                 postMessage(event.message)
@@ -74,24 +74,30 @@ class MessagesViewModel @Inject constructor(
             )
             when(result) {
                 is Resource.Success -> {
-                    _dataState.value = _dataState.value.copy(
+                    uiState = uiState.copy(
                         isLoading = false,
+                        errorStatus = false,
                         messages = result.data ?: emptyList()
                     )
                 }
                 is Resource.Error -> {
-                    _dataState.value = _dataState.value.copy(
+                    uiState = uiState.copy(
                         isLoading = false,
                         errorStatus = true,
-                        errorText = ((result.message ?: UiText.StringResources(R.string.unexpected_error)))
+                        errorText = ((result.message ?: UiText.StringResources(R.string.unexpected_error))),
+                        messages = emptyList()
                     )
                 }
                 is Resource.Loading -> {
-                    _dataState.value = _dataState.value.copy(isLoading = true)
+                    uiState = uiState.copy(
+                        isLoading = true,
+                        errorStatus = false,
+                        messages = emptyList()
+                    )
                 }
             }
         }
-        _dataState.value = _dataState.value.copy(message = "")
+        uiState = uiState.copy(message = "")
     }
 
     private fun readMessage(messageId: String) {
@@ -108,27 +114,33 @@ class MessagesViewModel @Inject constructor(
         ).onEach { result ->
             when(result) {
                 is Resource.Success -> {
-                    _dataState.value = _dataState.value.copy(
+                    uiState = uiState.copy(
                         isLoading = false,
+                        errorStatus = false,
                         messages = result.data ?: emptyList()
                     )
                 }
                 is Resource.Error -> {
-                    _dataState.value = _dataState.value.copy(
+                    uiState = uiState.copy(
                         isLoading = false,
                         errorStatus = true,
-                        errorText = ((result.message ?: UiText.StringResources(R.string.unexpected_error)))
+                        errorText = result.message ?: UiText.StringResources(R.string.unexpected_error),
+                        messages = emptyList()
                     )
                 }
                 is Resource.Loading -> {
-                    _dataState.value = _dataState.value.copy(isLoading = true)
+                    uiState = uiState.copy(
+                        isLoading = true,
+                        errorStatus = false,
+                        messages = emptyList()
+                    )
                 }
             }
         }.launchIn(viewModelScope)
     }
 
     private fun initializeDataState() {
-        _dataState.value = MessagesScreenDataState(
+        uiState = MessagesScreenDataState(
             userId = _appSettings.value.user,
             receiverId = _receiverId,
             receiverName = _receiverName

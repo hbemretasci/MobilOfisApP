@@ -1,13 +1,12 @@
 package com.codmine.mukellef.domain.use_case.login_screen
 
 import com.codmine.mukellef.R
-import com.codmine.mukellef.domain.use_case.ValidationResult
+import com.codmine.mukellef.domain.model.validation.ValidationResult
 import com.codmine.mukellef.domain.util.Constants.MAX_VK_LENGTH
 import com.codmine.mukellef.domain.util.UiText
 import javax.inject.Inject
 
 class ValidateVk @Inject constructor() {
-
     fun execute(vk: String): ValidationResult {
         if (vk.isBlank()) {
             return ValidationResult(
@@ -25,7 +24,8 @@ class ValidateVk @Inject constructor() {
             )
         }
         return ValidationResult(
-            successful = true
+            successful = true,
+            errorMessage = null
         )
     }
 }

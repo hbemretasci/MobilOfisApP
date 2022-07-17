@@ -34,9 +34,9 @@ fun NotificationScreen(
     paddingValues: PaddingValues,
     viewModel: NotificationViewModel = hiltViewModel()
 ) {
-    val state = viewModel.dataState.value
+    val uiState = viewModel.uiState
     val swipeRefreshState = rememberSwipeRefreshState(
-        isRefreshing = state.isRefreshing
+        isRefreshing = uiState.isRefreshing
     )
 
     var expandedNotification by remember { mutableStateOf<String?>(null) }
@@ -63,7 +63,7 @@ fun NotificationScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
-                items(state.notifications) { notification ->
+                items(uiState.notifications) { notification ->
                     NotificationItem(
                         notification = notification,
                         expanded = expandedNotification == notification.id,
@@ -81,17 +81,17 @@ fun NotificationScreen(
                 item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
             }
         }
-        if(state.isLoading) {
+        if(uiState.isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
-        if(state.errorStatus) {
+        if(uiState.errorStatus) {
             ReLoadData(
                 modifier = Modifier.fillMaxSize(),
-                errorMsg = state.errorText ?: UiText.StringResources(R.string.unexpected_error),
+                errorMsg = uiState.errorText ?: UiText.StringResources(R.string.unexpected_error),
                 onRetry = { viewModel.onEvent(NotificationEvent.Refresh) }
             )
         }
-        if((!state.isLoading) && (!state.errorStatus) && (state.notifications.isEmpty())) {
+        if((!uiState.isLoading) && (!uiState.errorStatus) && (uiState.notifications.isEmpty())) {
             DataNotFound(message = UiText.StringResources(R.string.notification_not_found))
         }
     }
@@ -153,12 +153,10 @@ fun NotificationItem(
                         onClick = { onDocumentClick(notification) }
                     ) {
                         NotificationDocumentIcon(
-                            modifier = Modifier
-                                .padding(
-                                    bottom = MaterialTheme.spacing.medium,
-                                    end = MaterialTheme.spacing.medium
-                                )
-                                .scale(1.5f, 1.5f)
+                            modifier = Modifier.padding(
+                                bottom = MaterialTheme.spacing.medium,
+                                end = MaterialTheme.spacing.medium
+                            ).scale(1.5f, 1.5f)
                         )
                     }
                 }

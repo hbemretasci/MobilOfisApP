@@ -25,20 +25,19 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
             val viewModel: MainViewModel = hiltViewModel()
-
             MobilOfisTheme {
                 ProvideWindowInsets(
                     windowInsetsAnimationsEnabled = true,
-                    consumeWindowInsets = false) {
+                    consumeWindowInsets = false
+                ) {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background,
                     ) {
                         val navController = rememberNavController()
                         val navBackStackEntry by navController.currentBackStackEntryAsState()
-                        val openExitAppDialog = viewModel.exitDialogState.value
+                        val openExitAppDialog = viewModel.exitDialogState
 
                         OfisScaffold(
                             navController = navController,

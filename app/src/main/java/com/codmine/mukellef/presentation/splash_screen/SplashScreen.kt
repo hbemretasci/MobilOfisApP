@@ -26,7 +26,7 @@ fun SplashScreen(
     navController: NavController,
     viewModel: SplashViewModel = hiltViewModel()
 ) {
-    val logoState = viewModel.logoState.value
+    val logoState = viewModel.logoState
     val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {

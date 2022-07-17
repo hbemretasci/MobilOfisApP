@@ -1,7 +1,8 @@
 package com.codmine.mukellef.presentation.login_screen
 
-import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codmine.mukellef.R
@@ -26,11 +27,8 @@ class LoginViewModel @Inject constructor(
     private val setUserLoginData: SetUserLoginData
 ): ViewModel() {
     
-    private val _dataState = mutableStateOf(LoginScreenDataState())
-    val dataState: State<LoginScreenDataState> = _dataState
-
-    private val _viewState = mutableStateOf(LoginScreenViewState())
-    val viewState: State<LoginScreenViewState> = _viewState
+    var uiState by mutableStateOf(LoginScreenState())
+        private set
 
     private val _uiEventChannel = Channel<LoginUiEvent>()
     val uiEvents = _uiEventChannel.receiveAsFlow()
@@ -38,13 +36,13 @@ class LoginViewModel @Inject constructor(
     fun onEvent(event: LoginEvent) {
         when(event) {
             is LoginEvent.GibChanged -> {
-                _viewState.value = _viewState.value.copy(gib = event.gibValue)
+                uiState = uiState.copy(gib = event.gibValue)
             }
             is LoginEvent.VkChanged -> {
-                _viewState.value = _viewState.value.copy(vk = event.vkValue)
+                uiState = uiState.copy(vk = event.vkValue)
             }
             is LoginEvent.PasswordChanged -> {
-                _viewState.value = _viewState.value.copy(password = event.passwordValue)
+                uiState = uiState.copy(password = event.passwordValue)
             }
             is LoginEvent.Validate -> {
                 validationData()
@@ -56,9 +54,9 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun validationData() {
-        val gibResult = validateGib.execute(_viewState.value.gib)
-        val vkResult = validateVk.execute(_viewState.value.vk)
-        val passwordResult = validatePassword.execute(_viewState.value.password)
+        val gibResult = validateGib.execute(uiState.gib)
+        val vkResult = validateVk.execute(uiState.vk)
+        val passwordResult = validatePassword.execute(uiState.password)
 
         val hasError = listOf(
             gibResult,
@@ -66,11 +64,12 @@ class LoginViewModel @Inject constructor(
             passwordResult
         ).any { !it.successful }
 
-        _viewState.value = _viewState.value.copy(
+        uiState = uiState.copy(
             gibError = gibResult.errorMessage,
             vkError = vkResult.errorMessage,
             passwordError = passwordResult.errorMessage
         )
+
         if(hasError) return
         viewModelScope.launch {
             _uiEventChannel.send(LoginUiEvent.ValidationSuccess)
@@ -78,21 +77,23 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun checkLogin() {
-        getTaxPayer(
-            _viewState.value.gib, _viewState.value.vk, _viewState.value.password
-        ).onEach { result ->
+        getTaxPayer(uiState.gib, uiState.vk, uiState.password).onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    _dataState.value = LoginScreenDataState(taxPayer = result.data)
-                    _dataState.value.taxPayer?.let {
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        errorStatus = false,
+                        taxPayer = result.data
+                    )
+                    uiState.taxPayer?.let {
                         if(it.loginResult == RESULT_USER_LOGIN) {
                             setAppSettings(
-                                true,
-                                _viewState.value.gib,
-                                _viewState.value.vk,
-                                _viewState.value.password,
-                                it.userId?: "",
-                                it.accountantId?: ""
+                                loginStatus = true,
+                                gib = uiState.gib,
+                                vk = uiState.vk,
+                                password = uiState.password,
+                                user = it.userId ?: "",
+                                accountant = it.accountantId ?: ""
                             )
                             _uiEventChannel.send(LoginUiEvent.Login)
                         } else {
@@ -103,23 +104,31 @@ class LoginViewModel @Inject constructor(
                     }
                 }
                 is Resource.Error -> {
-                    _dataState.value = LoginScreenDataState(
+                    uiState = uiState.copy(
+                        isLoading = false,
                         errorStatus = true,
-                        errorText = result.message ?: UiText.StringResources(R.string.unexpected_error)
+                        errorText = result.message ?: UiText.StringResources(R.string.unexpected_error),
+                        taxPayer = null
                     )
                     _uiEventChannel.send(
-                        LoginUiEvent.ShowSnackbar(_dataState.value.errorText ?: UiText.StringResources(R.string.unexpected_error))
+                        LoginUiEvent.ShowSnackbar(
+                            uiState.errorText ?: UiText.StringResources(R.string.unexpected_error)
+                        )
                     )
                 }
                 is Resource.Loading -> {
-                    _dataState.value = LoginScreenDataState(isLoading = true)
+                    uiState = uiState.copy(
+                        isLoading = true,
+                        errorStatus = false,
+                        taxPayer = null
+                    )
                 }
             }
         }.launchIn(viewModelScope)
     }
 
-    private suspend fun setAppSettings(loginStatus: Boolean, gib: String, vk: String, password: String,
-        user: String, accountant: String
+    private suspend fun setAppSettings(
+        loginStatus: Boolean, gib: String, vk: String, password: String, user: String, accountant: String
     ) {
         setUserLoginData(loginStatus, gib, vk, password, user, accountant)
     }

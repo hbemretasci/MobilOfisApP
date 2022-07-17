@@ -18,8 +18,8 @@ class SplashViewModel @Inject constructor(
     private val getUserLoginData: GetUserLoginData
 ): ViewModel() {
 
-    private val _logoState = mutableStateOf(false)
-    val logoState: State<Boolean> = _logoState
+    var logoState by mutableStateOf(false)
+        private set
 
     private val _appSettings = mutableStateOf(AppSettings())
 
@@ -32,10 +32,10 @@ class SplashViewModel @Inject constructor(
                 getAppSettings()
             }
             is SplashEvent.ShowLogo -> {
-                _logoState.value = true
+                logoState = true
             }
             is SplashEvent.HideLogo -> {
-                _logoState.value = false
+                logoState = false
             }
             is SplashEvent.Navigate -> {
                 if(_appSettings.value.login) {
