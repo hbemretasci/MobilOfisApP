@@ -7,9 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codmine.mukellef.domain.use_case.login_screen.SetUserLoginData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.system.exitProcess
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -17,6 +18,9 @@ class MainViewModel @Inject constructor(
 ): ViewModel() {
     var exitDialogState by mutableStateOf(false)
     private set
+
+    private val _uiEventChannel = Channel<MainUiEvent>()
+    val uiEvents = _uiEventChannel.receiveAsFlow()
 
     fun onEvent(event: MainEvent) {
         when(event) {
@@ -27,9 +31,17 @@ class MainViewModel @Inject constructor(
                 exitDialogState = false
             }
             is MainEvent.ExitConfirm -> {
+                exitDialogState = false
                 viewModelScope.launch {
-                    setAppSettings(false, "", "", "", "", "")
-                    exitProcess(0)
+                    setAppSettings(
+                        loginStatus = false,
+                        gib = "",
+                        vk = "",
+                        password = "",
+                        user = "",
+                        accountant = ""
+                    )
+                    _uiEventChannel.send(MainUiEvent.Logout)
                 }
             }
         }

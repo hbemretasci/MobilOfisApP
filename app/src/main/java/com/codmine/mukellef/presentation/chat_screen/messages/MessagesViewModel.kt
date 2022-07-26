@@ -63,38 +63,38 @@ class MessagesViewModel @Inject constructor(
     }
 
     private fun postMessage(sentMessage: String) {
-        viewModelScope.launch {
-            val result = postMessage(
-                _appSettings.value.gib,
-                _appSettings.value.vk,
-                _appSettings.value.password,
-                _appSettings.value.user,
-                _receiverId,
-                sentMessage
-            )
-            when(result) {
-                is Resource.Success -> {
-                    uiState = uiState.copy(
-                        isLoading = false,
-                        errorStatus = false,
-                        messages = result.data ?: emptyList()
-                    )
-                }
-                is Resource.Error -> {
-                    uiState = uiState.copy(
-                        isLoading = false,
-                        errorStatus = true,
-                        errorText = ((result.message ?: UiText.StringResources(R.string.unexpected_error))),
-                        messages = emptyList()
-                    )
-                }
-                is Resource.Loading -> {
-                    uiState = uiState.copy(
-                        isLoading = true,
-                        errorStatus = false,
-                        messages = emptyList()
-                    )
-                }
+
+        println("mesaj at")
+
+        val result = postMessage(
+            _appSettings.value.gib,
+            _appSettings.value.user,
+            _receiverId,
+            sentMessage
+        )
+        println(result)
+        when(result) {
+            is Resource.Success -> {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    errorStatus = false,
+                    messages = emptyList()
+                )
+            }
+            is Resource.Error -> {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    errorStatus = true,
+                    errorText = ((result.message ?: UiText.StringResources(R.string.unexpected_error))),
+                    messages = emptyList()
+                )
+            }
+            is Resource.Loading -> {
+                uiState = uiState.copy(
+                    isLoading = true,
+                    errorStatus = false,
+                    messages = emptyList()
+                )
             }
         }
         uiState = uiState.copy(message = "")

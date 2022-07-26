@@ -65,19 +65,6 @@ interface MobileOfficeRepository {
         user: String
     ): BalanceDto
 
-    suspend fun postMessage(
-        queryType: String,
-        gib: String,
-        vk: String,
-        password: String,
-        sender: String,
-        receiver: String,
-        type: String,
-        documentId: String,
-        messageContent: String,
-        notificationType: String
-    ): PostMessageDto
-
     suspend fun postReadingInfo(
         queryType: String,
         gib: String,

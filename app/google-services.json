@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "609176316510",
+    "project_id": "mobilofis-2f309",
+    "storage_bucket": "mobilofis-2f309.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:609176316510:android:f6bd3d9473e9df0bbb62cf",
+        "android_client_info": {
+          "package_name": "com.codmine.mukellef"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "609176316510-ujqsifbjuqbssjvpmishgosq5jle94t3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuVDA8ySnlJRVPV8FuaInXqjLbYdiEx9s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "609176316510-ujqsifbjuqbssjvpmishgosq5jle94t3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

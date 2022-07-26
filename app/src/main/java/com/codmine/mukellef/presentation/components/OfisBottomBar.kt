@@ -12,7 +12,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -39,7 +38,7 @@ fun OfisBottomBar(
     navController: NavController,
     barState: Boolean
 ) {
-    AnimatedVisibility (
+    AnimatedVisibility(
         visible = barState,
         enter = slideInVertically(initialOffsetY = { it }),
         exit = slideOutVertically(targetOffsetY = { it }),
@@ -52,8 +51,8 @@ fun OfisBottomBar(
             bottomNavItems.forEach { screen ->
                 NavigationBarItem(
                     icon = { Icon(screen.icon, UiText.StringResources(screen.cont).asString()) },
-                    label = { Text(UiText.StringResources(screen.title).asString(), fontWeight = FontWeight.Bold) },
-                    selected = currentDestination?.hierarchy?.any { it.route == screen.route} == true,
+                    label = { Text(UiText.StringResources(screen.title).asString()) },
+                    selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                     onClick = {
                         navController.navigate(screen.route) {
                             popUpTo(navController.graph.findStartDestination().id) {
@@ -62,7 +61,11 @@ fun OfisBottomBar(
                             launchSingleTop = true
                             restoreState = true
                         }
-                    }
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                        selectedTextColor = MaterialTheme.colorScheme.primary
+                    )
                 )
             }
         }

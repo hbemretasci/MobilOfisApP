@@ -6,8 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -25,7 +27,27 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+
+            val context = LocalContext.current
             val viewModel: MainViewModel = hiltViewModel()
+            val navController = rememberNavController()
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val openExitAppDialog = viewModel.exitDialogState
+
+            LaunchedEffect(key1 = context) {
+                viewModel.uiEvents.collect { event ->
+                    when(event) {
+                        is MainUiEvent.Logout -> {
+                            navController.navigate(Screen.LoginScreen.route) {
+                                popUpTo(Screen.LoginScreen.route) {
+                                    inclusive = true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             MobilOfisTheme {
                 ProvideWindowInsets(
                     windowInsetsAnimationsEnabled = true,
@@ -35,27 +57,17 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background,
                     ) {
-                        val navController = rememberNavController()
-                        val navBackStackEntry by navController.currentBackStackEntryAsState()
-                        val openExitAppDialog = viewModel.exitDialogState
-
                         OfisScaffold(
                             navController = navController,
                             showNavigation = shouldShowNaviIcon(navBackStackEntry) ,
                             showBars = !shouldNotShowBars(navBackStackEntry),
                             modifier = Modifier.fillMaxSize(),
-                            onActIconPressed = {
-                                viewModel.onEvent(MainEvent.ExitDialog)
-                            }
+                            onActIconPressed = { viewModel.onEvent(MainEvent.ExitDialog) }
                         )
                         if (openExitAppDialog) {
                             ExitDialog(
-                                onConfirmClick = {
-                                    viewModel.onEvent(MainEvent.ExitConfirm)
-                                },
-                                onDismissClick = {
-                                    viewModel.onEvent(MainEvent.ExitCancel)
-                                }
+                                onConfirmClick = { viewModel.onEvent(MainEvent.ExitConfirm) },
+                                onDismissClick = {viewModel.onEvent(MainEvent.ExitCancel) }
                             )
                         }
                     }

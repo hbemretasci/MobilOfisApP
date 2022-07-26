@@ -5,7 +5,6 @@ import com.codmine.mukellef.data.remote.dto.balance.BalanceDto
 import com.codmine.mukellef.data.remote.dto.documents.DocumentsDto
 import com.codmine.mukellef.data.remote.dto.messages.MessagesDto
 import com.codmine.mukellef.data.remote.dto.notifications.NotificationsDto
-import com.codmine.mukellef.data.remote.dto.post_message.PostMessageDto
 import com.codmine.mukellef.data.remote.dto.post_reading.ReadingNotificationDto
 import com.codmine.mukellef.data.remote.dto.tax_payer.TaxPayerDto
 import com.codmine.mukellef.data.remote.dto.unread.UnreadNotificationsDto
@@ -91,24 +90,6 @@ class MobileOfficeRepositoryImpl @Inject constructor(
     ): BalanceDto {
         return api.getBalance(
             queryType, gib, vk, password, user
-        )
-    }
-
-    override suspend fun postMessage(
-        queryType: String,
-        gib: String,
-        vk: String,
-        password: String,
-        sender: String,
-        receiver: String,
-        type: String,
-        documentId: String,
-        messageContent: String,
-        notificationType: String
-    ): PostMessageDto {
-        return api.postMessage(
-            queryType, gib, vk, password, sender, receiver,
-            type, documentId, messageContent, notificationType
         )
     }
 

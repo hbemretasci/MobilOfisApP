@@ -25,9 +25,11 @@ class PostDocumentReadingInfo @Inject constructor(
             ).toReadingDocument()
             emit(Resource.Success(documentReadingInfo))
         } catch(e: HttpException) {
-            emit(Resource.Error((e.localizedMessage ?: UiText.StringResources(R.string.unexpected_error)) as UiText))
+            val errorMessage = (e.localizedMessage ?: UiText.StringResources(R.string.unexpected_error)) as String
+            emit(Resource.Error(message = UiText.DynamicString(errorMessage)))
         } catch(e: IOException) {
-            emit(Resource.Error(UiText.StringResources(R.string.internet_error)))
+            val errorMessage = (e.localizedMessage ?: UiText.StringResources(R.string.unexpected_error)) as String
+            emit(Resource.Error(message = UiText.DynamicString(errorMessage)))
         }
     }
 }

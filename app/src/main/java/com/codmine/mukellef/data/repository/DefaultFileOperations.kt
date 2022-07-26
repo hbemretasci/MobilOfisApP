@@ -33,9 +33,7 @@ class DefaultFileOperations @Inject constructor (
         val br = object: BroadcastReceiver() {
             override fun onReceive(p0: Context?, p1: Intent?) {
                 val id : Long? = p1?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID,-1)
-                if (id == downloadId) {
-                    showFile(fileName)
-                }
+                if (id == downloadId) showFile(fileName)
             }
         }
         application.registerReceiver(br, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))

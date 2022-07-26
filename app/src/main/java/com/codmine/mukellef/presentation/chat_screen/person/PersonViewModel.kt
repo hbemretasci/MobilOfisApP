@@ -24,7 +24,6 @@ class PersonViewModel @Inject constructor(
     private val getUnreadMessagesCount: GetUnreadMessagesCount,
     private val getUserLoginData: GetUserLoginData
 ): ViewModel() {
-
     var uiState by mutableStateOf(PersonScreenDataState())
         private set
 

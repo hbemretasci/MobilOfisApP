@@ -23,9 +23,11 @@ class GetUnreadMessagesCount @Inject constructor(
             ).unreadNotifications.map { it.toUnreadNotification() }
             Resource.Success(unreadData)
         } catch(e: HttpException) {
-            Resource.Error((e.localizedMessage ?: UiText.StringResources(R.string.unexpected_error)) as UiText)
+            val errorMessage = (e.localizedMessage ?: UiText.StringResources(R.string.unexpected_error)) as String
+            Resource.Error(message = UiText.DynamicString(errorMessage))
         } catch(e: IOException) {
-            Resource.Error(UiText.StringResources(R.string.internet_error))
+            val errorMessage = (e.localizedMessage ?: UiText.StringResources(R.string.unexpected_error)) as String
+            Resource.Error(message = UiText.DynamicString(errorMessage))
         }
     }
 }

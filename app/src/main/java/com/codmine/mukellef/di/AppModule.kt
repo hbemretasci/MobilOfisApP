@@ -8,11 +8,13 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import com.codmine.mukellef.data.remote.MobileOfficeApi
 import com.codmine.mukellef.data.repository.DatastorePreferences
 import com.codmine.mukellef.data.repository.DefaultFileOperations
+import com.codmine.mukellef.data.repository.FirebaseRepositoryImpl
 import com.codmine.mukellef.data.repository.MobileOfficeRepositoryImpl
 import com.codmine.mukellef.domain.repository.MobileOfficeRepository
 import com.codmine.mukellef.domain.repository.CustomPreferences
 import com.codmine.mukellef.domain.repository.CustomPreferences.Companion.DATA_FILE_KEY
 import com.codmine.mukellef.domain.repository.FileOperations
+import com.codmine.mukellef.domain.repository.FirebaseRepository
 import com.codmine.mukellef.domain.util.Constants.BASE_URL
 import dagger.Module
 import dagger.Provides
@@ -62,6 +64,12 @@ object AppModule {
     @Singleton
     fun provideMobileOfficeRepository(api: MobileOfficeApi): MobileOfficeRepository {
         return MobileOfficeRepositoryImpl(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseRepository(): FirebaseRepository {
+        return FirebaseRepositoryImpl()
     }
 
 }
