@@ -54,6 +54,7 @@ fun BalanceScreen(
                 items(uiState.transactions) { transaction ->
                     TransactionItem(transaction = transaction)
                 }
+                item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
             }
         }
         if(uiState.isLoading) {

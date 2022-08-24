@@ -70,6 +70,7 @@ fun DocumentScreen(
                         }
                     )
                 }
+                item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
             }
         }
         if(uiState.isLoading) {

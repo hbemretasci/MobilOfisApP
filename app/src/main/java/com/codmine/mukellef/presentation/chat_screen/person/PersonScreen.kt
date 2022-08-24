@@ -16,7 +16,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.codmine.mukellef.R
 import com.codmine.mukellef.domain.model.tax_payer.RelatedUser
 import com.codmine.mukellef.domain.util.Constants.ROUNDED_VALUE
@@ -26,13 +25,14 @@ import com.codmine.mukellef.presentation.components.GlowIndicator
 import com.codmine.mukellef.presentation.components.ReLoadData
 import com.codmine.mukellef.presentation.components.Screen
 import com.codmine.mukellef.domain.util.UiText
+import com.codmine.mukellef.presentation.components.DataNotFound
 import com.codmine.mukellef.ui.theme.spacing
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
 fun PersonScreen(
-    navController: NavController,
+    open: (String) -> Unit,
     paddingValues: PaddingValues,
     viewModel: PersonViewModel = hiltViewModel()
 ) {
@@ -70,7 +70,7 @@ fun PersonScreen(
                         onItemClick = { clickedUser ->
                             val opponentId = clickedUser.id
                             val opponentName = clickedUser.name
-                            navController.navigate(Screen.ChatMessageScreen.route + "/${opponentId}/${opponentName}")
+                            open(Screen.ChatMessageScreen.route + "/${opponentId}/${opponentName}")
                         }
                     )
                 }
@@ -86,6 +86,9 @@ fun PersonScreen(
                 errorMsg = uiState.errorText ?: UiText.StringResources(R.string.unexpected_error),
                 onRetry = { viewModel.onEvent(PersonEvent.Refresh) }
             )
+        }
+        if((!uiState.isLoading) && (!uiState.errorStatus) && (uiState.relatedUsers.isEmpty())) {
+            DataNotFound(message = UiText.StringResources(R.string.person_not_found))
         }
     }
 }

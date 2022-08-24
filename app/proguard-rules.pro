@@ -22,7 +22,7 @@
 
 -keep class com.codmine.mukellef.data.remote.dto.balance.* { *; }
 -keep class com.codmine.mukellef.data.remote.dto.documents.* { *; }
--keep class com.codmine.mukellef.data.remote.dto.messages.* { *; }
+-keep class com.codmine.mukellef.data.remote.dto.chat.* { *; }
 -keep class com.codmine.mukellef.data.remote.dto.notifications.* { *; }
 -keep class com.codmine.mukellef.data.remote.dto.post_message.* { *; }
 -keep class com.codmine.mukellef.data.remote.dto.post_reading.* { *; }

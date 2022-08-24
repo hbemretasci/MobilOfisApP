@@ -1,6 +1,5 @@
 package com.codmine.mukellef.data.remote.dto.notifications
 
-import com.codmine.mukellef.domain.model.chat.Message
 import com.codmine.mukellef.domain.model.notifications.Notification
 import com.google.gson.annotations.SerializedName
 
@@ -33,17 +32,5 @@ fun NotificationDto.toNotification(): Notification {
         senderUser = senderUser,
         message = message,
         readingTime = readingTime
-    )
-}
-
-fun NotificationDto.toMessage(): Message {
-    return Message(
-        receivedUserId = receivedUserId,
-        postTime = postTime,
-        senderUser = senderUser,
-        senderUserId = senderUserId,
-        message = message,
-        readingTime = readingTime,
-        id = id
     )
 }

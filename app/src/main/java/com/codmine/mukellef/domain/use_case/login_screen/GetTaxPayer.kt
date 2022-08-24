@@ -23,11 +23,9 @@ class GetTaxPayer @Inject constructor(
             val taxPayer = repository.getTaxPayer(QUERY_MUKELLEF, gib, vk, password).toTaxPayer()
             emit(Resource.Success(taxPayer))
         } catch(e: HttpException) {
-            val errorMessage = (e.localizedMessage ?: UiText.StringResources(R.string.unexpected_error)) as String
-            emit(Resource.Error(message = UiText.DynamicString(errorMessage)))
+            emit(Resource.Error(message = UiText.StringResources(R.string.server_connection_error)))
         } catch(e: IOException) {
-            val errorMessage = (e.localizedMessage ?: UiText.StringResources(R.string.unexpected_error)) as String
-            emit(Resource.Error(message = UiText.DynamicString(errorMessage)))
+            emit(Resource.Error(message = UiText.StringResources(R.string.server_connection_error)))
         }
     }
 }

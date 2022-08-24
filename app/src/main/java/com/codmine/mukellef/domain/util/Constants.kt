@@ -16,11 +16,8 @@ object Constants {
     const val QUERY_MUKELLEF = "1"
     const val QUERY_NOTIFICATION = "5"
     const val QUERY_BALANCE = "9"
-    const val QUERY_READING = "3"
-    const val QUERY_UNREAD = "4"
 
     const val NOTIFICATION_TYPE_NOTIFICATION = "1"
-    const val NOTIFICATION_TYPE_MESSAGE = "2"
     const val NOTIFICATION_TYPE_DOCUMENT = "3"
 
     const val NAV_CHAT_MESSAGES_USER_ID ="opponentUserId"

@@ -1,11 +1,11 @@
 package com.codmine.mukellef.domain.model.chat
 
 data class Message(
-    val receivedUserId: String,
-    val postTime: String,
-    val senderUser: String,
-    val senderUserId: String,
-    val readingTime: String,
-    val message: String,
-    val id: String
+    val id: String,
+    val content: String,
+    val receiver: String,
+    val sender: String,
+    val status: Boolean,
+    val postDate: String,
+    val postTime: String
 )

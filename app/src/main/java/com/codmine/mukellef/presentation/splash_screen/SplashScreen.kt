@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -23,11 +22,10 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(
-    navController: NavController,
+    openAndPopUp: (Screen, Screen) -> Unit,
     viewModel: SplashViewModel = hiltViewModel()
 ) {
     val logoState = viewModel.logoState
-    val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
         viewModel.onEvent(SplashEvent.LoadData)
@@ -37,23 +35,11 @@ fun SplashScreen(
         viewModel.onEvent(SplashEvent.Navigate)
     }
 
-    LaunchedEffect(key1 = context) {
+    LaunchedEffect(key1 = true) {
         viewModel.uiEvents.collect { event ->
             when(event) {
-                is SplashUiEvent.NavigateLogin -> {
-                    navController.navigate(Screen.LoginScreen.route) {
-                        popUpTo(Screen.SplashScreen.route) {
-                            inclusive = true
-                        }
-                    }
-                }
-                is SplashUiEvent.NavigateNotification -> {
-                    navController.navigate(Screen.NotificationScreen.route) {
-                        popUpTo(Screen.SplashScreen.route) {
-                            inclusive = true
-                        }
-                    }
-                }
+                is SplashUiEvent.NavigateLogin -> { openAndPopUp(Screen.LoginScreen, Screen.SplashScreen) }
+                is SplashUiEvent.NavigateNotification -> { openAndPopUp(Screen.NotificationScreen, Screen.SplashScreen) }
             }
         }
     }

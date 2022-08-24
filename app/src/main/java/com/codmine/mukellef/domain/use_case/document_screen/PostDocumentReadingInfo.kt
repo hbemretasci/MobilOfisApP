@@ -18,6 +18,7 @@ class PostDocumentReadingInfo @Inject constructor(
 ) {
     operator fun invoke(
         gib: String, vk: String, password: String, documentId: String): Flow<Resource<ReadingDocument>> = flow {
+        /*
         try {
             emit(Resource.Loading())
             val documentReadingInfo = repository.postReadingInfo(
@@ -25,11 +26,11 @@ class PostDocumentReadingInfo @Inject constructor(
             ).toReadingDocument()
             emit(Resource.Success(documentReadingInfo))
         } catch(e: HttpException) {
-            val errorMessage = (e.localizedMessage ?: UiText.StringResources(R.string.unexpected_error)) as String
-            emit(Resource.Error(message = UiText.DynamicString(errorMessage)))
+            emit(Resource.Error(message = UiText.StringResources(R.string.server_connection_error)))
         } catch(e: IOException) {
-            val errorMessage = (e.localizedMessage ?: UiText.StringResources(R.string.unexpected_error)) as String
-            emit(Resource.Error(message = UiText.DynamicString(errorMessage)))
+            emit(Resource.Error(message = UiText.StringResources(R.string.server_connection_error)))
         }
+
+         */
     }
 }

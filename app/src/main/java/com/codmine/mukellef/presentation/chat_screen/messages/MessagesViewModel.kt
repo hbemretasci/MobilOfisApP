@@ -6,32 +6,35 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.codmine.mukellef.R
+import com.codmine.mukellef.domain.model.chat.Message
 import com.codmine.mukellef.domain.model.datastore.AppSettings
-import com.codmine.mukellef.domain.use_case.chat_screen.GetMessagesById
-import com.codmine.mukellef.domain.use_case.chat_screen.PostMessage
-import com.codmine.mukellef.domain.use_case.chat_screen.PostMessageReadingInfo
+import com.codmine.mukellef.domain.use_case.chat_screen.*
 import com.codmine.mukellef.domain.use_case.splash_screen.GetUserLoginData
 import com.codmine.mukellef.domain.util.Constants.NAV_CHAT_MESSAGES_USER_ID
 import com.codmine.mukellef.domain.util.Constants.NAV_CHAT_MESSAGES_USER_NAME
-import com.codmine.mukellef.domain.util.Resource
 import com.codmine.mukellef.domain.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MessagesViewModel @Inject constructor(
-    private val getMessagesById: GetMessagesById,
+    private val addListener: AddListener,
+    private val removeListener: RemoveListener,
     private val savedStateHandle: SavedStateHandle,
     private val getUserLoginData: GetUserLoginData,
-    private val postMessageReadingInfo: PostMessageReadingInfo,
+    //private val postMessageReadingInfo: PostMessageReadingInfo,
     private val postMessage: PostMessage
 ):ViewModel() {
     var uiState by mutableStateOf(MessagesScreenDataState())
         private set
+
+    private val _uiEventChannel = Channel<MessagesUiEvent>()
+    val uiEvents = _uiEventChannel.receiveAsFlow()
 
     private val _appSettings = mutableStateOf(AppSettings())
 
@@ -40,66 +43,86 @@ class MessagesViewModel @Inject constructor(
 
     fun onEvent(event: MessagesEvent) {
         when(event) {
-            is MessagesEvent.LoadData -> {
+            is MessagesEvent.AddMessagesListener -> {
                 _receiverId = savedStateHandle.get<String>(NAV_CHAT_MESSAGES_USER_ID) ?: ""
                 _receiverName = savedStateHandle.get<String>(NAV_CHAT_MESSAGES_USER_NAME) ?: ""
                 getAppSettings()
                 initializeDataState()
-                getMessageList()
-            }
-            is MessagesEvent.Refresh -> {
-                getMessageList()
+                addChatListener()
             }
             is MessagesEvent.PostReadingMessage -> {
-                readMessage(event.messageId)
+                //readMessage(event.messageId)
             }
             is MessagesEvent.MessageChanged -> {
                 uiState = uiState.copy(message = event.messageValue)
             }
-            is MessagesEvent.PostMessage -> {
-                postMessage(event.message)
-            }
+            is MessagesEvent.PostMessage -> { sendMessage(event.message) }
+            is MessagesEvent.RemoveMessagesListener -> { removeChatListener() }
         }
     }
 
-    private fun postMessage(sentMessage: String) {
+    private fun getAppSettings() {
+        getUserLoginData().onEach { result ->
+            _appSettings.value = result
+        }.launchIn(viewModelScope)
+    }
 
-        println("mesaj at")
-
-        val result = postMessage(
-            _appSettings.value.gib,
-            _appSettings.value.user,
-            _receiverId,
-            sentMessage
+    private fun initializeDataState() {
+        uiState = MessagesScreenDataState(
+            userId = _appSettings.value.user,
+            receiverId = _receiverId,
+            receiverName = _receiverName
         )
-        println(result)
-        when(result) {
-            is Resource.Success -> {
-                uiState = uiState.copy(
-                    isLoading = false,
-                    errorStatus = false,
-                    messages = emptyList()
-                )
-            }
-            is Resource.Error -> {
-                uiState = uiState.copy(
-                    isLoading = false,
-                    errorStatus = true,
-                    errorText = ((result.message ?: UiText.StringResources(R.string.unexpected_error))),
-                    messages = emptyList()
-                )
-            }
-            is Resource.Loading -> {
-                uiState = uiState.copy(
-                    isLoading = true,
-                    errorStatus = false,
-                    messages = emptyList()
-                )
-            }
-        }
-        uiState = uiState.copy(message = "")
     }
 
+    private fun addChatListener() {
+        viewModelScope.launch {
+            addListener(_appSettings.value.gib, _appSettings.value.user, _receiverId, ::onMessageAddEvent, ::onMessageAddError)
+        }
+    }
+
+    private fun onMessageAddEvent(message: Message) {
+        val newList = uiState.messages + message
+        uiState = uiState.copy(
+            isLoading = false,
+            errorStatus = false,
+            messages = newList
+        )
+    }
+
+    private fun onMessageAddError(error: Throwable) {
+        uiState = uiState.copy(
+            isLoading = false,
+            errorStatus = true,
+            errorText = error.localizedMessage?.let { UiText.DynamicString(it) },
+            messages = emptyList()
+        )
+    }
+
+    private fun sendMessage(sentMessage: String) {
+        postMessage(_appSettings.value.gib, _appSettings.value.user, _receiverId, sentMessage) { error ->
+            if(error == null) {
+                uiState = uiState.copy(message = "")
+                viewModelScope.launch {
+                    _uiEventChannel.send(MessagesUiEvent.SendMessageSuccess)
+                }
+            } else onSendMessageError(error)
+        }
+    }
+
+    private fun onSendMessageError(error: Throwable) {
+        viewModelScope.launch {
+            _uiEventChannel.send(MessagesUiEvent.ShowSnackbar(error.let { UiText.DynamicString(it.toString()) }))
+        }
+    }
+
+    private fun removeChatListener() {
+        viewModelScope.launch {
+            removeListener()
+        }
+    }
+
+    /*
     private fun readMessage(messageId: String) {
         viewModelScope.launch {
             postMessageReadingInfo(
@@ -108,6 +131,9 @@ class MessagesViewModel @Inject constructor(
         }
     }
 
+     */
+
+    /*
     private fun getMessageList() {
         getMessagesById(
             _appSettings.value.gib, _appSettings.value.vk, _appSettings.value.password, _appSettings.value.user, _receiverId
@@ -138,19 +164,6 @@ class MessagesViewModel @Inject constructor(
             }
         }.launchIn(viewModelScope)
     }
-
-    private fun initializeDataState() {
-        uiState = MessagesScreenDataState(
-            userId = _appSettings.value.user,
-            receiverId = _receiverId,
-            receiverName = _receiverName
-        )
-    }
-
-    private fun getAppSettings() {
-        getUserLoginData().onEach { result ->
-            _appSettings.value = result
-        }.launchIn(viewModelScope)
-    }
+     */
 
 }

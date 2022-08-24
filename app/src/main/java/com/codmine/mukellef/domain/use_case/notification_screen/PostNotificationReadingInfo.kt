@@ -19,6 +19,7 @@ class PostNotificationReadingInfo @Inject constructor(
     operator fun invoke(
         gib: String, vk: String, password: String, notificationId: String
     ): Flow<Resource<ReadingNotification>> = flow {
+        /*
         try {
             emit(Resource.Loading())
             val notificationReadingInfo = repository.postReadingInfo(
@@ -26,11 +27,11 @@ class PostNotificationReadingInfo @Inject constructor(
             ).toReadingNotification()
             emit(Resource.Success(notificationReadingInfo))
         } catch(e: HttpException) {
-            val errorMessage = (e.localizedMessage ?: UiText.StringResources(R.string.unexpected_error)) as String
-            emit(Resource.Error(message = UiText.DynamicString(errorMessage)))
+            emit(Resource.Error(message = UiText.StringResources(R.string.server_connection_error)))
         } catch(e: IOException) {
-            val errorMessage = (e.localizedMessage ?: UiText.StringResources(R.string.unexpected_error)) as String
-            emit(Resource.Error(message = UiText.DynamicString(errorMessage)))
+            emit(Resource.Error(message = UiText.StringResources(R.string.server_connection_error)))
         }
+
+         */
     }
 }

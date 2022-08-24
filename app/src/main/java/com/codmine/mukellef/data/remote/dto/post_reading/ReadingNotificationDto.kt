@@ -1,6 +1,5 @@
 package com.codmine.mukellef.data.remote.dto.post_reading
 
-import com.codmine.mukellef.domain.model.chat.ReadingMessage
 import com.codmine.mukellef.domain.model.documents.ReadingDocument
 import com.codmine.mukellef.domain.model.notifications.ReadingNotification
 import com.google.gson.annotations.SerializedName
@@ -28,6 +27,7 @@ fun ReadingNotificationDto.toReadingNotification(): ReadingNotification {
     )
 }
 
+/*
 fun ReadingNotificationDto.toReadingMessage(): ReadingMessage {
     return ReadingMessage(
         processingTime = processingTime,
@@ -35,3 +35,5 @@ fun ReadingNotificationDto.toReadingMessage(): ReadingMessage {
         readingResult = reading.readingResult
     )
 }
+
+ */

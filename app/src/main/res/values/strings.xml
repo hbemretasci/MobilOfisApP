@@ -15,14 +15,15 @@
     <string name="max_gib_len_error">Gib kodu en fazla %d karakter olabilir.</string>
     <string name="max_vk_len_error">Vergi kimlik numarası en fazla %d karakter olabilir.</string>
     <string name="max_password_len_error">Şifre en fazla %d karakter olabilir.</string>
+    <string name="gib_error">Gib kodu giriş hatası.</string>
+    <string name="vk_error">Vk kodu giriş hatası.</string>
+    <string name="password_error">Şifre giriş hatası.</string>
 
     <string name="gib_place_holder">Gib kodunu giriniz.</string>
     <string name="vk_place_holder">Vergi kimlik numarasını giriniz.</string>
     <string name="password_place_holder">Şifreyi giriniz.</string>
     <string name="login_button_text">Giriş Yap</string>
     <string name="login_screen_text">Giriş Yap</string>
-    <string name="unexpected_error">Beklenmeyen hata.</string>
-    <string name="internet_error">Sunucuya erişilemiyor, bağlantı hatası.</string>
 
     <string name="retry">Yeniden dene!</string>
     <string name="document_title_post_time">Yayınlanma</string>
@@ -39,13 +40,14 @@
     <string name="notification_not_found">Gösterilecek bildirim bulunamadı.</string>
     <string name="document_not_found">Gösterilecek döküman bulunamadı.</string>
     <string name="transaction_not_found">Gösterilecek işlem bulunamadı.</string>
-    <string name="jumpBottom">Son Mesaja Git</string>
     <string name="messages_not_found">Gösterilecek mesaj bulunamadı.</string>
+    <string name="person_not_found">Gösterilecek kişi bulunamadı.</string>
+    <string name="jumpBottom">Son Mesaja Git</string>
     <string name="send_message_place_holder">Mesaj</string>
     <string name="send_message_content_description">Gönder</string>
 
-    <string name="gib_error">Gib kodu giriş hatası.</string>
-    <string name="vk_error">Vk kodu giriş hatası.</string>
-    <string name="password_error">Şifre giriş hatası.</string>
+    <string name="unexpected_error">Beklenmeyen hata.</string>
+    <string name="server_connection_error">Sunucuya erişilemiyor, bağlantı hatası.</string>
+    <string name="server_error">Sunucuya erişilemiyor.</string>
 
 </resources>

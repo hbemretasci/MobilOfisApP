@@ -14,13 +14,12 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.codmine.mukellef.R
 import com.codmine.mukellef.domain.model.chat.Message
-import com.codmine.mukellef.domain.util.postDate
-import com.codmine.mukellef.domain.util.postTime
 import com.codmine.mukellef.presentation.chat_screen.messages.components.DayHeader
 import com.codmine.mukellef.presentation.chat_screen.messages.components.JumpToBottom
 import com.codmine.mukellef.presentation.chat_screen.messages.components.MessageHeader
@@ -28,21 +27,34 @@ import com.codmine.mukellef.presentation.chat_screen.messages.components.Message
 import com.codmine.mukellef.presentation.components.DataNotFound
 import com.codmine.mukellef.presentation.components.ReLoadData
 import com.codmine.mukellef.domain.util.UiText
+import com.codmine.mukellef.domain.util.postDate
+import com.codmine.mukellef.domain.util.postTime
 import com.codmine.mukellef.ui.theme.spacing
 import kotlinx.coroutines.launch
 
 @Composable
 fun MessagesScreen(
     paddingValues: PaddingValues,
+    snackbarHostState: SnackbarHostState,
     viewModel: MessagesViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState
+    val context = LocalContext.current
     val scrollState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val focusRequester = FocusRequester()
 
     LaunchedEffect(key1 = true) {
-        viewModel.onEvent(MessagesEvent.LoadData)
+        viewModel.uiEvents.collect { event ->
+            when(event) {
+                is MessagesUiEvent.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(message = event.message.asString(context))
+                }
+                is MessagesUiEvent.SendMessageSuccess -> {
+                    scrollState.scrollToItem(0)
+                }
+            }
+        }
     }
 
    Column(
@@ -67,10 +79,10 @@ fun MessagesScreen(
                ) {
                    for (i in uiState.messages.indices) {
                        item {
-                           if ((uiState.messages[i].readingTime.isEmpty()) && (uiState.messages[i].senderUserId == uiState.receiverId)) {
-                               viewModel.onEvent(MessagesEvent.PostReadingMessage(uiState.messages[i].id))
+                           if ((!uiState.messages[i].status) && (uiState.messages[i].sender == uiState.receiverId)) {
+                               //viewModel.onEvent(MessagesEvent.PostReadingMessage(uiState.messages[i].id))
                            }
-                           MessageItem(uiState.messages[i], uiState.messages[i].senderUserId == uiState.userId)
+                           MessageItem(uiState.messages[i], uiState.messages[i].sender == uiState.userId)
                            if (i + 1 < uiState.messages.size) {
                                if (postDate(uiState.messages[i].postTime) != postDate(uiState.messages[i + 1].postTime)) {
                                    DayHeader(postDate(uiState.messages[i].postTime))
@@ -117,10 +129,10 @@ fun MessagesScreen(
                sendMessage = {
                    scope.launch {
                        viewModel.onEvent(MessagesEvent.PostMessage(it))
-                       scrollState.scrollToItem(0)
                    }
                }
            )
+           // *************************************************************************************
            if(uiState.isLoading) {
                Box(modifier = Modifier.fillMaxSize()) {
                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
@@ -130,14 +142,21 @@ fun MessagesScreen(
                ReLoadData(
                    modifier = Modifier.fillMaxSize(),
                    errorMsg = uiState.errorText ?: UiText.StringResources(R.string.unexpected_error),
-                   onRetry = { viewModel.onEvent(MessagesEvent.Refresh) }
+                   onRetry = { }
                )
            }
            if((!uiState.isLoading) && (!uiState.errorStatus) && (uiState.messages.isEmpty())) {
                DataNotFound(message = UiText.StringResources(R.string.messages_not_found))
            }
+           // *************************************************************************************
        }
    }
+
+    DisposableEffect(viewModel) {
+        viewModel.onEvent(MessagesEvent.AddMessagesListener)
+        onDispose { viewModel.onEvent(MessagesEvent.RemoveMessagesListener) }
+    }
+
 }
 
 @Composable
@@ -191,7 +210,7 @@ fun MessageItem(
         ) {
             Text(
                 modifier = Modifier.padding(bottom = MaterialTheme.spacing.small),
-                text = message.message,
+                text = message.content,
                 style = MaterialTheme.typography.bodyLarge,
                 color = if (isUserMe) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onTertiary
             )

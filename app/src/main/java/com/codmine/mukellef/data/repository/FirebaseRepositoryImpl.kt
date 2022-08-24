@@ -1,47 +1,47 @@
 package com.codmine.mukellef.data.repository
 
-import com.codmine.mukellef.R
+import com.codmine.mukellef.data.remote.dto.chat.MessageDto
+import com.codmine.mukellef.data.remote.dto.chat.toMessage
+import com.codmine.mukellef.domain.model.chat.Message
 import com.codmine.mukellef.domain.repository.FirebaseRepository
-import com.codmine.mukellef.domain.util.Resource
-import com.codmine.mukellef.domain.util.UiText
-import com.google.firebase.Timestamp
-import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 
 class FirebaseRepositoryImpl: FirebaseRepository {
 
     private val db = Firebase.firestore
+    private var listenerRegistration: ListenerRegistration? = null
 
-    override fun postMessage(gib: String, sender: String, receiver: String, messageContent: String): Resource<DocumentReference> {
-
-        val chatItem = hashMapOf(
-            "sender" to sender,
-            "receiver" to receiver,
-            "time" to Timestamp.now(),
-            "status" to false,
-            "content" to messageContent
-        )
-
-        var errorMessage: UiText? = null
-        var document: DocumentReference? = null
-
+    override fun postMessage(gib: String, message: MessageDto, onResult: (Throwable?) -> Unit) {
         db.collection("MM$gib")
-            .add(chatItem)
-            .addOnSuccessListener { documentReference ->
-                document = documentReference
-            }
-            .addOnFailureListener { e ->
-                val message = (e.localizedMessage ?: UiText.StringResources(R.string.unexpected_error)) as String
-                errorMessage = UiText.DynamicString(message)
-            }
-        document?.let {
-            return Resource.Success(data = it)
-        }
-        errorMessage?.let {
-            return Resource.Error(message = it)
-        }
-        return Resource.Error(message = UiText.StringResources(R.string.unexpected_error))
+            .add(message)
+            .addOnCompleteListener { onResult(it.exception) }
     }
 
+    override fun addListener(
+        gib: String, sender: String, receiver: String, onDocumentEvent: (Message) -> Unit, onError: (Throwable) -> Unit
+    ) {
+        val query = db.collection("MM$gib")
+            .whereEqualTo("receiver", receiver)
+            .whereEqualTo("sender", sender)
+            .orderBy("time", Query.Direction.DESCENDING)
+        listenerRegistration = query.addSnapshotListener { value, error ->
+            if (error != null) {
+                onError(error)
+                return@addSnapshotListener
+            }
+            value?.documentChanges?.forEach {
+                //val message = it.document.toObject<MessageDto>().toMessage().copy(id = it.document.id)
+                val message = it.document.toObject<MessageDto>().toMessage()
+                onDocumentEvent(message)
+            }
+        }
+    }
+
+    override fun removeListener() {
+        listenerRegistration?.remove()
+    }
 }

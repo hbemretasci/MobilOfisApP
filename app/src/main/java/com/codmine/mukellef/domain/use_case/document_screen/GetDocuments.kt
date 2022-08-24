@@ -27,11 +27,9 @@ class GetDocuments @Inject constructor(
             ).documents.map { it.toDocument() }
             emit(Resource.Success(documents))
         } catch(e: HttpException) {
-            val errorMessage = (e.localizedMessage ?: UiText.StringResources(R.string.unexpected_error)) as String
-            emit(Resource.Error(message = UiText.DynamicString(errorMessage)))
+            emit(Resource.Error(message = UiText.StringResources(R.string.server_connection_error)))
         } catch(e: IOException) {
-            val errorMessage = (e.localizedMessage ?: UiText.StringResources(R.string.unexpected_error)) as String
-            emit(Resource.Error(message = UiText.DynamicString(errorMessage)))
+            emit(Resource.Error(message = UiText.StringResources(R.string.server_connection_error)))
         }
     }
 }

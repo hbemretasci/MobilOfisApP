@@ -16,7 +16,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.codmine.mukellef.R
 import com.codmine.mukellef.presentation.components.Screen
 import com.codmine.mukellef.domain.util.UiText
@@ -25,7 +24,7 @@ import com.codmine.mukellef.ui.theme.spacing
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LoginScreen(
-    navController: NavController,
+    openAndPopUp: (Screen, Screen) -> Unit,
     snackbarHostState: SnackbarHostState,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
@@ -34,16 +33,10 @@ fun LoginScreen(
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    LaunchedEffect(key1 = context) {
+    LaunchedEffect(key1 = true) {
         viewModel.uiEvents.collect { event ->
             when(event) {
-                is LoginUiEvent.Login -> {
-                    navController.navigate(Screen.NotificationScreen.route) {
-                        popUpTo(Screen.LoginScreen.route) {
-                            inclusive = true
-                        }
-                    }
-                }
+                is LoginUiEvent.Login -> { openAndPopUp(Screen.NotificationScreen, Screen.LoginScreen) }
                 is LoginUiEvent.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(message = event.message.asString(context))
                 }
