@@ -1,8 +1,6 @@
 package com.codmine.mukellef.domain.util
 
 fun postDate(dayString : String) : String {
-    return dayString
-
     val month = dayString.substring(4, 6)
     var day = dayString.substring(6, 8)
     day = day.toInt().toString()
@@ -24,16 +22,12 @@ fun postDate(dayString : String) : String {
 }
 
 fun postTime(dayString : String) : String {
-    return dayString
-
     val hour = dayString.substring(8, 10)
     val minute = dayString.substring(10,12)
     return "$hour:$minute"
 }
 
 fun dateAndTime(dayString : String) : String {
-    return dayString
-
     val year = dayString.substring(0, 4)
     val month = dayString.substring(4, 6)
     val day = dayString.substring(6, 8)

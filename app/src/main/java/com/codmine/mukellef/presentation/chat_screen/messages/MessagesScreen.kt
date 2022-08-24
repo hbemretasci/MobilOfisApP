@@ -27,8 +27,6 @@ import com.codmine.mukellef.presentation.chat_screen.messages.components.Message
 import com.codmine.mukellef.presentation.components.DataNotFound
 import com.codmine.mukellef.presentation.components.ReLoadData
 import com.codmine.mukellef.domain.util.UiText
-import com.codmine.mukellef.domain.util.postDate
-import com.codmine.mukellef.domain.util.postTime
 import com.codmine.mukellef.ui.theme.spacing
 import kotlinx.coroutines.launch
 
@@ -84,11 +82,11 @@ fun MessagesScreen(
                            }
                            MessageItem(uiState.messages[i], uiState.messages[i].sender == uiState.userId)
                            if (i + 1 < uiState.messages.size) {
-                               if (postDate(uiState.messages[i].postTime) != postDate(uiState.messages[i + 1].postTime)) {
-                                   DayHeader(postDate(uiState.messages[i].postTime))
+                               if (uiState.messages[i].postDate != uiState.messages[i + 1].postDate) {
+                                   DayHeader(uiState.messages[i].postDate)
                                }
                            } else {
-                               DayHeader(postDate(uiState.messages[i].postTime))
+                               DayHeader(uiState.messages[i].postDate)
                            }
                        }
                    }
@@ -215,7 +213,7 @@ fun MessageItem(
                 color = if (isUserMe) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onTertiary
             )
             Text(
-                text = postTime(message.postTime),
+                text = message.postTime,
                 style = MaterialTheme.typography.labelSmall,
                 color = if (isUserMe) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onTertiary,
                 modifier = Modifier.align(Alignment.End)
