@@ -21,13 +21,11 @@
 #-renamesourcefileattribute SourceFile
 
 -keep class com.codmine.mukellef.data.remote.dto.balance.* { *; }
--keep class com.codmine.mukellef.data.remote.dto.documents.* { *; }
 -keep class com.codmine.mukellef.data.remote.dto.chat.* { *; }
+-keep class com.codmine.mukellef.data.remote.dto.documents.* { *; }
 -keep class com.codmine.mukellef.data.remote.dto.notifications.* { *; }
--keep class com.codmine.mukellef.data.remote.dto.post_message.* { *; }
 -keep class com.codmine.mukellef.data.remote.dto.post_reading.* { *; }
 -keep class com.codmine.mukellef.data.remote.dto.tax_payer.* { *; }
--keep class com.codmine.mukellef.data.remote.dto.unread.* { *; }
 -keep class com.codmine.mukellef.domain.model.balance.* { *; }
 -keep class com.codmine.mukellef.domain.model.chat.* { *; }
 -keep class com.codmine.mukellef.domain.model.datastore.* { *; }

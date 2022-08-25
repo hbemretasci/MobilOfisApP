@@ -19,7 +19,6 @@ class PostNotificationReadingInfo @Inject constructor(
     operator fun invoke(
         gib: String, vk: String, password: String, notificationId: String
     ): Flow<Resource<ReadingNotification>> = flow {
-        /*
         try {
             emit(Resource.Loading())
             val notificationReadingInfo = repository.postReadingInfo(
@@ -31,7 +30,5 @@ class PostNotificationReadingInfo @Inject constructor(
         } catch(e: IOException) {
             emit(Resource.Error(message = UiText.StringResources(R.string.server_connection_error)))
         }
-
-         */
     }
 }

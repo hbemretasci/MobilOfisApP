@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">609176316510-ujqsifbjuqbssjvpmishgosq5jle94t3.apps.googleusercontent.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">609176316510</string>
+    <string name="google_api_key" translatable="false">AIzaSyAuVDA8ySnlJRVPV8FuaInXqjLbYdiEx9s</string>
+    <string name="google_app_id" translatable="false">1:609176316510:android:f6bd3d9473e9df0bbb62cf</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAuVDA8ySnlJRVPV8FuaInXqjLbYdiEx9s</string>
+    <string name="google_storage_bucket" translatable="false">mobilofis-2f309.appspot.com</string>
+    <string name="project_id" translatable="false">mobilofis-2f309</string>
+</resources>

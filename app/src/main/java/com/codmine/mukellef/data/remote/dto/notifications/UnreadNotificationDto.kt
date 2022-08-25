@@ -10,13 +10,3 @@ data class UnreadNotificationDto(
     @SerializedName("Toplam")
     val total: String
 )
-
-/*
-fun UnreadNotificationDto.toUnreadNotification(): UnreadNotification {
-    return UnreadNotification(
-        senderUserId = senderUserId,
-        unReadAmount = total
-    )
-}
-
- */

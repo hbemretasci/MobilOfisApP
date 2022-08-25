@@ -4,6 +4,7 @@ import com.codmine.mukellef.data.remote.MobileOfficeApi
 import com.codmine.mukellef.data.remote.dto.balance.BalanceDto
 import com.codmine.mukellef.data.remote.dto.documents.DocumentsDto
 import com.codmine.mukellef.data.remote.dto.notifications.NotificationsDto
+import com.codmine.mukellef.data.remote.dto.post_reading.ReadingNotificationDto
 import com.codmine.mukellef.data.remote.dto.tax_payer.TaxPayerDto
 import com.codmine.mukellef.domain.repository.MobileOfficeRepository
 import javax.inject.Inject
@@ -62,4 +63,17 @@ class MobileOfficeRepositoryImpl @Inject constructor(
             queryType, gib, vk, password, user
         )
     }
+
+    override suspend fun postReadingInfo(
+        queryType: String,
+        gib: String,
+        vk: String,
+        password: String,
+        notificationId: String
+    ): ReadingNotificationDto {
+        return api.postReadingInfo(
+            queryType, gib, vk, password, notificationId
+        )
+    }
+
 }

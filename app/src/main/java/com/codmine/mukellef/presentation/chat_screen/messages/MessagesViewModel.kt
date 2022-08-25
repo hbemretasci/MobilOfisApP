@@ -82,7 +82,8 @@ class MessagesViewModel @Inject constructor(
     }
 
     private fun onMessageAddEvent(message: Message) {
-        val newList = uiState.messages + message
+        val newList = uiState.messages.toMutableList()
+        newList.add(0, message)
         uiState = uiState.copy(
             isLoading = false,
             errorStatus = false,

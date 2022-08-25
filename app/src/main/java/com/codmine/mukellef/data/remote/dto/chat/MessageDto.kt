@@ -17,7 +17,7 @@ fun MessageDto.toMessage(): Message {
     val df = DateFormat.getDateInstance(DateFormat.SHORT)
     val tf = DateFormat.getTimeInstance(DateFormat.SHORT)
     return Message(
-        id = "1",
+        id = "",
         content = content,
         receiver = receiver,
         sender = sender,

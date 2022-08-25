@@ -18,7 +18,6 @@ class PostDocumentReadingInfo @Inject constructor(
 ) {
     operator fun invoke(
         gib: String, vk: String, password: String, documentId: String): Flow<Resource<ReadingDocument>> = flow {
-        /*
         try {
             emit(Resource.Loading())
             val documentReadingInfo = repository.postReadingInfo(
@@ -30,7 +29,5 @@ class PostDocumentReadingInfo @Inject constructor(
         } catch(e: IOException) {
             emit(Resource.Error(message = UiText.StringResources(R.string.server_connection_error)))
         }
-
-         */
     }
 }

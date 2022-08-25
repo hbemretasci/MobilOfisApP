@@ -3,6 +3,7 @@ package com.codmine.mukellef.data.remote
 import com.codmine.mukellef.data.remote.dto.balance.BalanceDto
 import com.codmine.mukellef.data.remote.dto.documents.DocumentsDto
 import com.codmine.mukellef.data.remote.dto.notifications.NotificationsDto
+import com.codmine.mukellef.data.remote.dto.post_reading.ReadingNotificationDto
 import com.codmine.mukellef.data.remote.dto.tax_payer.TaxPayerDto
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -47,4 +48,13 @@ interface MobileOfficeApi {
         @Query("User_Pass") password: String,
         @Query("User_id") user: String
     ): BalanceDto
+
+    @GET("mobil_islem.asp")
+    suspend fun postReadingInfo(
+        @Query("CodMineMobil") queryType: String,
+        @Query("GibNo") gib: String,
+        @Query("User_Vk") vk: String,
+        @Query("User_Pass") password: String,
+        @Query("Bildirimid") notificationId: String
+    ): ReadingNotificationDto
 }

@@ -27,15 +27,14 @@ class FirebaseRepositoryImpl: FirebaseRepository {
         val query = db.collection("MM$gib")
             .whereEqualTo("receiver", receiver)
             .whereEqualTo("sender", sender)
-            .orderBy("time", Query.Direction.DESCENDING)
+            .orderBy("time", Query.Direction.ASCENDING)
         listenerRegistration = query.addSnapshotListener { value, error ->
             if (error != null) {
                 onError(error)
                 return@addSnapshotListener
             }
             value?.documentChanges?.forEach {
-                //val message = it.document.toObject<MessageDto>().toMessage().copy(id = it.document.id)
-                val message = it.document.toObject<MessageDto>().toMessage()
+                val message = it.document.toObject<MessageDto>().toMessage().copy(id = it.document.id)
                 onDocumentEvent(message)
             }
         }

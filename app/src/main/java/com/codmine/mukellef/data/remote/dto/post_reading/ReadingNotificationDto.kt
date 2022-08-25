@@ -26,14 +26,3 @@ fun ReadingNotificationDto.toReadingNotification(): ReadingNotification {
         readingResult = reading.readingResult
     )
 }
-
-/*
-fun ReadingNotificationDto.toReadingMessage(): ReadingMessage {
-    return ReadingMessage(
-        processingTime = processingTime,
-        readingMessage = reading.readingMessage,
-        readingResult = reading.readingResult
-    )
-}
-
- */

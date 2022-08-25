@@ -14,6 +14,7 @@ object Constants {
     const val RESULT_USER_LOGIN = "9"
 
     const val QUERY_MUKELLEF = "1"
+    const val QUERY_READING = "3"
     const val QUERY_NOTIFICATION = "5"
     const val QUERY_BALANCE = "9"
 
