@@ -27,7 +27,6 @@ class MessagesViewModel @Inject constructor(
     private val removeListener: RemoveListener,
     private val savedStateHandle: SavedStateHandle,
     private val getUserLoginData: GetUserLoginData,
-    //private val postMessageReadingInfo: PostMessageReadingInfo,
     private val postMessage: PostMessage
 ):ViewModel() {
     var uiState by mutableStateOf(MessagesScreenDataState())
@@ -40,6 +39,7 @@ class MessagesViewModel @Inject constructor(
 
     private var _receiverId: String = ""
     private var _receiverName: String = ""
+    private var _chatKey: String = ""
 
     fun onEvent(event: MessagesEvent) {
         when(event) {
@@ -51,7 +51,7 @@ class MessagesViewModel @Inject constructor(
                 addChatListener()
             }
             is MessagesEvent.PostReadingMessage -> {
-                //readMessage(event.messageId)
+                // Buraya mesaj okuma fonksiyonu gelecek.
             }
             is MessagesEvent.MessageChanged -> {
                 uiState = uiState.copy(message = event.messageValue)
@@ -73,17 +73,22 @@ class MessagesViewModel @Inject constructor(
             receiverId = _receiverId,
             receiverName = _receiverName
         )
+        _chatKey = if(_appSettings.value.user < _receiverId) "f${_appSettings.value.user}-s$_receiverId" else "f$_receiverId-s${_appSettings.value.user}"
     }
 
     private fun addChatListener() {
         viewModelScope.launch {
-            addListener(_appSettings.value.gib, _appSettings.value.user, _receiverId, ::onMessageAddEvent, ::onMessageAddError)
+            addListener(_appSettings.value.gib, _appSettings.value.user, _receiverId, _chatKey, ::onMessageAddEvent, ::onMessageAddError)
         }
     }
 
     private fun onMessageAddEvent(message: Message) {
         val newList = uiState.messages.toMutableList()
-        newList.add(0, message)
+        if(newList.size > 0) {
+            if(message.time > newList[0].time) newList.add(0, message) else newList.add(message)
+        } else {
+            newList.add(message)
+        }
         uiState = uiState.copy(
             isLoading = false,
             errorStatus = false,
@@ -101,7 +106,7 @@ class MessagesViewModel @Inject constructor(
     }
 
     private fun sendMessage(sentMessage: String) {
-        postMessage(_appSettings.value.gib, _appSettings.value.user, _receiverId, sentMessage) { error ->
+        postMessage(_appSettings.value.gib, _appSettings.value.user, _receiverId, _chatKey, sentMessage) { error ->
             if(error == null) {
                 uiState = uiState.copy(message = "")
                 viewModelScope.launch {
@@ -122,49 +127,4 @@ class MessagesViewModel @Inject constructor(
             removeListener()
         }
     }
-
-    /*
-    private fun readMessage(messageId: String) {
-        viewModelScope.launch {
-            postMessageReadingInfo(
-                _appSettings.value.gib, _appSettings.value.vk, _appSettings.value.password, messageId
-            )
-        }
-    }
-
-     */
-
-    /*
-    private fun getMessageList() {
-        getMessagesById(
-            _appSettings.value.gib, _appSettings.value.vk, _appSettings.value.password, _appSettings.value.user, _receiverId
-        ).onEach { result ->
-            when(result) {
-                is Resource.Success -> {
-                    uiState = uiState.copy(
-                        isLoading = false,
-                        errorStatus = false,
-                        messages = result.data ?: emptyList()
-                    )
-                }
-                is Resource.Error -> {
-                    uiState = uiState.copy(
-                        isLoading = false,
-                        errorStatus = true,
-                        errorText = result.message ?: UiText.StringResources(R.string.unexpected_error),
-                        messages = emptyList()
-                    )
-                }
-                is Resource.Loading -> {
-                    uiState = uiState.copy(
-                        isLoading = true,
-                        errorStatus = false,
-                        messages = emptyList()
-                    )
-                }
-            }
-        }.launchIn(viewModelScope)
-    }
-     */
-
 }

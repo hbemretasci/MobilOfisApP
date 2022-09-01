@@ -17,6 +17,7 @@ import com.codmine.mukellef.domain.util.UiText
 import com.codmine.mukellef.ui.theme.spacing
 import com.google.accompanist.insets.navigationBarsWithImePadding
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MessageInput(
     text: String,

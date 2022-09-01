@@ -6,6 +6,7 @@ import java.text.DateFormat
 
 data class MessageDto(
     val content: String = "",
+    val key: String = "",
     val receiver: String = "",
     val sender: String = "",
     val status: Boolean = false,
@@ -22,6 +23,7 @@ fun MessageDto.toMessage(): Message {
         receiver = receiver,
         sender = sender,
         status = false,
+        time = time,
         postDate = df.format(postTime),
         postTime = tf.format(postTime)
     )

@@ -21,7 +21,7 @@ import com.codmine.mukellef.presentation.components.Screen
 import com.codmine.mukellef.domain.util.UiText
 import com.codmine.mukellef.ui.theme.spacing
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     openAndPopUp: (Screen, Screen) -> Unit,

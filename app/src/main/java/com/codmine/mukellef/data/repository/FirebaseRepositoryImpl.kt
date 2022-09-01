@@ -4,6 +4,7 @@ import com.codmine.mukellef.data.remote.dto.chat.MessageDto
 import com.codmine.mukellef.data.remote.dto.chat.toMessage
 import com.codmine.mukellef.domain.model.chat.Message
 import com.codmine.mukellef.domain.repository.FirebaseRepository
+import com.codmine.mukellef.domain.util.Constants.CHAT_QUERY_LIMIT
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
@@ -22,12 +23,12 @@ class FirebaseRepositoryImpl: FirebaseRepository {
     }
 
     override fun addListener(
-        gib: String, sender: String, receiver: String, onDocumentEvent: (Message) -> Unit, onError: (Throwable) -> Unit
+        gib: String, sender: String, receiver: String, key:String, onDocumentEvent: (Message) -> Unit, onError: (Throwable) -> Unit
     ) {
         val query = db.collection("MM$gib")
-            .whereEqualTo("receiver", receiver)
-            .whereEqualTo("sender", sender)
-            .orderBy("time", Query.Direction.ASCENDING)
+            .whereEqualTo("key", key)
+            .orderBy("time", Query.Direction.DESCENDING)
+            .limit(CHAT_QUERY_LIMIT)
         listenerRegistration = query.addSnapshotListener { value, error ->
             if (error != null) {
                 onError(error)

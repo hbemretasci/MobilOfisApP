@@ -11,6 +11,8 @@ object Constants {
     const val MAX_VK_LENGTH = 10
     const val MAX_PASSWORD_LENGTH = 10
 
+    const val CHAT_QUERY_LIMIT = 200L
+
     const val RESULT_USER_LOGIN = "9"
 
     const val QUERY_MUKELLEF = "1"

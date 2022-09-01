@@ -10,6 +10,7 @@ import androidx.compose.ui.draw.scale
 import com.codmine.mukellef.R
 import com.codmine.mukellef.domain.util.UiText
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UnReadMessages(messageCount: String) {
     BadgedBox(

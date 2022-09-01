@@ -10,12 +10,12 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.codmine.mukellef"
         minSdk 23
-        targetSdk 32
+        targetSdk 33
         versionCode 7
         versionName "1.4.0"
 
@@ -62,12 +62,12 @@ android {
 dependencies {
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation "androidx.compose.ui:ui:$compose_version"
-    implementation 'androidx.compose.material3:material3:1.0.0-alpha14'
-    implementation 'androidx.compose.material3:material3-window-size-class:1.0.0-alpha14'
+    implementation 'androidx.compose.material3:material3:1.0.0-beta01'
+    implementation 'androidx.compose.material3:material3-window-size-class:1.0.0-beta01'
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.0'
-    implementation 'androidx.activity:activity-compose:1.5.0'
-    implementation 'com.google.firebase:firebase-firestore:24.2.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
+    implementation 'androidx.activity:activity-compose:1.5.1'
+    implementation 'com.google.firebase:firebase-firestore:24.2.2'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
@@ -76,18 +76,18 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
 
     // Compose
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0"
-    implementation "androidx.navigation:navigation-compose:2.5.0"
-    implementation "androidx.compose.material:material-icons-core:1.1.1"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1"
+    implementation "androidx.navigation:navigation-compose:2.5.1"
+    implementation "androidx.compose.material:material-icons-core:1.2.1"
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
 
     // Coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
     // Coroutine Lifecycle Scopes
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.0"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.1"
 
     // Dagger - Hilt
     implementation 'com.google.dagger:hilt-android:2.42'
@@ -130,8 +130,13 @@ dependencies {
 
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:30.2.0')
+
+    // Analytics
     implementation 'com.google.firebase:firebase-analytics-ktx'
 
     // Firestore
     implementation 'com.google.firebase:firebase-firestore-ktx'
+
+    // Auth
+    implementation 'com.google.firebase:firebase-auth-ktx'
 }

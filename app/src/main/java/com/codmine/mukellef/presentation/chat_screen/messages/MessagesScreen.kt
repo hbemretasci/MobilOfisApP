@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,7 +23,6 @@ import com.codmine.mukellef.presentation.chat_screen.messages.components.DayHead
 import com.codmine.mukellef.presentation.chat_screen.messages.components.JumpToBottom
 import com.codmine.mukellef.presentation.chat_screen.messages.components.MessageHeader
 import com.codmine.mukellef.presentation.chat_screen.messages.components.MessageInput
-import com.codmine.mukellef.presentation.components.DataNotFound
 import com.codmine.mukellef.presentation.components.ReLoadData
 import com.codmine.mukellef.domain.util.UiText
 import com.codmine.mukellef.ui.theme.spacing
@@ -72,13 +70,14 @@ fun MessagesScreen(
                modifier = Modifier.weight(.85f),
            ) {
                LazyColumn(
+                   modifier = Modifier.padding(horizontal = MaterialTheme.spacing.small),
                    reverseLayout = true,
                    state = scrollState,
                ) {
                    for (i in uiState.messages.indices) {
                        item {
                            if ((!uiState.messages[i].status) && (uiState.messages[i].sender == uiState.receiverId)) {
-                               //viewModel.onEvent(MessagesEvent.PostReadingMessage(uiState.messages[i].id))
+                               viewModel.onEvent(MessagesEvent.PostReadingMessage(uiState.messages[i].id))
                            }
                            MessageItem(uiState.messages[i], uiState.messages[i].sender == uiState.userId)
                            if (i + 1 < uiState.messages.size) {
@@ -96,7 +95,6 @@ fun MessagesScreen(
                val jumpThreshold = with(LocalDensity.current) {
                    JumpToBottomThreshold.toPx()
                }
-
                // Show the button if the first visible item is not the first one or if the offset is
                // greater than the threshold.
                val jumpToBottomButtonEnabled by remember {
@@ -105,7 +103,6 @@ fun MessagesScreen(
                                scrollState.firstVisibleItemScrollOffset > jumpThreshold
                    }
                }
-
                JumpToBottom(
                    // Only show if the scroller is not at the bottom
                    enabled = jumpToBottomButtonEnabled,
@@ -121,21 +118,13 @@ fun MessagesScreen(
                text = uiState.message,
                modifier = Modifier.weight(.15f),
                focusRequester = focusRequester,
-               onValueChange = {
-                   viewModel.onEvent(MessagesEvent.MessageChanged(it))
-               },
+               onValueChange = { viewModel.onEvent(MessagesEvent.MessageChanged(it)) },
                sendMessage = {
                    scope.launch {
                        viewModel.onEvent(MessagesEvent.PostMessage(it))
                    }
                }
            )
-           // *************************************************************************************
-           if(uiState.isLoading) {
-               Box(modifier = Modifier.fillMaxSize()) {
-                   CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-               }
-           }
            if(uiState.errorStatus) {
                ReLoadData(
                    modifier = Modifier.fillMaxSize(),
@@ -143,10 +132,6 @@ fun MessagesScreen(
                    onRetry = { }
                )
            }
-           if((!uiState.isLoading) && (!uiState.errorStatus) && (uiState.messages.isEmpty())) {
-               DataNotFound(message = UiText.StringResources(R.string.messages_not_found))
-           }
-           // *************************************************************************************
        }
    }
 
@@ -164,7 +149,6 @@ fun MessageItem(
 ) {
     val meColor: Color = MaterialTheme.colorScheme.primary
     val opponentColor: Color = MaterialTheme.colorScheme.tertiary
-
     Box(
         contentAlignment = if (isUserMe) Alignment.CenterEnd else Alignment.CenterStart,
         modifier = Modifier
