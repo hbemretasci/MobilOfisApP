@@ -7,7 +7,6 @@ data class Message(
     val content: String,
     val receiver: String,
     val sender: String,
-    val status: Boolean,
     val time: Timestamp,
     val postDate: String,
     val postTime: String

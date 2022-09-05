@@ -76,9 +76,7 @@ fun MessagesScreen(
                ) {
                    for (i in uiState.messages.indices) {
                        item {
-                           if ((!uiState.messages[i].status) && (uiState.messages[i].sender == uiState.receiverId)) {
-                               viewModel.onEvent(MessagesEvent.PostReadingMessage(uiState.messages[i].id))
-                           }
+                           // if ((!uiState.messages[i].status) && (uiState.messages[i].sender == uiState.receiverId))
                            MessageItem(uiState.messages[i], uiState.messages[i].sender == uiState.userId)
                            if (i + 1 < uiState.messages.size) {
                                if (uiState.messages[i].postDate != uiState.messages[i + 1].postDate) {

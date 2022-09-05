@@ -9,7 +9,7 @@ class PostMessage @Inject constructor(
     private val repository: FirebaseRepository
 ) {
     operator fun invoke(gib: String, sender: String, receiver: String, key:String, message: String, onResult: (Throwable?) -> Unit) {
-        val messageItem = MessageDto(message, key, receiver, sender, false, Timestamp.now())
+        val messageItem = MessageDto(message, key, receiver, sender, Timestamp.now())
         repository.postMessage(gib, messageItem, onResult)
     }
 }

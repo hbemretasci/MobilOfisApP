@@ -9,7 +9,6 @@ data class MessageDto(
     val key: String = "",
     val receiver: String = "",
     val sender: String = "",
-    val status: Boolean = false,
     val time: Timestamp = Timestamp.now()
 )
 
@@ -22,7 +21,6 @@ fun MessageDto.toMessage(): Message {
         content = content,
         receiver = receiver,
         sender = sender,
-        status = false,
         time = time,
         postDate = df.format(postTime),
         postTime = tf.format(postTime)

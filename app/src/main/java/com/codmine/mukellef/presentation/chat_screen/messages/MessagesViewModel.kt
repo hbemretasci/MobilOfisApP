@@ -50,9 +50,6 @@ class MessagesViewModel @Inject constructor(
                 initializeDataState()
                 addChatListener()
             }
-            is MessagesEvent.PostReadingMessage -> {
-                // Buraya mesaj okuma fonksiyonu gelecek.
-            }
             is MessagesEvent.MessageChanged -> {
                 uiState = uiState.copy(message = event.messageValue)
             }
