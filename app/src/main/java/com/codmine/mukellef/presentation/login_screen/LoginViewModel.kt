@@ -24,9 +24,9 @@ class LoginViewModel @Inject constructor(
     private val validateVk: ValidateVk,
     private val validatePassword: ValidatePassword,
     private val getTaxPayer: GetTaxPayer,
-    private val setUserLoginData: SetUserLoginData
+    private val setUserLoginData: SetUserLoginData,
+    private val userLogIn: SignInOrSignUpWithEmailAndPassword
 ): ViewModel() {
-    
     var uiState by mutableStateOf(LoginScreenState())
         private set
 
@@ -77,6 +77,7 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun checkLogin() {
+        val email: String = "UA" + uiState.vk + "@mobiloffice.com"
         getTaxPayer(uiState.gib, uiState.vk, uiState.password).onEach { result ->
             when (result) {
                 is Resource.Success -> {
@@ -85,8 +86,15 @@ class LoginViewModel @Inject constructor(
                         errorStatus = false,
                         taxPayer = result.data
                     )
-                    uiState.taxPayer?.let {
+                    uiState.taxPayer?.let { it ->
                         if(it.loginResult == RESULT_USER_LOGIN) {
+
+                            userLogIn(email, uiState.password) { error ->
+                                //println(error)
+                            }
+
+                            /*
+
                             setAppSettings(
                                 loginStatus = true,
                                 gib = uiState.gib,
@@ -95,7 +103,12 @@ class LoginViewModel @Inject constructor(
                                 user = it.userId ?: "",
                                 accountant = it.accountantId ?: ""
                             )
+
+
+
                             _uiEventChannel.send(LoginUiEvent.Login)
+
+                             */
                         } else {
                             _uiEventChannel.send(
                                 LoginUiEvent.ShowSnackbar(UiText.DynamicString(it.loginMessage))

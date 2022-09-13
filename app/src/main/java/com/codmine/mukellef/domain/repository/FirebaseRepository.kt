@@ -13,4 +13,10 @@ interface FirebaseRepository {
 
     fun removeListener()
 
+    fun signUp(email: String, password: String, onResult: (Throwable?) -> Unit)
+
+    fun signIn(email: String, password: String, onResult: (Throwable?) -> Unit)
+
+    fun signOut()
+
 }

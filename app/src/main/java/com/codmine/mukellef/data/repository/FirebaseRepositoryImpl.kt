@@ -5,6 +5,7 @@ import com.codmine.mukellef.data.remote.dto.chat.toMessage
 import com.codmine.mukellef.domain.model.chat.Message
 import com.codmine.mukellef.domain.repository.FirebaseRepository
 import com.codmine.mukellef.domain.util.Constants.CHAT_QUERY_LIMIT
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
@@ -15,6 +16,8 @@ class FirebaseRepositoryImpl: FirebaseRepository {
 
     private val db = Firebase.firestore
     private var listenerRegistration: ListenerRegistration? = null
+
+    private val auth = Firebase.auth
 
     override fun postMessage(gib: String, message: MessageDto, onResult: (Throwable?) -> Unit) {
         db.collection("MM$gib")
@@ -43,5 +46,19 @@ class FirebaseRepositoryImpl: FirebaseRepository {
 
     override fun removeListener() {
         listenerRegistration?.remove()
+    }
+
+    override fun signUp(email: String, password: String, onResult: (Throwable?) -> Unit) {
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { onResult(it.exception) }
+    }
+
+    override fun signIn(email: String, password: String, onResult: (Throwable?) -> Unit) {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { onResult(it.exception) }
+    }
+
+    override fun signOut() {
+        auth.signOut()
     }
 }
