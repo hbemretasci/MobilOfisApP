@@ -36,12 +36,17 @@ fun LoginScreen(
     LaunchedEffect(key1 = true) {
         viewModel.uiEvents.collect { event ->
             when(event) {
-                is LoginUiEvent.Login -> { openAndPopUp(Screen.NotificationScreen, Screen.LoginScreen) }
+                is LoginUiEvent.ValidationSuccess -> {
+                    viewModel.onEvent(LoginEvent.CheckLoginApi)
+                }
+                is LoginUiEvent.LoginSuccessApi -> {
+                    viewModel.onEvent(LoginEvent.CheckLoginDatabase)
+                }
+                is LoginUiEvent.LoginSuccessDatabase -> {
+                    openAndPopUp(Screen.NotificationScreen, Screen.LoginScreen)
+                }
                 is LoginUiEvent.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(message = event.message.asString(context))
-                }
-                is LoginUiEvent.ValidationSuccess -> {
-                    viewModel.onEvent(LoginEvent.CheckLogin)
                 }
             }
         }
@@ -70,7 +75,6 @@ fun LoginScreen(
                 style = MaterialTheme.typography.headlineMedium
             )
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
-
             TextField(
                 value = uiState.gib,
                 onValueChange = {
@@ -95,7 +99,6 @@ fun LoginScreen(
                 )
             }
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
-
             TextField(
                 value = uiState.vk,
                 onValueChange = {
@@ -120,7 +123,6 @@ fun LoginScreen(
                 )
             }
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
-
             TextField(
                 value = uiState.password,
                 onValueChange = {
@@ -150,7 +152,6 @@ fun LoginScreen(
                 )
             }
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
-
             Button(
                 onClick = {
                     keyboardController?.hide()

@@ -25,7 +25,7 @@ class LoginViewModel @Inject constructor(
     private val validatePassword: ValidatePassword,
     private val getTaxPayer: GetTaxPayer,
     private val setUserLoginData: SetUserLoginData,
-    private val userLogIn: SignInOrSignUpWithEmailAndPassword
+    private val userSignIn: SignInOrSignUpWithEmailAndPassword
 ): ViewModel() {
     var uiState by mutableStateOf(LoginScreenState())
         private set
@@ -47,8 +47,11 @@ class LoginViewModel @Inject constructor(
             is LoginEvent.Validate -> {
                 validationData()
             }
-            is LoginEvent.CheckLogin -> {
-                checkLogin()
+            is LoginEvent.CheckLoginApi -> {
+                checkLoginApi()
+            }
+            is LoginEvent.CheckLoginDatabase -> {
+                checkLoginDatabase()
             }
         }
     }
@@ -69,58 +72,28 @@ class LoginViewModel @Inject constructor(
             vkError = vkResult.errorMessage,
             passwordError = passwordResult.errorMessage
         )
-
         if(hasError) return
         viewModelScope.launch {
             _uiEventChannel.send(LoginUiEvent.ValidationSuccess)
         }
     }
 
-    private fun checkLogin() {
-        val email: String = "UA" + uiState.vk + "@mobiloffice.com"
+    private fun checkLoginApi() {
         getTaxPayer(uiState.gib, uiState.vk, uiState.password).onEach { result ->
             when (result) {
-                is Resource.Success -> {
+                is Resource.Loading -> {
                     uiState = uiState.copy(
-                        isLoading = false,
+                        isLoading = true,
                         errorStatus = false,
-                        taxPayer = result.data
+                        taxPayer = null
                     )
-                    uiState.taxPayer?.let { it ->
-                        if(it.loginResult == RESULT_USER_LOGIN) {
-
-                            userLogIn(email, uiState.password) { error ->
-                                //println(error)
-                            }
-
-                            /*
-
-                            setAppSettings(
-                                loginStatus = true,
-                                gib = uiState.gib,
-                                vk = uiState.vk,
-                                password = uiState.password,
-                                user = it.userId ?: "",
-                                accountant = it.accountantId ?: ""
-                            )
-
-
-
-                            _uiEventChannel.send(LoginUiEvent.Login)
-
-                             */
-                        } else {
-                            _uiEventChannel.send(
-                                LoginUiEvent.ShowSnackbar(UiText.DynamicString(it.loginMessage))
-                            )
-                        }
-                    }
                 }
                 is Resource.Error -> {
                     uiState = uiState.copy(
                         isLoading = false,
                         errorStatus = true,
-                        errorText = result.message ?: UiText.StringResources(R.string.unexpected_error),
+                        errorText = result.message
+                            ?: UiText.StringResources(R.string.unexpected_error),
                         taxPayer = null
                     )
                     _uiEventChannel.send(
@@ -129,15 +102,58 @@ class LoginViewModel @Inject constructor(
                         )
                     )
                 }
-                is Resource.Loading -> {
-                    uiState = uiState.copy(
-                        isLoading = true,
-                        errorStatus = false,
-                        taxPayer = null
-                    )
+                is Resource.Success -> {
+                    result.data?.let {
+                        if (it.loginResult == RESULT_USER_LOGIN) {
+                            uiState = uiState.copy(taxPayer = result.data)
+                            _uiEventChannel.send(LoginUiEvent.LoginSuccessApi)
+                        } else {
+                            _uiEventChannel.send(
+                                LoginUiEvent.ShowSnackbar(UiText.DynamicString(it.loginMessage))
+                            )
+                        }
+                    }
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    private fun checkLoginDatabase() {
+        println("ok")
+
+        val email: String = "UA" + uiState.vk + "@mobilise.com"
+        userSignIn(email, uiState.password) { error ->
+            if (error == null) {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    errorStatus = false
+                )
+                viewModelScope.launch {
+                    setAppSettings(
+                        loginStatus = true,
+                        gib = uiState.gib,
+                        vk = uiState.vk,
+                        password = uiState.password,
+                        user = uiState.taxPayer?.userId ?: "",
+                        accountant = uiState.taxPayer?.accountantId ?: ""
+                    )
+                    _uiEventChannel.send(LoginUiEvent.LoginSuccessDatabase)
+                }
+            } else {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    errorStatus = true,
+                    errorText = UiText.DynamicString(error.localizedMessage)
+                )
+                viewModelScope.launch {
+                    _uiEventChannel.send(
+                        LoginUiEvent.ShowSnackbar(
+                            uiState.errorText ?: UiText.StringResources(R.string.unexpected_error)
+                        )
+                    )
+                }
+            }
+        }
     }
 
     private suspend fun setAppSettings(

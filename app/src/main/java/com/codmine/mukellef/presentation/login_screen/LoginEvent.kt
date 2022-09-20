@@ -5,5 +5,6 @@ sealed class LoginEvent {
     data class VkChanged(val vkValue: String): LoginEvent()
     data class PasswordChanged(val passwordValue: String): LoginEvent()
     object Validate: LoginEvent()
-    object CheckLogin: LoginEvent()
+    object CheckLoginApi: LoginEvent()
+    object CheckLoginDatabase: LoginEvent()
 }
