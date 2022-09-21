@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codmine.mukellef.R
 import com.codmine.mukellef.domain.use_case.login_screen.*
+import com.codmine.mukellef.domain.use_case.main.LogOut
 import com.codmine.mukellef.domain.util.Constants.RESULT_USER_LOGIN
 import com.codmine.mukellef.domain.util.Resource
 import com.codmine.mukellef.domain.util.UiText
@@ -25,7 +26,8 @@ class LoginViewModel @Inject constructor(
     private val validatePassword: ValidatePassword,
     private val getTaxPayer: GetTaxPayer,
     private val setUserLoginData: SetUserLoginData,
-    private val userSignIn: SignInOrSignUpWithEmailAndPassword
+    private val logIn: LogInWithEmailAndPassword,
+    private val logOut: LogOut
 ): ViewModel() {
     var uiState by mutableStateOf(LoginScreenState())
         private set
@@ -105,11 +107,23 @@ class LoginViewModel @Inject constructor(
                 is Resource.Success -> {
                     result.data?.let {
                         if (it.loginResult == RESULT_USER_LOGIN) {
-                            uiState = uiState.copy(taxPayer = result.data)
+                            uiState = uiState.copy(
+                                isLoading = false,
+                                errorStatus = false,
+                                taxPayer = result.data
+                            )
                             _uiEventChannel.send(LoginUiEvent.LoginSuccessApi)
                         } else {
+                            uiState = uiState.copy(
+                                isLoading = false,
+                                errorStatus = true,
+                                errorText = UiText.DynamicString(it.loginMessage),
+                                taxPayer = null
+                            )
                             _uiEventChannel.send(
-                                LoginUiEvent.ShowSnackbar(UiText.DynamicString(it.loginMessage))
+                                LoginUiEvent.ShowSnackbar(
+                                    uiState.errorText ?: UiText.StringResources(R.string.unexpected_error)
+                                )
                             )
                         }
                     }
@@ -119,31 +133,14 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun checkLoginDatabase() {
-        println("ok")
-
         val email: String = "UA" + uiState.vk + "@mobilise.com"
-        userSignIn(email, uiState.password) { error ->
-            if (error == null) {
-                uiState = uiState.copy(
-                    isLoading = false,
-                    errorStatus = false
-                )
-                viewModelScope.launch {
-                    setAppSettings(
-                        loginStatus = true,
-                        gib = uiState.gib,
-                        vk = uiState.vk,
-                        password = uiState.password,
-                        user = uiState.taxPayer?.userId ?: "",
-                        accountant = uiState.taxPayer?.accountantId ?: ""
-                    )
-                    _uiEventChannel.send(LoginUiEvent.LoginSuccessDatabase)
-                }
-            } else {
+        logOut()
+        logIn(email, uiState.password, ::logInSuccess) { error ->
+            if (error != null) {
                 uiState = uiState.copy(
                     isLoading = false,
                     errorStatus = true,
-                    errorText = UiText.DynamicString(error.localizedMessage)
+                    errorText = error.localizedMessage?.let { UiText.DynamicString(it) }
                 )
                 viewModelScope.launch {
                     _uiEventChannel.send(
@@ -153,6 +150,20 @@ class LoginViewModel @Inject constructor(
                     )
                 }
             }
+        }
+    }
+
+    private fun logInSuccess() {
+        viewModelScope.launch {
+            setAppSettings(
+                loginStatus = true,
+                gib = uiState.gib,
+                vk = uiState.vk,
+                password = uiState.password,
+                user = uiState.taxPayer?.userId ?: "",
+                accountant = uiState.taxPayer?.accountantId ?: ""
+            )
+            _uiEventChannel.send(LoginUiEvent.LoginSuccessDatabase)
         }
     }
 

@@ -17,6 +17,8 @@ interface FirebaseRepository {
 
     fun signIn(email: String, password: String, onResult: (Throwable?) -> Unit)
 
+    fun isLoggedInUser(): Boolean
+
     fun signOut()
 
 }

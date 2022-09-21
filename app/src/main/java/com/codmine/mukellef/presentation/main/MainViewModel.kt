@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codmine.mukellef.domain.use_case.login_screen.SetUserLoginData
+import com.codmine.mukellef.domain.use_case.main.LogOut
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val setUserLoginData: SetUserLoginData
+    private val setUserLoginData: SetUserLoginData,
+    private val logOut: LogOut
 ): ViewModel() {
     var exitDialogState by mutableStateOf(false)
     private set
@@ -41,6 +43,7 @@ class MainViewModel @Inject constructor(
                         user = "",
                         accountant = ""
                     )
+                    logOut()
                     _uiEventChannel.send(MainUiEvent.Logout)
                 }
             }

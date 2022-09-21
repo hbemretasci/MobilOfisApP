@@ -55,10 +55,16 @@ class FirebaseRepositoryImpl: FirebaseRepository {
 
     override fun signIn(email: String, password: String, onResult: (Throwable?) -> Unit) {
         auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { onResult(it.exception) }
+            .addOnCompleteListener { onResult(it.exception)
+            }
+    }
+
+    override fun isLoggedInUser(): Boolean {
+        return auth.currentUser != null
     }
 
     override fun signOut() {
         auth.signOut()
     }
+
 }

@@ -2,11 +2,12 @@
 package com.codmine.mukellef.presentation.login_screen;
 
 import com.codmine.mukellef.domain.use_case.login_screen.GetTaxPayer;
+import com.codmine.mukellef.domain.use_case.login_screen.LogInWithEmailAndPassword;
 import com.codmine.mukellef.domain.use_case.login_screen.SetUserLoginData;
-import com.codmine.mukellef.domain.use_case.login_screen.SignInOrSignUpWithEmailAndPassword;
 import com.codmine.mukellef.domain.use_case.login_screen.ValidateGib;
 import com.codmine.mukellef.domain.use_case.login_screen.ValidatePassword;
 import com.codmine.mukellef.domain.use_case.login_screen.ValidateVk;
+import com.codmine.mukellef.domain.use_case.main.LogOut;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
 import dagger.internal.QualifierMetadata;
@@ -31,37 +32,40 @@ public final class LoginViewModel_Factory implements Factory<LoginViewModel> {
 
   private final Provider<SetUserLoginData> setUserLoginDataProvider;
 
-  private final Provider<SignInOrSignUpWithEmailAndPassword> userSignInProvider;
+  private final Provider<LogInWithEmailAndPassword> logInProvider;
+
+  private final Provider<LogOut> logOutProvider;
 
   public LoginViewModel_Factory(Provider<ValidateGib> validateGibProvider,
       Provider<ValidateVk> validateVkProvider, Provider<ValidatePassword> validatePasswordProvider,
       Provider<GetTaxPayer> getTaxPayerProvider,
       Provider<SetUserLoginData> setUserLoginDataProvider,
-      Provider<SignInOrSignUpWithEmailAndPassword> userSignInProvider) {
+      Provider<LogInWithEmailAndPassword> logInProvider, Provider<LogOut> logOutProvider) {
     this.validateGibProvider = validateGibProvider;
     this.validateVkProvider = validateVkProvider;
     this.validatePasswordProvider = validatePasswordProvider;
     this.getTaxPayerProvider = getTaxPayerProvider;
     this.setUserLoginDataProvider = setUserLoginDataProvider;
-    this.userSignInProvider = userSignInProvider;
+    this.logInProvider = logInProvider;
+    this.logOutProvider = logOutProvider;
   }
 
   @Override
   public LoginViewModel get() {
-    return newInstance(validateGibProvider.get(), validateVkProvider.get(), validatePasswordProvider.get(), getTaxPayerProvider.get(), setUserLoginDataProvider.get(), userSignInProvider.get());
+    return newInstance(validateGibProvider.get(), validateVkProvider.get(), validatePasswordProvider.get(), getTaxPayerProvider.get(), setUserLoginDataProvider.get(), logInProvider.get(), logOutProvider.get());
   }
 
   public static LoginViewModel_Factory create(Provider<ValidateGib> validateGibProvider,
       Provider<ValidateVk> validateVkProvider, Provider<ValidatePassword> validatePasswordProvider,
       Provider<GetTaxPayer> getTaxPayerProvider,
       Provider<SetUserLoginData> setUserLoginDataProvider,
-      Provider<SignInOrSignUpWithEmailAndPassword> userSignInProvider) {
-    return new LoginViewModel_Factory(validateGibProvider, validateVkProvider, validatePasswordProvider, getTaxPayerProvider, setUserLoginDataProvider, userSignInProvider);
+      Provider<LogInWithEmailAndPassword> logInProvider, Provider<LogOut> logOutProvider) {
+    return new LoginViewModel_Factory(validateGibProvider, validateVkProvider, validatePasswordProvider, getTaxPayerProvider, setUserLoginDataProvider, logInProvider, logOutProvider);
   }
 
   public static LoginViewModel newInstance(ValidateGib validateGib, ValidateVk validateVk,
       ValidatePassword validatePassword, GetTaxPayer getTaxPayer, SetUserLoginData setUserLoginData,
-      SignInOrSignUpWithEmailAndPassword userSignIn) {
-    return new LoginViewModel(validateGib, validateVk, validatePassword, getTaxPayer, setUserLoginData, userSignIn);
+      LogInWithEmailAndPassword logIn, LogOut logOut) {
+    return new LoginViewModel(validateGib, validateVk, validatePassword, getTaxPayer, setUserLoginData, logIn, logOut);
   }
 }
