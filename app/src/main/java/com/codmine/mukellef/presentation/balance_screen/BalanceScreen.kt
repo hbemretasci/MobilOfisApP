@@ -73,7 +73,6 @@ fun BalanceScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionItem(transaction: Transaction) {
     Card(
