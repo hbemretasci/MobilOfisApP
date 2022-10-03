@@ -18,8 +18,8 @@ class BalanceViewModel @Inject constructor(
     private val getTransactions: GetTransactions,
     private val getUserLoginData: GetUserLoginData
 ):ViewModel() {
-    var uiState by mutableStateOf(BalanceScreenDataState())
-        private set
+    private val _uiState = MutableStateFlow(BalanceScreenDataState())
+    val uiState = _uiState.asStateFlow()
 
     private val _appSettings = mutableStateOf(AppSettings())
 
@@ -41,14 +41,14 @@ class BalanceViewModel @Inject constructor(
         ).onEach { result ->
             when(result) {
                 is Resource.Success -> {
-                    uiState = uiState.copy(
+                    _uiState.value = uiState.value.copy(
                         isLoading = false,
                         errorStatus = false,
                         transactions = result.data ?: emptyList()
                     )
                 }
                 is Resource.Error -> {
-                    uiState = uiState.copy(
+                    _uiState.value = uiState.value.copy(
                         isLoading = false,
                         errorStatus = true,
                         errorText = result.message ?: UiText.StringResources(R.string.unexpected_error),
@@ -56,7 +56,7 @@ class BalanceViewModel @Inject constructor(
                     )
                 }
                 is Resource.Loading -> {
-                    uiState = uiState.copy(
+                    _uiState.value = uiState.value.copy(
                         isLoading = true,
                         errorStatus = false,
                         transactions = emptyList()

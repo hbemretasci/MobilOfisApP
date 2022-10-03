@@ -8,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.codmine.mukellef.R
 import com.codmine.mukellef.domain.model.balance.Transaction
@@ -24,7 +25,7 @@ fun BalanceScreen(
     paddingValues: PaddingValues,
     viewModel: BalanceViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.uiState
+    val uiState by viewModel.uiState.collectAsState()
     val swipeRefreshState = rememberSwipeRefreshState(
         isRefreshing = uiState.isRefreshing
     )
@@ -79,7 +80,7 @@ fun TransactionItem(transaction: Transaction) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(
-                horizontal = MaterialTheme.spacing.large,
+                horizontal = MaterialTheme.spacing.medium,
                 vertical = MaterialTheme.spacing.small
             ),
     ) {
@@ -88,7 +89,7 @@ fun TransactionItem(transaction: Transaction) {
                 .fillMaxWidth()
                 .padding(
                     top = MaterialTheme.spacing.medium,
-                    start = MaterialTheme.spacing.medium
+                    start = MaterialTheme.spacing.small
                 ),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically,
@@ -99,24 +100,29 @@ fun TransactionItem(transaction: Transaction) {
                 style = MaterialTheme.typography.labelLarge,
             )
         }
-        Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.extraSmall))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
                     bottom = MaterialTheme.spacing.medium,
-                    start = MaterialTheme.spacing.medium,
-                    end = MaterialTheme.spacing.medium
+                    start = MaterialTheme.spacing.small,
+                    end = MaterialTheme.spacing.small
                 ),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
+                modifier = Modifier.weight(.7f),
                 text = transaction.name,
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.labelLarge,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
             )
+            Spacer(modifier = Modifier.width(MaterialTheme.spacing.medium))
             Text(
+                modifier = Modifier.weight(.3f),
                 text = transaction.amount,
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.labelLarge
