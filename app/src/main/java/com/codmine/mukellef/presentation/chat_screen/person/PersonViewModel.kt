@@ -1,8 +1,6 @@
 package com.codmine.mukellef.presentation.chat_screen.person
 
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codmine.mukellef.R
@@ -12,6 +10,8 @@ import com.codmine.mukellef.domain.use_case.splash_screen.GetUserLoginData
 import com.codmine.mukellef.domain.util.Resource
 import com.codmine.mukellef.domain.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -21,8 +21,8 @@ class PersonViewModel @Inject constructor(
     private val getRelatedUsers: GetRelatedUsers,
     private val getUserLoginData: GetUserLoginData
 ): ViewModel() {
-    var uiState by mutableStateOf(PersonScreenDataState())
-        private set
+    private val _uiState = MutableStateFlow(PersonScreenDataState())
+    val uiState = _uiState.asStateFlow()
 
     private val _appSettings = mutableStateOf(AppSettings())
 
@@ -44,14 +44,14 @@ class PersonViewModel @Inject constructor(
         ).onEach { result ->
             when(result) {
                 is Resource.Success -> {
-                    uiState = uiState.copy(
+                    _uiState.value = uiState.value.copy(
                         isLoading = false,
                         errorStatus = false,
                         relatedUsers = result.data ?: emptyList()
                     )
                 }
                 is Resource.Error -> {
-                    uiState = uiState.copy(
+                    _uiState.value = uiState.value.copy(
                         isLoading = false,
                         errorStatus = true,
                         errorText = result.message ?: UiText.StringResources(R.string.unexpected_error),
@@ -59,7 +59,7 @@ class PersonViewModel @Inject constructor(
                     )
                 }
                 is Resource.Loading -> {
-                    uiState = uiState.copy(
+                    _uiState.value = uiState.value.copy(
                         isLoading = true,
                         errorStatus = false,
                         relatedUsers = emptyList()

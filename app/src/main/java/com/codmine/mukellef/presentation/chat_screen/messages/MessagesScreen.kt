@@ -137,7 +137,6 @@ fun MessagesScreen(
         viewModel.onEvent(MessagesEvent.AddMessagesListener)
         onDispose { viewModel.onEvent(MessagesEvent.RemoveMessagesListener) }
     }
-
 }
 
 @Composable

@@ -11,20 +11,22 @@ import androidx.compose.ui.Modifier
 import com.codmine.mukellef.R
 import com.codmine.mukellef.domain.util.UiText
 
+//tint = if (documentStatus) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary,
+
 @Composable
 fun UnReadNotificationIcon() {
     Icon(
-        tint = MaterialTheme.colorScheme.onPrimaryContainer,
         imageVector = Icons.Default.MarkChatUnread,
+        tint = MaterialTheme.colorScheme.primary,
         contentDescription = UiText.StringResources(R.string.unread_icon_content_description).asString()
     )
 }
 
 @Composable
-fun ReadNotificationIcon(expanded: Boolean) {
+fun ReadNotificationIcon() {
     Icon(
         imageVector = Icons.Default.MarkChatRead,
-        tint = if (expanded) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onPrimaryContainer,
+        tint = MaterialTheme.colorScheme.secondary,
         contentDescription = UiText.StringResources(R.string.read_icon_content_description).asString()
     )
 }

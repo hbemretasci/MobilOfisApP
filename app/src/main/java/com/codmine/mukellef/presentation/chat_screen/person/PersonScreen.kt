@@ -9,6 +9,8 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
@@ -36,7 +38,7 @@ fun PersonScreen(
     paddingValues: PaddingValues,
     viewModel: PersonViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.uiState
+    val uiState by viewModel.uiState.collectAsState()
     val swipeRefreshState = rememberSwipeRefreshState(
         isRefreshing = uiState.isRefreshing
     )
@@ -93,7 +95,6 @@ fun PersonScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserItem(
     user: RelatedUser,
@@ -105,7 +106,7 @@ fun UserItem(
             .fillMaxSize()
             .padding(
                 horizontal = MaterialTheme.spacing.large,
-                vertical =  MaterialTheme.spacing.small
+                vertical = MaterialTheme.spacing.small
             )
             .clickable { onItemClick(user) },
         shape = RoundedCornerShape(ROUNDED_VALUE.dp)

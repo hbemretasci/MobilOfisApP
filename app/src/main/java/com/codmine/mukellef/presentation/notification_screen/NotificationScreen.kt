@@ -34,7 +34,7 @@ fun NotificationScreen(
     paddingValues: PaddingValues,
     viewModel: NotificationViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.uiState
+    val uiState by viewModel.uiState.collectAsState()
     val swipeRefreshState = rememberSwipeRefreshState(
         isRefreshing = uiState.isRefreshing
     )
@@ -69,9 +69,7 @@ fun NotificationScreen(
                         expanded = expandedNotification == notification.id,
                         onItemClick = {
                             expandedNotification = if (expandedNotification == it.id) null else it.id
-                            if (it.readingTime.isEmpty()) {
-                                viewModel.onEvent(NotificationEvent.ReadNotification(it))
-                            }
+                            if (it.readingTime.isEmpty()) viewModel.onEvent(NotificationEvent.ReadNotification(it))
                         },
                         onDocumentClick = {
                             viewModel.onEvent(NotificationEvent.ShowNotification(it))
@@ -97,7 +95,6 @@ fun NotificationScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationItem(
     notification: Notification,
@@ -121,13 +118,14 @@ fun NotificationItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Spacer(modifier = Modifier.width(MaterialTheme.spacing.small))
-                if (notification.readingTime.isNotEmpty()) ReadNotificationIcon(expanded) else UnReadNotificationIcon()
+                if (notification.readingTime.isNotEmpty()) ReadNotificationIcon() else UnReadNotificationIcon()
                 Spacer(modifier = Modifier.width(MaterialTheme.spacing.medium))
                 Text(
                     text = notification.message,
                     maxLines = 2,
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = if (notification.readingTime.isEmpty()) FontWeight.Bold else FontWeight.Normal,
+                    color = if (notification.readingTime.isEmpty()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
                     overflow = TextOverflow.Ellipsis
                 )
             }
@@ -140,7 +138,7 @@ fun NotificationItem(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Spacer(modifier = Modifier.width(MaterialTheme.spacing.small))
-                    ReadNotificationIcon(expanded)
+                    ReadNotificationIcon()
                     Spacer(modifier = Modifier.width(MaterialTheme.spacing.medium))
                     Text(
                         text = notification.message,
@@ -153,10 +151,12 @@ fun NotificationItem(
                         onClick = { onDocumentClick(notification) }
                     ) {
                         NotificationDocumentIcon(
-                            modifier = Modifier.padding(
-                                bottom = MaterialTheme.spacing.medium,
-                                end = MaterialTheme.spacing.medium
-                            ).scale(1.5f, 1.5f)
+                            modifier = Modifier
+                                .padding(
+                                    bottom = MaterialTheme.spacing.medium,
+                                    end = MaterialTheme.spacing.medium
+                                )
+                                .scale(1.5f, 1.5f)
                         )
                     }
                 }

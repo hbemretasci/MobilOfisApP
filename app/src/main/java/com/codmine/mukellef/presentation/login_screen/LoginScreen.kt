@@ -6,6 +6,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -28,7 +30,7 @@ fun LoginScreen(
     snackbarHostState: SnackbarHostState,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.uiState
+    val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -92,7 +94,7 @@ fun LoginScreen(
             )
             if (uiState.gibError != null) {
                 Text(
-                    text = viewModel.uiState.gibError?.asString() ?: UiText.StringResources(R.string.gib_error).asString(),
+                    text = uiState.gibError?.asString() ?: UiText.StringResources(R.string.gib_error).asString(),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.End)
@@ -116,7 +118,7 @@ fun LoginScreen(
             )
             if (uiState.vkError != null) {
                 Text(
-                    text = viewModel.uiState.vkError?.asString() ?: UiText.StringResources(R.string.vk_error).asString(),
+                    text = uiState.vkError?.asString() ?: UiText.StringResources(R.string.vk_error).asString(),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.End)
@@ -145,7 +147,7 @@ fun LoginScreen(
             )
             if (uiState.passwordError != null) {
                 Text(
-                    text = viewModel.uiState.passwordError?.asString() ?: UiText.StringResources(R.string.password_error).asString(),
+                    text = uiState.passwordError?.asString() ?: UiText.StringResources(R.string.password_error).asString(),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.End)

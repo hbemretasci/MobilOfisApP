@@ -34,7 +34,7 @@ fun DocumentScreen(
     paddingValues: PaddingValues,
     viewModel: DocumentViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.uiState
+    val uiState by viewModel.uiState.collectAsState()
     val swipeRefreshState = rememberSwipeRefreshState(
         isRefreshing = uiState.isRefreshing
     )
@@ -65,9 +65,7 @@ fun DocumentScreen(
                     DocumentItem(
                         document = document,
                         readingStatus = document.readingTime.isNotEmpty(),
-                        onDocumentClick = {
-                            viewModel.onEvent(DocumentEvent.ShowAndReadDocument(it))
-                        }
+                        onDocumentClick = { viewModel.onEvent(DocumentEvent.ShowAndReadDocument(document)) }
                     )
                 }
                 item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
@@ -89,7 +87,6 @@ fun DocumentScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DocumentItem(
     document: Document,
@@ -103,9 +100,7 @@ fun DocumentItem(
                 horizontal = MaterialTheme.spacing.large,
                 vertical = MaterialTheme.spacing.small
             )
-            .clickable {
-                onDocumentClick(document)
-            },
+            .clickable { onDocumentClick(document) },
         shape = RoundedCornerShape(XL_ROUNDED_VALUE).copy(
             topStart = CornerSize(0),
             bottomEnd = CornerSize(0)
@@ -150,9 +145,7 @@ fun DocumentItem(
                     }
                 }
                 Row(
-                    modifier = Modifier
-                        .weight(.5f)
-                        .fillMaxHeight(),
+                    modifier = Modifier.weight(.5f),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -168,7 +161,6 @@ fun DocumentItem(
                         )
                         Text(
                             text = if (document.readingTime.isNotEmpty()) dateAndTime(document.readingTime) else "-" ,
-                            modifier = Modifier.padding(MaterialTheme.spacing.small),
                             style = MaterialTheme.typography.bodyMedium,
                             fontStyle = FontStyle.Italic
                         )
@@ -194,7 +186,7 @@ fun DocumentItem(
 @Composable
 fun DocumentStatusIcon(documentStatus: Boolean) {
     Icon(
-        tint = if (documentStatus) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
+        tint = if (documentStatus) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary,
         imageVector = if(documentStatus) Icons.Default.MarkEmailRead else Icons.Default.MarkEmailUnread,
         contentDescription = UiText.StringResources(R.string.document_icon_content_description).asString()
     )

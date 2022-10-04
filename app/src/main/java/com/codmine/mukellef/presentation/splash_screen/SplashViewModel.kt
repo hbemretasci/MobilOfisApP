@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codmine.mukellef.domain.model.datastore.AppSettings
 import com.codmine.mukellef.domain.use_case.splash_screen.GetUserLoginData
+import com.codmine.mukellef.domain.use_case.splash_screen.GetUserLoginInformation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
@@ -15,9 +16,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
-    private val getUserLoginData: GetUserLoginData
+    private val getUserLoginData: GetUserLoginData,
+    private val getUserLoginInformation: GetUserLoginInformation
 ): ViewModel() {
-
     var logoState by mutableStateOf(false)
         private set
 
@@ -38,7 +39,7 @@ class SplashViewModel @Inject constructor(
                 logoState = false
             }
             is SplashEvent.Navigate -> {
-                if(_appSettings.value.login) {
+                if(_appSettings.value.login && getUserLoginInformation()) {
                     viewModelScope.launch {
                         _uiEventChannel.send(SplashUiEvent.NavigateNotification)
                     }

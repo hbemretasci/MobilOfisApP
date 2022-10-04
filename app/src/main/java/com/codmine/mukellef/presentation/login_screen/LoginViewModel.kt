@@ -1,8 +1,5 @@
 package com.codmine.mukellef.presentation.login_screen
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codmine.mukellef.R
@@ -13,9 +10,7 @@ import com.codmine.mukellef.domain.util.Resource
 import com.codmine.mukellef.domain.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,8 +24,8 @@ class LoginViewModel @Inject constructor(
     private val logIn: LogInWithEmailAndPassword,
     private val logOut: LogOut
 ): ViewModel() {
-    var uiState by mutableStateOf(LoginScreenState())
-        private set
+    private val _uiState = MutableStateFlow(LoginScreenState())
+    val uiState = _uiState.asStateFlow()
 
     private val _uiEventChannel = Channel<LoginUiEvent>()
     val uiEvents = _uiEventChannel.receiveAsFlow()
@@ -38,13 +33,13 @@ class LoginViewModel @Inject constructor(
     fun onEvent(event: LoginEvent) {
         when(event) {
             is LoginEvent.GibChanged -> {
-                uiState = uiState.copy(gib = event.gibValue)
+                _uiState.value = uiState.value.copy(gib = event.gibValue)
             }
             is LoginEvent.VkChanged -> {
-                uiState = uiState.copy(vk = event.vkValue)
+                _uiState.value = uiState.value.copy(vk = event.vkValue)
             }
             is LoginEvent.PasswordChanged -> {
-                uiState = uiState.copy(password = event.passwordValue)
+                _uiState.value = uiState.value.copy(password = event.passwordValue)
             }
             is LoginEvent.Validate -> {
                 validationData()
@@ -59,9 +54,9 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun validationData() {
-        val gibResult = validateGib.execute(uiState.gib)
-        val vkResult = validateVk.execute(uiState.vk)
-        val passwordResult = validatePassword.execute(uiState.password)
+        val gibResult = validateGib.execute(uiState.value.gib)
+        val vkResult = validateVk.execute(uiState.value.vk)
+        val passwordResult = validatePassword.execute(uiState.value.password)
 
         val hasError = listOf(
             gibResult,
@@ -69,7 +64,7 @@ class LoginViewModel @Inject constructor(
             passwordResult
         ).any { !it.successful }
 
-        uiState = uiState.copy(
+        _uiState.value = uiState.value.copy(
             gibError = gibResult.errorMessage,
             vkError = vkResult.errorMessage,
             passwordError = passwordResult.errorMessage
@@ -81,40 +76,38 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun checkLoginApi() {
-        getTaxPayer(uiState.gib, uiState.vk, uiState.password).onEach { result ->
+        getTaxPayer(uiState.value.gib, uiState.value.vk, uiState.value.password).onEach { result ->
             when (result) {
                 is Resource.Loading -> {
-                    uiState = uiState.copy(
+                    _uiState.value = uiState.value.copy(
                         isLoading = true,
                         errorStatus = false,
                         taxPayer = null
                     )
                 }
                 is Resource.Error -> {
-                    uiState = uiState.copy(
+                    _uiState.value = uiState.value.copy(
                         isLoading = false,
                         errorStatus = true,
-                        errorText = result.message
-                            ?: UiText.StringResources(R.string.unexpected_error),
+                        errorText = result.message ?: UiText.StringResources(R.string.unexpected_error),
                         taxPayer = null
                     )
                     _uiEventChannel.send(
                         LoginUiEvent.ShowSnackbar(
-                            uiState.errorText ?: UiText.StringResources(R.string.unexpected_error)
+                            uiState.value.errorText ?: UiText.StringResources(R.string.unexpected_error)
                         )
                     )
                 }
                 is Resource.Success -> {
                     result.data?.let {
                         if (it.loginResult == RESULT_USER_LOGIN) {
-                            uiState = uiState.copy(
-                                isLoading = false,
+                            _uiState.value = uiState.value.copy(
                                 errorStatus = false,
                                 taxPayer = result.data
                             )
                             _uiEventChannel.send(LoginUiEvent.LoginSuccessApi)
                         } else {
-                            uiState = uiState.copy(
+                            _uiState.value = uiState.value.copy(
                                 isLoading = false,
                                 errorStatus = true,
                                 errorText = UiText.DynamicString(it.loginMessage),
@@ -122,7 +115,7 @@ class LoginViewModel @Inject constructor(
                             )
                             _uiEventChannel.send(
                                 LoginUiEvent.ShowSnackbar(
-                                    uiState.errorText ?: UiText.StringResources(R.string.unexpected_error)
+                                    uiState.value.errorText ?: UiText.StringResources(R.string.unexpected_error)
                                 )
                             )
                         }
@@ -133,11 +126,11 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun checkLoginDatabase() {
-        val email: String = "UA" + uiState.vk + "@mobilise.com"
+        val email: String = "UA" + uiState.value.vk + "@mobilise.com"
         logOut()
-        logIn(email, uiState.password, ::logInSuccess) { error ->
+        logIn(email, uiState.value.password, ::logInSuccess) { error ->
             if (error != null) {
-                uiState = uiState.copy(
+                _uiState.value = uiState.value.copy(
                     isLoading = false,
                     errorStatus = true,
                     errorText = error.localizedMessage?.let { UiText.DynamicString(it) }
@@ -145,7 +138,7 @@ class LoginViewModel @Inject constructor(
                 viewModelScope.launch {
                     _uiEventChannel.send(
                         LoginUiEvent.ShowSnackbar(
-                            uiState.errorText ?: UiText.StringResources(R.string.unexpected_error)
+                            uiState.value.errorText ?: UiText.StringResources(R.string.unexpected_error)
                         )
                     )
                 }
@@ -154,14 +147,15 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun logInSuccess() {
+        _uiState.value = uiState.value.copy(isLoading = false)
         viewModelScope.launch {
             setAppSettings(
                 loginStatus = true,
-                gib = uiState.gib,
-                vk = uiState.vk,
-                password = uiState.password,
-                user = uiState.taxPayer?.userId ?: "",
-                accountant = uiState.taxPayer?.accountantId ?: ""
+                gib = uiState.value.gib,
+                vk = uiState.value.vk,
+                password = uiState.value.password,
+                user = uiState.value.taxPayer?.userId ?: "",
+                accountant = uiState.value.taxPayer?.accountantId ?: ""
             )
             _uiEventChannel.send(LoginUiEvent.LoginSuccessDatabase)
         }

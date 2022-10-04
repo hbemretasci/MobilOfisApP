@@ -25,11 +25,10 @@ class NotificationViewModel @Inject constructor(
     private val getUserLoginData: GetUserLoginData,
     private val showDocument: ShowDocument
 ): ViewModel() {
-    var uiState by mutableStateOf(NotificationScreenDataState())
-        private set
+    private val _uiState = MutableStateFlow(NotificationScreenDataState())
+    val uiState = _uiState.asStateFlow()
 
-    var documentReadingState by mutableStateOf(ReadingNotificationState())
-        private set
+    private var documentReadingState by mutableStateOf(ReadingNotificationState())
 
     private val _appSettings = mutableStateOf(AppSettings())
 
@@ -43,14 +42,10 @@ class NotificationViewModel @Inject constructor(
                 getNotificationList()
             }
             is NotificationEvent.ReadNotification -> {
-                if (event.notification.readingTime.isEmpty()) {
-                    postReadingInfo(event.notification)
-                }
+                if (event.notification.readingTime.isEmpty()) postReadingInfo(event.notification)
             }
             is NotificationEvent.ShowNotification -> {
-                if (event.notification.documentName.isNotEmpty()) {
-                    showNotification(_appSettings.value.gib, event.notification)
-                }
+                if (event.notification.documentName.isNotEmpty()) showNotification(_appSettings.value.gib, event.notification)
             }
         }
     }
@@ -65,14 +60,14 @@ class NotificationViewModel @Inject constructor(
         ).onEach { result ->
             when(result) {
                 is Resource.Success -> {
-                    uiState = uiState.copy(
+                    _uiState.value = uiState.value.copy(
                         isLoading = false,
                         errorStatus = false,
                         notifications = result.data ?: emptyList()
                     )
                 }
                 is Resource.Error -> {
-                    uiState = uiState.copy(
+                    _uiState.value = uiState.value.copy(
                         isLoading = false,
                         errorStatus = true,
                         errorText = result.message ?: UiText.StringResources(R.string.unexpected_error),
@@ -80,7 +75,7 @@ class NotificationViewModel @Inject constructor(
                     )
                 }
                 is Resource.Loading -> {
-                    uiState = uiState.copy(
+                    _uiState.value = uiState.value.copy(
                         isLoading = true,
                         errorStatus = false,
                         notifications = emptyList()
@@ -101,6 +96,7 @@ class NotificationViewModel @Inject constructor(
                         errorStatus = false,
                         readingNotification = result.data
                     )
+                    _uiState.value.notifications.find { it.id == notification.id }?.readingTime = documentReadingState.readingNotification?.processingTime ?: "ok"
                 }
                 is Resource.Error -> {
                     documentReadingState = documentReadingState.copy(

@@ -2,6 +2,7 @@
 package com.codmine.mukellef.presentation.splash_screen;
 
 import com.codmine.mukellef.domain.use_case.splash_screen.GetUserLoginData;
+import com.codmine.mukellef.domain.use_case.splash_screen.GetUserLoginInformation;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
 import dagger.internal.QualifierMetadata;
@@ -18,21 +19,26 @@ import javax.inject.Provider;
 public final class SplashViewModel_Factory implements Factory<SplashViewModel> {
   private final Provider<GetUserLoginData> getUserLoginDataProvider;
 
-  public SplashViewModel_Factory(Provider<GetUserLoginData> getUserLoginDataProvider) {
+  private final Provider<GetUserLoginInformation> getUserLoginInformationProvider;
+
+  public SplashViewModel_Factory(Provider<GetUserLoginData> getUserLoginDataProvider,
+      Provider<GetUserLoginInformation> getUserLoginInformationProvider) {
     this.getUserLoginDataProvider = getUserLoginDataProvider;
+    this.getUserLoginInformationProvider = getUserLoginInformationProvider;
   }
 
   @Override
   public SplashViewModel get() {
-    return newInstance(getUserLoginDataProvider.get());
+    return newInstance(getUserLoginDataProvider.get(), getUserLoginInformationProvider.get());
   }
 
-  public static SplashViewModel_Factory create(
-      Provider<GetUserLoginData> getUserLoginDataProvider) {
-    return new SplashViewModel_Factory(getUserLoginDataProvider);
+  public static SplashViewModel_Factory create(Provider<GetUserLoginData> getUserLoginDataProvider,
+      Provider<GetUserLoginInformation> getUserLoginInformationProvider) {
+    return new SplashViewModel_Factory(getUserLoginDataProvider, getUserLoginInformationProvider);
   }
 
-  public static SplashViewModel newInstance(GetUserLoginData getUserLoginData) {
-    return new SplashViewModel(getUserLoginData);
+  public static SplashViewModel newInstance(GetUserLoginData getUserLoginData,
+      GetUserLoginInformation getUserLoginInformation) {
+    return new SplashViewModel(getUserLoginData, getUserLoginInformation);
   }
 }

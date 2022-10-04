@@ -25,11 +25,10 @@ class DocumentViewModel @Inject constructor(
     private val getUserLoginData: GetUserLoginData,
     private val showDocument: ShowDocument
 ): ViewModel() {
-    var uiState by mutableStateOf(DocumentScreenDataState())
-        private set
+    private val _uiState = MutableStateFlow(DocumentScreenDataState())
+    val uiState = _uiState.asStateFlow()
 
-    var documentReadingState by mutableStateOf(ReadingDocumentState())
-        private set
+    private var documentReadingState by mutableStateOf(ReadingDocumentState())
 
     private val _appSettings = mutableStateOf(AppSettings())
 
@@ -43,12 +42,8 @@ class DocumentViewModel @Inject constructor(
                 getDocumentList()
             }
             is DocumentEvent.ShowAndReadDocument -> {
-                if (event.document.readingTime.isEmpty()) {
-                    postReadingInfo(event.document)
-                }
-                if (event.document.documentName.isNotEmpty()) {
-                    showDocument(_appSettings.value.gib, event.document)
-                }
+                if (event.document.readingTime.isEmpty()) postReadingInfo(event.document)
+                if (event.document.documentName.isNotEmpty()) showDocument(_appSettings.value.gib, event.document)
             }
         }
     }
@@ -63,14 +58,14 @@ class DocumentViewModel @Inject constructor(
         ).onEach { result ->
             when(result) {
                 is Resource.Success -> {
-                    uiState = uiState.copy(
+                    _uiState.value = uiState.value.copy(
                         isLoading = false,
                         errorStatus = false,
                         documents = result.data ?: emptyList()
                     )
                 }
                 is Resource.Error -> {
-                    uiState = uiState.copy(
+                    _uiState.value = uiState.value.copy(
                         isLoading = false,
                         errorStatus = true,
                         errorText = result.message ?: UiText.StringResources(R.string.unexpected_error),
@@ -78,7 +73,7 @@ class DocumentViewModel @Inject constructor(
                     )
                 }
                 is Resource.Loading -> {
-                    uiState = uiState.copy(
+                    _uiState.value = uiState.value.copy(
                         isLoading = true,
                         errorStatus = false,
                         documents = emptyList()
@@ -99,6 +94,7 @@ class DocumentViewModel @Inject constructor(
                         errorStatus = false,
                         readingDocument = result.data
                     )
+                    getDocumentList()
                 }
                 is Resource.Error -> {
                     documentReadingState = documentReadingState.copy(

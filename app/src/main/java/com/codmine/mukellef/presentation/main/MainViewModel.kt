@@ -19,7 +19,7 @@ class MainViewModel @Inject constructor(
     private val logOut: LogOut
 ): ViewModel() {
     var exitDialogState by mutableStateOf(false)
-    private set
+        private set
 
     private val _uiEventChannel = Channel<MainUiEvent>()
     val uiEvents = _uiEventChannel.receiveAsFlow()
