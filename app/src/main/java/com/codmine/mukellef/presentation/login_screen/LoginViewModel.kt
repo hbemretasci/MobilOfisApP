@@ -8,6 +8,7 @@ import com.codmine.mukellef.domain.use_case.main.LogOut
 import com.codmine.mukellef.domain.util.Constants.RESULT_USER_LOGIN
 import com.codmine.mukellef.domain.util.Resource
 import com.codmine.mukellef.domain.util.UiText
+import com.onesignal.OneSignal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
@@ -159,6 +160,7 @@ class LoginViewModel @Inject constructor(
             )
             _uiEventChannel.send(LoginUiEvent.LoginSuccessDatabase)
         }
+        OneSignal.setExternalUserId("UA" + uiState.value.vk)
     }
 
     private suspend fun setAppSettings(
