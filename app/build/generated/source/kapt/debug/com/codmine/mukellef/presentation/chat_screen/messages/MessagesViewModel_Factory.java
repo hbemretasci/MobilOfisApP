@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle;
 import com.codmine.mukellef.domain.use_case.chat_screen.AddListener;
 import com.codmine.mukellef.domain.use_case.chat_screen.PostMessage;
 import com.codmine.mukellef.domain.use_case.chat_screen.RemoveListener;
+import com.codmine.mukellef.domain.use_case.chat_screen.SendPushNotification;
 import com.codmine.mukellef.domain.use_case.splash_screen.GetUserLoginData;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
@@ -30,34 +31,40 @@ public final class MessagesViewModel_Factory implements Factory<MessagesViewMode
 
   private final Provider<PostMessage> postMessageProvider;
 
+  private final Provider<SendPushNotification> sendPushNotificationProvider;
+
   public MessagesViewModel_Factory(Provider<AddListener> addListenerProvider,
       Provider<RemoveListener> removeListenerProvider,
       Provider<SavedStateHandle> savedStateHandleProvider,
       Provider<GetUserLoginData> getUserLoginDataProvider,
-      Provider<PostMessage> postMessageProvider) {
+      Provider<PostMessage> postMessageProvider,
+      Provider<SendPushNotification> sendPushNotificationProvider) {
     this.addListenerProvider = addListenerProvider;
     this.removeListenerProvider = removeListenerProvider;
     this.savedStateHandleProvider = savedStateHandleProvider;
     this.getUserLoginDataProvider = getUserLoginDataProvider;
     this.postMessageProvider = postMessageProvider;
+    this.sendPushNotificationProvider = sendPushNotificationProvider;
   }
 
   @Override
   public MessagesViewModel get() {
-    return newInstance(addListenerProvider.get(), removeListenerProvider.get(), savedStateHandleProvider.get(), getUserLoginDataProvider.get(), postMessageProvider.get());
+    return newInstance(addListenerProvider.get(), removeListenerProvider.get(), savedStateHandleProvider.get(), getUserLoginDataProvider.get(), postMessageProvider.get(), sendPushNotificationProvider.get());
   }
 
   public static MessagesViewModel_Factory create(Provider<AddListener> addListenerProvider,
       Provider<RemoveListener> removeListenerProvider,
       Provider<SavedStateHandle> savedStateHandleProvider,
       Provider<GetUserLoginData> getUserLoginDataProvider,
-      Provider<PostMessage> postMessageProvider) {
-    return new MessagesViewModel_Factory(addListenerProvider, removeListenerProvider, savedStateHandleProvider, getUserLoginDataProvider, postMessageProvider);
+      Provider<PostMessage> postMessageProvider,
+      Provider<SendPushNotification> sendPushNotificationProvider) {
+    return new MessagesViewModel_Factory(addListenerProvider, removeListenerProvider, savedStateHandleProvider, getUserLoginDataProvider, postMessageProvider, sendPushNotificationProvider);
   }
 
   public static MessagesViewModel newInstance(AddListener addListener,
       RemoveListener removeListener, SavedStateHandle savedStateHandle,
-      GetUserLoginData getUserLoginData, PostMessage postMessage) {
-    return new MessagesViewModel(addListener, removeListener, savedStateHandle, getUserLoginData, postMessage);
+      GetUserLoginData getUserLoginData, PostMessage postMessage,
+      SendPushNotification sendPushNotification) {
+    return new MessagesViewModel(addListener, removeListener, savedStateHandle, getUserLoginData, postMessage, sendPushNotification);
   }
 }

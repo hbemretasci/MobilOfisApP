@@ -27,7 +27,8 @@ class MessagesViewModel @Inject constructor(
     private val removeListener: RemoveListener,
     private val savedStateHandle: SavedStateHandle,
     private val getUserLoginData: GetUserLoginData,
-    private val postMessage: PostMessage
+    private val postMessage: PostMessage,
+    private val sendPushNotification: SendPushNotification
 ):ViewModel() {
     var uiState by mutableStateOf(MessagesScreenDataState())
         private set
@@ -106,6 +107,7 @@ class MessagesViewModel @Inject constructor(
         postMessage(_appSettings.value.gib, _appSettings.value.user, _receiverId, _chatKey, sentMessage) { error ->
             if(error == null) {
                 uiState = uiState.copy(message = "")
+                sendPushNotification("UA$_receiverId", "${_appSettings.value.user} dan yeni bir mesajınız var.")
                 viewModelScope.launch {
                     _uiEventChannel.send(MessagesUiEvent.SendMessageSuccess)
                 }

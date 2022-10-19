@@ -3,6 +3,7 @@ package com.codmine.mukellef.presentation.login_screen;
 
 import com.codmine.mukellef.domain.use_case.login_screen.GetTaxPayer;
 import com.codmine.mukellef.domain.use_case.login_screen.LogInWithEmailAndPassword;
+import com.codmine.mukellef.domain.use_case.login_screen.SetOnesignalExternalId;
 import com.codmine.mukellef.domain.use_case.login_screen.SetUserLoginData;
 import com.codmine.mukellef.domain.use_case.login_screen.ValidateGib;
 import com.codmine.mukellef.domain.use_case.login_screen.ValidatePassword;
@@ -36,11 +37,14 @@ public final class LoginViewModel_Factory implements Factory<LoginViewModel> {
 
   private final Provider<LogOut> logOutProvider;
 
+  private final Provider<SetOnesignalExternalId> setOnesignalExternalIdProvider;
+
   public LoginViewModel_Factory(Provider<ValidateGib> validateGibProvider,
       Provider<ValidateVk> validateVkProvider, Provider<ValidatePassword> validatePasswordProvider,
       Provider<GetTaxPayer> getTaxPayerProvider,
       Provider<SetUserLoginData> setUserLoginDataProvider,
-      Provider<LogInWithEmailAndPassword> logInProvider, Provider<LogOut> logOutProvider) {
+      Provider<LogInWithEmailAndPassword> logInProvider, Provider<LogOut> logOutProvider,
+      Provider<SetOnesignalExternalId> setOnesignalExternalIdProvider) {
     this.validateGibProvider = validateGibProvider;
     this.validateVkProvider = validateVkProvider;
     this.validatePasswordProvider = validatePasswordProvider;
@@ -48,24 +52,27 @@ public final class LoginViewModel_Factory implements Factory<LoginViewModel> {
     this.setUserLoginDataProvider = setUserLoginDataProvider;
     this.logInProvider = logInProvider;
     this.logOutProvider = logOutProvider;
+    this.setOnesignalExternalIdProvider = setOnesignalExternalIdProvider;
   }
 
   @Override
   public LoginViewModel get() {
-    return newInstance(validateGibProvider.get(), validateVkProvider.get(), validatePasswordProvider.get(), getTaxPayerProvider.get(), setUserLoginDataProvider.get(), logInProvider.get(), logOutProvider.get());
+    return newInstance(validateGibProvider.get(), validateVkProvider.get(), validatePasswordProvider.get(), getTaxPayerProvider.get(), setUserLoginDataProvider.get(), logInProvider.get(), logOutProvider.get(), setOnesignalExternalIdProvider.get());
   }
 
   public static LoginViewModel_Factory create(Provider<ValidateGib> validateGibProvider,
       Provider<ValidateVk> validateVkProvider, Provider<ValidatePassword> validatePasswordProvider,
       Provider<GetTaxPayer> getTaxPayerProvider,
       Provider<SetUserLoginData> setUserLoginDataProvider,
-      Provider<LogInWithEmailAndPassword> logInProvider, Provider<LogOut> logOutProvider) {
-    return new LoginViewModel_Factory(validateGibProvider, validateVkProvider, validatePasswordProvider, getTaxPayerProvider, setUserLoginDataProvider, logInProvider, logOutProvider);
+      Provider<LogInWithEmailAndPassword> logInProvider, Provider<LogOut> logOutProvider,
+      Provider<SetOnesignalExternalId> setOnesignalExternalIdProvider) {
+    return new LoginViewModel_Factory(validateGibProvider, validateVkProvider, validatePasswordProvider, getTaxPayerProvider, setUserLoginDataProvider, logInProvider, logOutProvider, setOnesignalExternalIdProvider);
   }
 
   public static LoginViewModel newInstance(ValidateGib validateGib, ValidateVk validateVk,
       ValidatePassword validatePassword, GetTaxPayer getTaxPayer, SetUserLoginData setUserLoginData,
-      LogInWithEmailAndPassword logIn, LogOut logOut) {
-    return new LoginViewModel(validateGib, validateVk, validatePassword, getTaxPayer, setUserLoginData, logIn, logOut);
+      LogInWithEmailAndPassword logIn, LogOut logOut,
+      SetOnesignalExternalId setOnesignalExternalId) {
+    return new LoginViewModel(validateGib, validateVk, validatePassword, getTaxPayer, setUserLoginData, logIn, logOut, setOnesignalExternalId);
   }
 }

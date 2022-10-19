@@ -11,9 +11,7 @@ class MobileOfficeApplication: Application() {
     override fun onCreate() {
         super.onCreate()
 
-        // OneSignal Initialization
         OneSignal.initWithContext(this)
         OneSignal.setAppId(ONESIGNAL_APP_ID)
-
     }
 }

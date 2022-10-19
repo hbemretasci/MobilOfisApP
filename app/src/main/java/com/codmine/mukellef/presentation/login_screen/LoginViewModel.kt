@@ -8,7 +8,6 @@ import com.codmine.mukellef.domain.use_case.main.LogOut
 import com.codmine.mukellef.domain.util.Constants.RESULT_USER_LOGIN
 import com.codmine.mukellef.domain.util.Resource
 import com.codmine.mukellef.domain.util.UiText
-import com.onesignal.OneSignal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
@@ -23,7 +22,8 @@ class LoginViewModel @Inject constructor(
     private val getTaxPayer: GetTaxPayer,
     private val setUserLoginData: SetUserLoginData,
     private val logIn: LogInWithEmailAndPassword,
-    private val logOut: LogOut
+    private val logOut: LogOut,
+    private val setOnesignalExternalId: SetOnesignalExternalId
 ): ViewModel() {
     private val _uiState = MutableStateFlow(LoginScreenState())
     val uiState = _uiState.asStateFlow()
@@ -160,7 +160,7 @@ class LoginViewModel @Inject constructor(
             )
             _uiEventChannel.send(LoginUiEvent.LoginSuccessDatabase)
         }
-        OneSignal.setExternalUserId("UA" + uiState.value.vk)
+        setOnesignalExternalId("UA" + uiState.value.vk)
     }
 
     private suspend fun setAppSettings(
