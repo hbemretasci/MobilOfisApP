@@ -7,8 +7,13 @@ interface FirebaseRepository {
 
     fun postMessage(gib: String, message: MessageDto, onResult: (Throwable?) -> Unit)
 
+    fun addUser(userId: String, oneSignalPlayerId: String)
+
+    fun getUserPlayerId(userId: String): String
+
     fun addListener(
-        gib: String, sender: String, receiver: String, key:String, onDocumentEvent: (Message) -> Unit, onError: (Throwable) -> Unit
+        gib: String, sender: String, receiver: String, key:String,
+        onDocumentEvent: (Message) -> Unit, onError: (Throwable) -> Unit
     )
 
     fun removeListener()

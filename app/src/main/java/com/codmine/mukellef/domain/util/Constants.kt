@@ -2,6 +2,8 @@ package com.codmine.mukellef.domain.util
 
 object Constants {
     const val BASE_URL = "http://www.ipeksu.com/mobil/"
+    const val USER_PREFIX = "ua"
+    const val USER_SUFFIX = "@mobilise.com"
 
     const val LOGO_DISPLAY_TIME = 2000L
     const val ROUNDED_VALUE = 8

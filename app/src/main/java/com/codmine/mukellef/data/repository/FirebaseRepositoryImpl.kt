@@ -25,8 +25,24 @@ class FirebaseRepositoryImpl: FirebaseRepository {
             .addOnCompleteListener { onResult(it.exception) }
     }
 
+    override fun addUser(userId: String, oneSignalPlayerId: String) {
+        val user = hashMapOf("onesignalid" to oneSignalPlayerId)
+        db.collection("users").document(userId).set(user)
+    }
+
+    override fun getUserPlayerId(userId: String): String {
+        var result: String = "noplayerid"
+        db.collection("users").document(userId).get()
+            .addOnSuccessListener { document ->
+                result = document?.data?.toString() ?: "noplayerid"
+            }
+        return result
+    }
+
     override fun addListener(
-        gib: String, sender: String, receiver: String, key:String, onDocumentEvent: (Message) -> Unit, onError: (Throwable) -> Unit
+        gib: String, sender: String, receiver: String, key:String,
+        onDocumentEvent: (Message) -> Unit,
+        onError: (Throwable) -> Unit
     ) {
         val query = db.collection("MM$gib")
             .whereEqualTo("key", key)
@@ -55,8 +71,7 @@ class FirebaseRepositoryImpl: FirebaseRepository {
 
     override fun signIn(email: String, password: String, onResult: (Throwable?) -> Unit) {
         auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { onResult(it.exception)
-            }
+            .addOnCompleteListener { onResult(it.exception) }
     }
 
     override fun isLoggedInUser(): Boolean {

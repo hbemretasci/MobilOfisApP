@@ -4,6 +4,8 @@ interface OnesignalRepository {
 
     fun setExternalId(id: String)
 
-    fun sendPushNotification(receiverId: String, notification: String)
+    fun getPlayerId(): String
+
+    fun sendPushNotification(targetId: String, notification: String)
 
 }

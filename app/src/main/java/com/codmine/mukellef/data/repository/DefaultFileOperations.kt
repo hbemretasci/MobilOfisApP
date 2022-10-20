@@ -69,7 +69,7 @@ class DefaultFileOperations @Inject constructor (
         try {
             application.startActivity(viewerIntent)
         } catch (e: ActivityNotFoundException) {
-
+            e.printStackTrace()
         }
     }
 

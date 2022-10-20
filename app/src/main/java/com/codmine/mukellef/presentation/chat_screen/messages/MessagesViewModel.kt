@@ -28,7 +28,8 @@ class MessagesViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val getUserLoginData: GetUserLoginData,
     private val postMessage: PostMessage,
-    private val sendPushNotification: SendPushNotification
+    private val sendPushNotification: SendPushNotification,
+    private val getUserPlayerId: GetUserPlayerId
 ):ViewModel() {
     var uiState by mutableStateOf(MessagesScreenDataState())
         private set
@@ -69,7 +70,8 @@ class MessagesViewModel @Inject constructor(
         uiState = MessagesScreenDataState(
             userId = _appSettings.value.user,
             receiverId = _receiverId,
-            receiverName = _receiverName
+            receiverName = _receiverName,
+            receiverPlayerId = getUserPlayerId(_receiverId)
         )
         _chatKey = if(_appSettings.value.user < _receiverId) "f${_appSettings.value.user}-s$_receiverId" else "f$_receiverId-s${_appSettings.value.user}"
     }
@@ -82,11 +84,7 @@ class MessagesViewModel @Inject constructor(
 
     private fun onMessageAddEvent(message: Message) {
         val newList = uiState.messages.toMutableList()
-        if(newList.size > 0) {
-            if(message.time > newList[0].time) newList.add(0, message) else newList.add(message)
-        } else {
-            newList.add(message)
-        }
+        if(newList.size > 0) if(message.time > newList[0].time) newList.add(0, message) else newList.add(message)  else newList.add(message)
         uiState = uiState.copy(
             isLoading = false,
             errorStatus = false,
@@ -106,8 +104,8 @@ class MessagesViewModel @Inject constructor(
     private fun sendMessage(sentMessage: String) {
         postMessage(_appSettings.value.gib, _appSettings.value.user, _receiverId, _chatKey, sentMessage) { error ->
             if(error == null) {
+                sendPushNotification(uiState.receiverPlayerId, uiState.message)
                 uiState = uiState.copy(message = "")
-                sendPushNotification("UA$_receiverId", "${_appSettings.value.user} dan yeni bir mesajınız var.")
                 viewModelScope.launch {
                     _uiEventChannel.send(MessagesUiEvent.SendMessageSuccess)
                 }

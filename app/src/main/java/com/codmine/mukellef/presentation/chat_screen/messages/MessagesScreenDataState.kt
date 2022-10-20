@@ -7,6 +7,7 @@ data class MessagesScreenDataState(
     val userId: String = "",
     val receiverId: String = "",
     val receiverName: String = "",
+    val receiverPlayerId: String = "",
     val message: String = "",
     val isLoading: Boolean = false,
     val errorStatus: Boolean = false,

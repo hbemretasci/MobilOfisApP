@@ -6,8 +6,11 @@ import com.codmine.mukellef.R
 import com.codmine.mukellef.domain.use_case.login_screen.*
 import com.codmine.mukellef.domain.use_case.main.LogOut
 import com.codmine.mukellef.domain.util.Constants.RESULT_USER_LOGIN
+import com.codmine.mukellef.domain.util.Constants.USER_PREFIX
+import com.codmine.mukellef.domain.util.Constants.USER_SUFFIX
 import com.codmine.mukellef.domain.util.Resource
 import com.codmine.mukellef.domain.util.UiText
+import com.codmine.mukellef.presentation.chat_screen.messages.MessagesUiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
@@ -23,7 +26,9 @@ class LoginViewModel @Inject constructor(
     private val setUserLoginData: SetUserLoginData,
     private val logIn: LogInWithEmailAndPassword,
     private val logOut: LogOut,
-    private val setOnesignalExternalId: SetOnesignalExternalId
+    private val setOnesignalExternalId: SetOnesignalExternalId,
+    private val getOnesignalPlayerId: GetOnesignalPlayerId,
+    private val addOrUpdateUser: AddOrUpdateUser
 ): ViewModel() {
     private val _uiState = MutableStateFlow(LoginScreenState())
     val uiState = _uiState.asStateFlow()
@@ -127,7 +132,7 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun checkLoginDatabase() {
-        val email: String = "UA" + uiState.value.vk + "@mobilise.com"
+        val email: String = USER_PREFIX + uiState.value.vk + USER_SUFFIX
         logOut()
         logIn(email, uiState.value.password, ::logInSuccess) { error ->
             if (error != null) {
@@ -160,7 +165,9 @@ class LoginViewModel @Inject constructor(
             )
             _uiEventChannel.send(LoginUiEvent.LoginSuccessDatabase)
         }
-        setOnesignalExternalId("UA" + uiState.value.vk)
+        setOnesignalExternalId(USER_PREFIX + uiState.value.vk)
+        val playerId = getOnesignalPlayerId()
+        uiState.value.taxPayer?.userId?.let { addOrUpdateUser(it, playerId) }
     }
 
     private suspend fun setAppSettings(

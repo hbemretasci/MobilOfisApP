@@ -3,7 +3,6 @@ package com.codmine.mukellef.data.repository
 import com.codmine.mukellef.domain.repository.OnesignalRepository
 import com.onesignal.OneSignal
 import org.json.JSONException
-
 import org.json.JSONObject
 
 class OnesignalRepositoryImpl: OnesignalRepository {
@@ -12,14 +11,19 @@ class OnesignalRepositoryImpl: OnesignalRepository {
         OneSignal.setExternalUserId(id)
     }
 
-    override fun sendPushNotification(receiverId: String, notification: String) {
+    override fun getPlayerId(): String {
+        return OneSignal.getDeviceState()?.userId ?: "noplayerid"
+    }
+
+
+    override fun sendPushNotification(targetId: String, notification: String) {
         try {
             OneSignal.postNotification(
-                JSONObject("{'contents': {'en':'$notification'}, 'include_external_user_ids': ['$receiverId']}"),
+                JSONObject("{'contents': {'en':'$notification'}, 'include_player_ids': ['$targetId']}"),
                 null
             )
         } catch (e: JSONException) {
-            //e.printStackTrace()
+            e.printStackTrace()
         }
     }
 
