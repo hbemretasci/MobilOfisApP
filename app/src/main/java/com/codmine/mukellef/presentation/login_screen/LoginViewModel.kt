@@ -10,7 +10,6 @@ import com.codmine.mukellef.domain.util.Constants.USER_PREFIX
 import com.codmine.mukellef.domain.util.Constants.USER_SUFFIX
 import com.codmine.mukellef.domain.util.Resource
 import com.codmine.mukellef.domain.util.UiText
-import com.codmine.mukellef.presentation.chat_screen.messages.MessagesUiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
@@ -154,6 +153,7 @@ class LoginViewModel @Inject constructor(
 
     private fun logInSuccess() {
         _uiState.value = uiState.value.copy(isLoading = false)
+
         viewModelScope.launch {
             setAppSettings(
                 loginStatus = true,
@@ -165,6 +165,7 @@ class LoginViewModel @Inject constructor(
             )
             _uiEventChannel.send(LoginUiEvent.LoginSuccessDatabase)
         }
+
         setOnesignalExternalId(USER_PREFIX + uiState.value.vk)
         val playerId = getOnesignalPlayerId()
         uiState.value.taxPayer?.userId?.let { addOrUpdateUser(it, playerId) }

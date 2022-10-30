@@ -5,12 +5,15 @@ import com.codmine.mukellef.data.remote.dto.chat.toMessage
 import com.codmine.mukellef.domain.model.chat.Message
 import com.codmine.mukellef.domain.repository.FirebaseRepository
 import com.codmine.mukellef.domain.util.Constants.CHAT_QUERY_LIMIT
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class FirebaseRepositoryImpl: FirebaseRepository {
 
@@ -30,13 +33,13 @@ class FirebaseRepositoryImpl: FirebaseRepository {
         db.collection("users").document(userId).set(user)
     }
 
-    override fun getUserPlayerId(userId: String): String {
-        var result: String = "noplayerid"
-        db.collection("users").document(userId).get()
-            .addOnSuccessListener { document ->
-                result = document?.data?.toString() ?: "noplayerid"
-            }
-        return result
+    override fun getUserPlayerId(userId: String): Flow<String> = flow {
+        val docRef = db.collection("users").document(userId)
+        val task = docRef.get()
+        val result = kotlin.runCatching { Tasks.await(task) }
+        val exception = task.exception
+        val data = result.getOrNull()
+        emit(data?.get("onesignalid").toString())
     }
 
     override fun addListener(

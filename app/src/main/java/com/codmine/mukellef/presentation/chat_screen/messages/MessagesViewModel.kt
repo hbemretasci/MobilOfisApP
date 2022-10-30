@@ -71,9 +71,17 @@ class MessagesViewModel @Inject constructor(
             userId = _appSettings.value.user,
             receiverId = _receiverId,
             receiverName = _receiverName,
-            receiverPlayerId = getUserPlayerId(_receiverId)
         )
         _chatKey = if(_appSettings.value.user < _receiverId) "f${_appSettings.value.user}-s$_receiverId" else "f$_receiverId-s${_appSettings.value.user}"
+
+        getUserPlayerId(_receiverId).onEach {
+            uiState = uiState.copy(
+                receiverPlayerId = it
+            )
+        }.launchIn(viewModelScope)
+
+        println(uiState.receiverPlayerId)
+
     }
 
     private fun addChatListener() {

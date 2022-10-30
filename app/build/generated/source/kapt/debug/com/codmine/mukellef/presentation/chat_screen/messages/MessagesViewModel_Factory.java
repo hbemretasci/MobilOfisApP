@@ -3,6 +3,7 @@ package com.codmine.mukellef.presentation.chat_screen.messages;
 
 import androidx.lifecycle.SavedStateHandle;
 import com.codmine.mukellef.domain.use_case.chat_screen.AddListener;
+import com.codmine.mukellef.domain.use_case.chat_screen.GetUserPlayerId;
 import com.codmine.mukellef.domain.use_case.chat_screen.PostMessage;
 import com.codmine.mukellef.domain.use_case.chat_screen.RemoveListener;
 import com.codmine.mukellef.domain.use_case.chat_screen.SendPushNotification;
@@ -33,23 +34,27 @@ public final class MessagesViewModel_Factory implements Factory<MessagesViewMode
 
   private final Provider<SendPushNotification> sendPushNotificationProvider;
 
+  private final Provider<GetUserPlayerId> getUserPlayerIdProvider;
+
   public MessagesViewModel_Factory(Provider<AddListener> addListenerProvider,
       Provider<RemoveListener> removeListenerProvider,
       Provider<SavedStateHandle> savedStateHandleProvider,
       Provider<GetUserLoginData> getUserLoginDataProvider,
       Provider<PostMessage> postMessageProvider,
-      Provider<SendPushNotification> sendPushNotificationProvider) {
+      Provider<SendPushNotification> sendPushNotificationProvider,
+      Provider<GetUserPlayerId> getUserPlayerIdProvider) {
     this.addListenerProvider = addListenerProvider;
     this.removeListenerProvider = removeListenerProvider;
     this.savedStateHandleProvider = savedStateHandleProvider;
     this.getUserLoginDataProvider = getUserLoginDataProvider;
     this.postMessageProvider = postMessageProvider;
     this.sendPushNotificationProvider = sendPushNotificationProvider;
+    this.getUserPlayerIdProvider = getUserPlayerIdProvider;
   }
 
   @Override
   public MessagesViewModel get() {
-    return newInstance(addListenerProvider.get(), removeListenerProvider.get(), savedStateHandleProvider.get(), getUserLoginDataProvider.get(), postMessageProvider.get(), sendPushNotificationProvider.get());
+    return newInstance(addListenerProvider.get(), removeListenerProvider.get(), savedStateHandleProvider.get(), getUserLoginDataProvider.get(), postMessageProvider.get(), sendPushNotificationProvider.get(), getUserPlayerIdProvider.get());
   }
 
   public static MessagesViewModel_Factory create(Provider<AddListener> addListenerProvider,
@@ -57,14 +62,15 @@ public final class MessagesViewModel_Factory implements Factory<MessagesViewMode
       Provider<SavedStateHandle> savedStateHandleProvider,
       Provider<GetUserLoginData> getUserLoginDataProvider,
       Provider<PostMessage> postMessageProvider,
-      Provider<SendPushNotification> sendPushNotificationProvider) {
-    return new MessagesViewModel_Factory(addListenerProvider, removeListenerProvider, savedStateHandleProvider, getUserLoginDataProvider, postMessageProvider, sendPushNotificationProvider);
+      Provider<SendPushNotification> sendPushNotificationProvider,
+      Provider<GetUserPlayerId> getUserPlayerIdProvider) {
+    return new MessagesViewModel_Factory(addListenerProvider, removeListenerProvider, savedStateHandleProvider, getUserLoginDataProvider, postMessageProvider, sendPushNotificationProvider, getUserPlayerIdProvider);
   }
 
   public static MessagesViewModel newInstance(AddListener addListener,
       RemoveListener removeListener, SavedStateHandle savedStateHandle,
       GetUserLoginData getUserLoginData, PostMessage postMessage,
-      SendPushNotification sendPushNotification) {
-    return new MessagesViewModel(addListener, removeListener, savedStateHandle, getUserLoginData, postMessage, sendPushNotification);
+      SendPushNotification sendPushNotification, GetUserPlayerId getUserPlayerId) {
+    return new MessagesViewModel(addListener, removeListener, savedStateHandle, getUserLoginData, postMessage, sendPushNotification, getUserPlayerId);
   }
 }
