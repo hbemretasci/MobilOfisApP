@@ -7,6 +7,8 @@ class SendPushNotification @Inject constructor(
     private val oneSignal: OnesignalRepository
 ) {
     operator fun invoke(receiverId: String, notification: String) {
+        println(receiverId)
+        println(notification)
         oneSignal.sendPushNotification(receiverId, notification)
     }
 }

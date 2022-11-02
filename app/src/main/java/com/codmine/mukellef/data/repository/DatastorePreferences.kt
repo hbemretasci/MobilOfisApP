@@ -10,6 +10,7 @@ import com.codmine.mukellef.domain.repository.CustomPreferences.Companion.KEY_AC
 import com.codmine.mukellef.domain.repository.CustomPreferences.Companion.KEY_GIB
 import com.codmine.mukellef.domain.repository.CustomPreferences.Companion.KEY_LOGIN
 import com.codmine.mukellef.domain.repository.CustomPreferences.Companion.KEY_PASSWORD
+import com.codmine.mukellef.domain.repository.CustomPreferences.Companion.KEY_TITLE
 import com.codmine.mukellef.domain.repository.CustomPreferences.Companion.KEY_USER
 import com.codmine.mukellef.domain.repository.CustomPreferences.Companion.KEY_VK
 import kotlinx.coroutines.flow.Flow
@@ -26,6 +27,7 @@ class DatastorePreferences(
         vk: String,
         password: String,
         user: String,
+        title: String,
         accountant: String
     ) {
         val loginKey = booleanPreferencesKey(KEY_LOGIN)
@@ -33,6 +35,7 @@ class DatastorePreferences(
         val vkKey = stringPreferencesKey(KEY_VK)
         val passwordKey = stringPreferencesKey(KEY_PASSWORD)
         val userKey = stringPreferencesKey(KEY_USER)
+        val titleKey = stringPreferencesKey(KEY_TITLE)
         val accountantKey = stringPreferencesKey(KEY_ACCOUNTANT)
         dataStorePreferences.edit {
             it[loginKey] = login
@@ -40,6 +43,7 @@ class DatastorePreferences(
             it[vkKey] = vk
             it[passwordKey] = password
             it[userKey] = user
+            it[titleKey] = title
             it[accountantKey] = accountant
         }
     }
@@ -80,6 +84,14 @@ class DatastorePreferences(
         val userKey = stringPreferencesKey(KEY_USER)
         val valueFlow: Flow<String> = dataStorePreferences.data.map {
             it[userKey] ?: ""
+        }
+        return valueFlow.first()
+    }
+
+    override suspend fun getTitleData(): String {
+        val titleKey = stringPreferencesKey(KEY_TITLE)
+        val valueFlow: Flow<String> = dataStorePreferences.data.map {
+            it[titleKey] ?: ""
         }
         return valueFlow.first()
     }

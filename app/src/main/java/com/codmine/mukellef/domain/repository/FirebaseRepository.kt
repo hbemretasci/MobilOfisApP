@@ -2,7 +2,7 @@ package com.codmine.mukellef.domain.repository
 
 import com.codmine.mukellef.data.remote.dto.chat.MessageDto
 import com.codmine.mukellef.domain.model.chat.Message
-import kotlinx.coroutines.flow.Flow
+import com.google.firebase.firestore.DocumentSnapshot
 
 interface FirebaseRepository {
 
@@ -10,7 +10,7 @@ interface FirebaseRepository {
 
     fun addUser(userId: String, oneSignalPlayerId: String)
 
-    fun getUserPlayerId(userId: String): Flow<String>
+    suspend fun getUserPlayerId(userId: String): DocumentSnapshot
 
     fun addListener(
         gib: String, sender: String, receiver: String, key:String,

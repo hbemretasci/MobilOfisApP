@@ -41,6 +41,7 @@ class MainViewModel @Inject constructor(
                         vk = "",
                         password = "",
                         user = "",
+                        title ="",
                         accountant = ""
                     )
                     logOut()
@@ -51,9 +52,9 @@ class MainViewModel @Inject constructor(
     }
 
     private suspend fun setAppSettings(
-        loginStatus: Boolean, gib: String, vk: String, password: String, user: String, accountant: String
+        loginStatus: Boolean, gib: String, vk: String, password: String, user: String, title: String, accountant: String
     ) {
-        setUserLoginData(loginStatus, gib, vk, password, user, accountant)
+        setUserLoginData(loginStatus, gib, vk, password, user, title, accountant)
     }
 
 }

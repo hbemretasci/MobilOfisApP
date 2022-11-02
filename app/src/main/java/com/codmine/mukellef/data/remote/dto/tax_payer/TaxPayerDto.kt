@@ -18,11 +18,8 @@ fun TaxPayerDto.toTaxPayer(): TaxPayer {
     return TaxPayer(
         loginResult = userAuthentication.loginResult,
         loginMessage = userAuthentication.loginMessage,
-        userId = user?.let {
-            it.id
-        },
-        accountantId = accountant?.let {
-            it.id
-        }
+        userId = user?.id,
+        userTitle = user?.title,
+        accountantId = accountant?.id
     )
 }

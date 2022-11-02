@@ -5,6 +5,7 @@ import com.codmine.mukellef.domain.util.UiText
 
 data class MessagesScreenDataState(
     val userId: String = "",
+    val userTitle: String = "",
     val receiverId: String = "",
     val receiverName: String = "",
     val receiverPlayerId: String = "",

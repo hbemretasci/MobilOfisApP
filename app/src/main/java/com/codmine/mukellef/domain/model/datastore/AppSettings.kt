@@ -6,5 +6,6 @@ data class AppSettings(
     val vk: String = "",
     val password: String = "",
     val user: String = "",
+    val title: String = "",
     val accountant: String = "",
 )

@@ -4,5 +4,6 @@ data class TaxPayer(
     val loginResult: String,
     val loginMessage: String,
     val userId: String? = "",
+    val userTitle: String? = "",
     val accountantId: String? = ""
 )

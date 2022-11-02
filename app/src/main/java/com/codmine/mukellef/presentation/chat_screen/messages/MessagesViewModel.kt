@@ -12,6 +12,7 @@ import com.codmine.mukellef.domain.use_case.chat_screen.*
 import com.codmine.mukellef.domain.use_case.splash_screen.GetUserLoginData
 import com.codmine.mukellef.domain.util.Constants.NAV_CHAT_MESSAGES_USER_ID
 import com.codmine.mukellef.domain.util.Constants.NAV_CHAT_MESSAGES_USER_NAME
+import com.codmine.mukellef.domain.util.Resource
 import com.codmine.mukellef.domain.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -69,19 +70,25 @@ class MessagesViewModel @Inject constructor(
     private fun initializeDataState() {
         uiState = MessagesScreenDataState(
             userId = _appSettings.value.user,
+            userTitle = _appSettings.value.title,
             receiverId = _receiverId,
             receiverName = _receiverName,
         )
         _chatKey = if(_appSettings.value.user < _receiverId) "f${_appSettings.value.user}-s$_receiverId" else "f$_receiverId-s${_appSettings.value.user}"
 
-        getUserPlayerId(_receiverId).onEach {
-            uiState = uiState.copy(
-                receiverPlayerId = it
-            )
+        getUserPlayerId(_receiverId).onEach { result ->
+            uiState = when(result) {
+                is Resource.Success -> {
+                    uiState.copy(receiverPlayerId = result.data ?: "noplayerid")
+                }
+                is Resource.Error -> {
+                    uiState.copy(receiverPlayerId = "noplayerid")
+                }
+                is Resource.Loading -> {
+                    uiState.copy(receiverPlayerId = "noplayerid")
+                }
+            }
         }.launchIn(viewModelScope)
-
-        println(uiState.receiverPlayerId)
-
     }
 
     private fun addChatListener() {
@@ -112,7 +119,10 @@ class MessagesViewModel @Inject constructor(
     private fun sendMessage(sentMessage: String) {
         postMessage(_appSettings.value.gib, _appSettings.value.user, _receiverId, _chatKey, sentMessage) { error ->
             if(error == null) {
-                sendPushNotification(uiState.receiverPlayerId, uiState.message)
+                sendPushNotification(
+                    receiverId = uiState.receiverPlayerId,
+                    notification = "${uiState.userTitle} dan mesajınız var."
+                )
                 uiState = uiState.copy(message = "")
                 viewModelScope.launch {
                     _uiEventChannel.send(MessagesUiEvent.SendMessageSuccess)

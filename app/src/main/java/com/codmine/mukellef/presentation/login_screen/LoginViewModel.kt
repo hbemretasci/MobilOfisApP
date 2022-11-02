@@ -161,6 +161,7 @@ class LoginViewModel @Inject constructor(
                 vk = uiState.value.vk,
                 password = uiState.value.password,
                 user = uiState.value.taxPayer?.userId ?: "",
+                title = uiState.value.taxPayer?.userTitle ?: "",
                 accountant = uiState.value.taxPayer?.accountantId ?: ""
             )
             _uiEventChannel.send(LoginUiEvent.LoginSuccessDatabase)
@@ -172,8 +173,8 @@ class LoginViewModel @Inject constructor(
     }
 
     private suspend fun setAppSettings(
-        loginStatus: Boolean, gib: String, vk: String, password: String, user: String, accountant: String
+        loginStatus: Boolean, gib: String, vk: String, password: String, user: String, title: String, accountant: String
     ) {
-        setUserLoginData(loginStatus, gib, vk, password, user, accountant)
+        setUserLoginData(loginStatus, gib, vk, password, user, title, accountant)
     }
 }
